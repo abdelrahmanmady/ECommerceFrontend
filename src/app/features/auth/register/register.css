@@ -125,14 +125,19 @@ h6 {
 
 .form-floating label {
     /* display: block; */
-    align-content: center;
+   
     font-weight: 700;
     color: #b0b0b0;
     
     font-size: 14px;
+  
     
     /* position: relative; */
     z-index: 1;
+}
+.form-floating label:active{
+    padding-bottom: 80px;
+    margin-bottom: 20px;
 }
 
 .form-floating input,
@@ -145,8 +150,8 @@ h6 {
     border-radius: 10px;
     font-size: 20px;
     transition: all 0.3s;
-    margin-top: 5px;
-    line-height: 20px;
+    padding-top: 30px;
+    
     
 }
 
