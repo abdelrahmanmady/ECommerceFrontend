@@ -176,6 +176,9 @@ h6 {
     grid-template-columns: 1fr 1fr;
     gap: 0px;
 }
+.checkBox-container{
+    padding-left: 20px;
+}
 
 .checkbox-group {
     display: flex;
