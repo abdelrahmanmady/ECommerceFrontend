@@ -1,1 +1,70 @@
-<p>login works!</p>
+<section class="login-section">
+  <div class="container">
+    <div class="login-container">
+      <div class="login-box">
+        <div class="login-header">
+          <h1>Welcome Back</h1>
+          <p>Sign in to your account to continue</p>
+        </div>
+
+        <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+          <!-- Email -->
+          <div class="form-group">
+            <label>Email Address *</label>
+            <input
+              type="email"
+              [(ngModel)]="email"
+              name="email"
+              required
+              placeholder="your@email.com"
+            />
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label>Password *</label>
+            <div class="password-field">
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                [(ngModel)]="password"
+                name="password"
+                required
+                placeholder="Enter your password"
+              />
+              <!-- Password toggle -->
+              <i
+                class="fas password-toggle"
+                [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"
+                (click)="togglePassword()"
+                title="Show/Hide password"
+              ></i>
+            </div>
+          </div>
+
+          <!-- Options -->
+          <div class="form-options">
+            <div class="remember-me">
+              <input
+                type="checkbox"
+                id="remember"
+                [(ngModel)]="rememberMe"
+                name="remember"
+              />
+              <label for="remember">Remember me</label>
+            </div>
+            <a href="#" class="forgot-password">Forgot Password?</a>
+          </div>
+
+          <button type="submit" class="btn-login">Sign In</button>
+        </form>
+
+
+        <!-- Register -->
+        <div class="register-link">
+          Don't have an account?
+          <a routerLink="/register">Create Account</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
