@@ -1,0 +1,412 @@
+<!-- Page Header -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+<section class="page-header">
+    <div class="container header-flex">
+        <h1>Product Details</h1>
+        <nav class="breadcrumb-custom">
+            <a href="index.html">Home</a>
+            <span>/</span>
+            <a href="shop.html">Shop</a>
+            <span>/</span>
+            <span>Wireless Headphones</span>
+        </nav>
+    </div>
+</section>
+<div class="product-details-container">
+
+
+    <!-- Product Details Section -->
+    <section class="product-details-section">
+        <div class="container">
+            <div class="row">
+                <!-- Product Gallery -->
+                <div class="col-lg-6">
+                    <div class="product-gallery">
+                        <div class="main-showcase">
+                            <div class="main-image">
+                                <img [src]="selectedImage" alt="Product" id="mainImage" class="img-fluid zoom-img">
+                                <div class="image-navigation">
+                                    <button class="nav-arrow prev-image image-nav-btn " type="button"
+                                        (click)="prevImage()">&#10094;</button>
+                                    <button class="nav-arrow next-image image-nav-btn" type="button"
+                                        (click)="nextImage()">&#10095;</button>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="thumbnail-images">
+                            @for(img of images ;track $index){
+                            <div class="thumbnail" [class.active]="selectedImage === img" (click)="changeImage($index)">
+
+                                <img [src]="img" alt="Thumbnail">
+                            </div>
+
+                            }
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Product Info -->
+                <div class="col-lg-6">
+                    <div class="product-info">
+                        <div class="reviews-container">
+
+                            <span class="product-badge-detail">In Stock</span>
+                            <div class="product-rating-detail">
+                                <div id="ratingStars" class="mb-3 stars"></div>
+
+                                <span class="review-count">(24 Customer Reviews)</span>
+                            </div>
+                        </div>
+                        <h1 class="product-title-detail">Premium Wireless Headphones</h1>
+
+
+
+                        <div class="product-price-detail">
+                            <span class="current-price">{{299.00|currency:"USD"}}</span>
+                            <span class="old-price">{{399.00|currency:"USD"}}</span>
+
+                        </div>
+                        <div class="discount-container">
+                            <span class="saving-badge">Save $50.00</span>
+                            <span class="discount-badge">21% off</span>
+
+                        </div>
+                        <p class="product-description">
+                            Experience premium sound quality with our latest wireless headphones. Featuring active noise
+                            cancellation, 30-hour battery life, and ergonomic design for all-day comfort. Perfect for
+                            music lovers, travelers, and professionals.
+                        </p>
+                        <div class="availability-badge">
+                            <div class="check-container">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <span class="status-text">Available</span>
+                            <span class="remaining-text">Only 19 items remaining</span>
+                        </div>
+
+
+                        <!-- Product Options -->
+                        <div class="product-options">
+                            <div class="option-group">
+                                <span class="option-label">Available Colors:</span>
+                                <div class="color-options">
+                                    <div class="color-option"
+                                        style="background: linear-gradient(135deg, #1a1a1a, #000);"></div>
+                                    <div class="color-option"
+                                        style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); border: 2px solid #ddd;">
+                                    </div>
+                                    <div class="color-option"
+                                        style="background: linear-gradient(135deg, #0066cc, #004499);"></div>
+                                    <div class="color-option"
+                                        style="background: linear-gradient(135deg, #28a745, #155724);"></div>
+                                </div>
+                            </div>
+
+                            <!-- <div class="option-group">
+                                <span class="option-label">Size:</span>
+                                <div class="size-options">
+                                    <div class="size-option">Standard</div>
+                                    <div class="size-option active">Large</div>
+                                    <div class="size-option">XL</div>
+                                </div>
+                            </div> -->
+
+                            <div class="option-group">
+                                <span class="option-label">Quantity:</span>
+                                <div class="quantity-selector">
+                                    <div class="quantity-input">
+                                        <button class="quantity-btn" (click)="decreaseQty()">−</button>
+                                        <input type="number" class="quantity-value" value="1" min="1" id="quantity">
+                                        <button class="quantity-btn" (click)="increaseQty()">+</button>
+                                    </div>
+                                    <!-- <span style="color: #6c757d; font-size: 14px;">128 pieces available</span> -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="product-actions-detail">
+                            <button class="btn-add-cart">
+                                <i class="fas fa-shopping-cart"></i>
+                                Add to Cart
+                            </button>
+                            <button class="btn-buy-now">
+                                <i class="fas bi bi-lightning"></i>
+                                Buy Now
+                            </button>
+                            <button class="btn-wishlist">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        </div>
+                        <div class="product-meta">
+                            <div class="meta-item">
+                                <i class="bi bi-truck"></i>
+                                <span class="meta-value">Free delivery on orders over $75</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                                <span class="meta-value">45-day hassle-free returns</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="bi bi-shield-check"></i>
+                                <span class="meta-value">3-year manufacturer warranty</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="bi bi-headset"></i>
+                                <span class="meta-value">24/7 customer support available</span>
+                            </div>
+                        </div>
+                        <!-- Share -->
+                        <!-- <div style="display: flex; align-items: center; gap: 15px;">
+                            <span style="font-weight: 600;">Share:</span>
+                            <div style="display: flex; gap: 10px;">
+                                <a href="#"
+                                    style="width: 35px; height: 35px; background-color: #f8f9fa; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #2b2b2b; text-decoration: none;"><i
+                                        class="fab fa-facebook-f"></i></a>
+                                <a href="#"
+                                    style="width: 35px; height: 35px; background-color: #f8f9fa; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #2b2b2b; text-decoration: none;"><i
+                                        class="fab fa-twitter"></i></a>
+                                <a href="#"
+                                    style="width: 35px; height: 35px; background-color: #f8f9fa; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #2b2b2b; text-decoration: none;"><i
+                                        class="fab fa-pinterest"></i></a>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Tabs -->
+            <!-- <div class="product-tabs">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#description">Overview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#specifications">Technical Details</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#reviews">Reviews (24)</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="description">
+                        <div class="product-overview">
+                            <h3>Product Overview</h3>
+                        <p>Immerse yourself in superior sound quality with our Premium Wireless Headphones. Designed for
+                            audiophiles and everyday users alike, these headphones deliver crystal-clear audio with deep
+                            bass and crisp highs.</p>
+                        </div>
+                        <div class="key-highlight">
+                            <div class="highlight-item">
+                                <i class="bi bi-check-circle-fill highlight-icon"></i>
+                                <p>Advanced Active Noise Cancellation</p>
+                                <p>hhhhh</p>
+
+                            </div>
+
+                        </div>
+                        
+                      </div>
+
+                    <div class="tab-pane fade" id="specifications">
+                        <h3>Technical Specifications</h3>
+                        <ul style="color: #6c757d; line-height: 2;">
+                            <li><strong>Driver Size:</strong> 40mm</li>
+                            <li><strong>Frequency Response:</strong> 20Hz - 20kHz</li>
+                            <li><strong>Impedance:</strong> 32 Ohms</li>
+                            <li><strong>Bluetooth Version:</strong> 5.0</li>
+                            <li><strong>Range:</strong> Up to 30 feet (10 meters)</li>
+                            <li><strong>Battery Life:</strong> 30 hours</li>
+                            <li><strong>Charging Time:</strong> 2 hours</li>
+                            <li><strong>Weight:</strong> 250g</li>
+                            <li><strong>Noise Cancellation:</strong> Active ANC</li>
+                            <li><strong>Microphone:</strong> Built-in with noise reduction</li>
+                        </ul>
+                    </div>
+
+                    <div class="tab-pane fade" id="reviews">
+                        <h3>Customer Reviews</h3>
+
+                        <div class="review-item">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100"
+                                        alt="Reviewer" class="reviewer-avatar">
+                                    <div>
+                                        <div class="reviewer-name">Sarah Johnson</div>
+                                        <div class="review-date">March 15, 2025</div>
+                                    </div>
+                                </div>
+                                <div class="review-rating">★★★★★</div>
+                            </div>
+                            <p class="review-text">Absolutely love these headphones! The sound quality is exceptional
+                                and the noise cancellation works perfectly. Very comfortable to wear for long periods.
+                            </p>
+                        </div>
+
+                        <div class="review-item">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100"
+                                        alt="Reviewer" class="reviewer-avatar">
+                                    <div>
+                                        <div class="reviewer-name">Michael Chen</div>
+                                        <div class="review-date">March 10, 2025</div>
+                                    </div>
+                                </div>
+                                <div class="review-rating">★★★★☆</div>
+                            </div>
+                            <p class="review-text">Great headphones for the price. Battery life is impressive and
+                                they're very comfortable. Only minor issue is they can feel a bit tight at first, but
+                                they loosened up after a few days.</p>
+                        </div>
+
+                        <div class="review-item">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100"
+                                        alt="Reviewer" class="reviewer-avatar">
+                                    <div>
+                                        <div class="reviewer-name">Emily Davis</div>
+                                        <div class="review-date">March 5, 2025</div>
+                                    </div>
+                                </div>
+                                <div class="review-rating">★★★★★</div>
+                            </div>
+                            <p class="review-text">Best purchase I've made this year! Perfect for working from home and
+                                traveling. The ANC is a game changer. Highly recommend!</p>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </section>
+
+    <!-- Related Products -->
+    <!-- <section class="related-products-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Related Products</h2>
+                <p>You might also like these items</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="product-card">
+                        <span class="product-badge">New</span>
+                        <div class="product-image">
+                            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400" alt="Product">
+                        </div>
+                        <div class="product-body">
+                            <div class="product-category">Electronics</div>
+                            <div class="product-title">
+                                <a href="product-details.html">Smart Watch Pro</a>
+                            </div>
+                            <div class="product-rating">
+                                ★★★★★ <span>(38)</span>
+                            </div>
+                            <div class="product-price">$225.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="https://images.unsplash.com/photo-1484704849700-f032a568e944?w=400" alt="Product">
+                        </div>
+                        <div class="product-body">
+                            <div class="product-category">Electronics</div>
+                            <div class="product-title">
+                                <a href="product-details.html">Wireless Speaker</a>
+                            </div>
+                            <div class="product-rating">
+                                ★★★★☆ <span>(22)</span>
+                            </div>
+                            <div class="product-price">$149.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400" alt="Product">
+                        </div>
+                        <div class="product-body">
+                            <div class="product-category">Fashion</div>
+                            <div class="product-title">
+                                <a href="product-details.html">Designer Sunglasses</a>
+                            </div>
+                            <div class="product-rating">
+                                ★★★★☆ <span>(16)</span>
+                            </div>
+                            <div class="product-price">$89.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400" alt="Product">
+                        </div>
+                        <div class="product-body">
+                            <div class="product-category">Fashion</div>
+                            <div class="product-title">
+                                <a href="product-details.html">Travel Backpack</a>
+                            </div>
+                            <div class="product-rating">
+                                ★★★★★ <span>(44)</span>
+                            </div>
+                            <div class="product-price">$69.00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section> -->
+</div>
+<!-- script -->
+<!--
+    // Change main image
+        function changeImage(thumb, src) {
+            document.getElementById('mainImage').src = src;
+            document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+            thumb.classList.add('active');
+        }
+        
+        // Quantity controls
+        function increaseQty() {
+            const qty = document.getElementById('quantity');
+            qty.value = parseInt(qty.value) + 1;
+        }
+        
+        function decreaseQty() {
+            const qty = document.getElementById('quantity');
+            if (parseInt(qty.value) > 1) {
+                qty.value = parseInt(qty.value) - 1;
+            }
+        }
+        
+        // Color selection
+        document.querySelectorAll('.color-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.color-option').forEach(o => o.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Size selection
+        document.querySelectorAll('.size-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.size-option').forEach(o => o.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+    -->
