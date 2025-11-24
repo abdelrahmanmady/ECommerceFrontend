@@ -1,0 +1,173 @@
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container header-flex">
+        <h1>Shop</h1>
+        <div class="breadcrumb-custom">
+            <a href="index.html">Home</a>
+            <span>/</span>
+            <span>Shop</span>
+        </div>
+    </div>
+</section>
+
+<!-- Shop Section -->
+<section class="shop-section">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-4 sidebar">
+                <div class="shop-sidebar">
+                    <!-- Categories -->
+                    <div class="sidebar-widget">
+                        <h4>Categories</h4>
+                        <ul class="category-list">
+                            <li>
+                                <label>
+                                    <input type="checkbox" value="Electronics" name="categoryType"> Electronics
+                                    <span class="category-count">(42)</span>
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input type="checkbox" value="Fashion" name="categoryType"> Fashion
+                                    <span class="category-count">(58)</span>
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input type="checkbox" value="Home & Garden" name="categoryType"> Home & Garden
+                                    <span class="category-count">(33)</span>
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input type="checkbox" value="Sports" name="categoryType"> Sports
+                                    <span class="category-count">(27)</span>
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input type="checkbox" value="Beauty" name="categoryType"> Beauty
+                                    <span class="category-count">(45)</span>
+                                </label>
+                            </li>
+                            <li>
+                                <label>
+                                    <input type="checkbox" value="Books" name="categoryType"> Books
+                                    <span class="category-count">(19)</span>
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Price Range -->
+                    <div class="sidebar-widget">
+                        <h4>Price Range</h4>
+                        <div class="price-values">
+                            <span>${{ minValue }}</span>
+                            <span>${{ maxValue }}</span>
+                        </div>
+
+                        <div class="range-slider">
+                            <div class="slider-track"></div>
+                            <div class="slider-progress" [style.left.%]="minPercent"
+                                [style.width.%]="maxPercent - minPercent"></div>
+
+                            <input type="range" min="0" max="1000" value="0" step="10" [(ngModel)]="minValue"
+                                (input)="updateSlider()" (mousedown)="onMinFocus()" (touchstart)="onMinFocus()"
+                                [style.z-index]="minZIndex" class="min-range">
+
+                            <input type="range" min="0" max="1000" value="500" step="10" class="max-range"
+                                [(ngModel)]="maxValue" (input)="updateSlider()" (mousedown)="onMaxFocus()"
+                                (touchstart)="onMaxFocus()" [style.z-index]="maxZIndex">
+
+                        </div>
+                        <button type="button" (click)="priceFilter()" class="price-filter btn btn-sm btn-primary w-100">
+                            Apply Filter
+
+                        </button>
+
+                    </div>
+
+                    <!-- Colors -->
+                    <!-- <div class="sidebar-widget">
+                        <h4>Colors</h4>
+                        <div class="color-options">
+                            <div class="color-option" style="background-color: #000000;"></div>
+                            <div class="color-option" style="background-color: #ffffff; border: 2px solid #ddd;"></div>
+                            <div class="color-option" style="background-color: #ff0000;"></div>
+                            <div class="color-option" style="background-color: #0000ff;"></div>
+                            <div class="color-option" style="background-color: #00ff00;"></div>
+                            <div class="color-option" style="background-color: #ffff00;"></div>
+                            <div class="color-option" style="background-color: #ff00ff;"></div>
+                            <div class="color-option" style="background-color: #00ffff;"></div>
+                        </div>
+                    </div> -->
+
+                    <!-- Sizes -->
+                    <!-- <div class="sidebar-widget">
+                        <h4>Sizes</h4>
+                        <div class="size-options">
+                            <div class="size-option">XS</div>
+                            <div class="size-option">S</div>
+                            <div class="size-option">M</div>
+                            <div class="size-option">L</div>
+                            <div class="size-option">XL</div>
+                            <div class="size-option">XXL</div>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="col-lg-8">
+                <!-- Toolbar -->
+                <div class="shop-toolbar">
+                    <div class="showing-results">
+                        Showing 1-12 of 48 results
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="view-options">
+                            <button class="view-btn" (click)="setView('grid')" [class.active]="viewType() === 'grid'">
+                                <i class="fas fa-th"></i></button>
+                            <button class="view-btn" (click)="setView('list')" [class.active]="viewType() === 'list'"><i
+                                    class="fas fa-list"></i></button>
+                        </div>
+                        <div class="sort-dropdown">
+                            <select (change)="sortProducts($event)">
+                                <!-- <option value="default">Default Sorting</option> -->
+                                <option value="asc"> Low to High</option>
+                                <option value="dsc">Price: High to Low</option>
+                                <option value="new">Newest First</option>
+                                <option value="pop">Popularity</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products -->
+                <div [ngClass]="viewType()" class="products-grid">
+
+                    @if(products){
+                    @for(product of products|paginate:{ itemsPerPage: 6, currentPage: page }; track $index){
+                    <div [ngClass]="[viewType(),'product-card']">
+                        <app-product-card [viewType]="viewType()" [productData]="product"></app-product-card>
+                    </div>
+
+                    }
+                    }
+
+                </div>
+
+
+                <!-- Pagination -->
+                <div class="pagination-wrapper">
+                    <div class="pagination">
+                        <pagination-controls (pageChange)="page = $event"></pagination-controls>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

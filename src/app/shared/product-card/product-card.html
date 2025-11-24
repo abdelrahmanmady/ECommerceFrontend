@@ -1,0 +1,29 @@
+<div class="product-card" [ngClass]="viewType()">
+    @if(productData().sale){
+<span class="product-badge sale">{{productData().sale}}%</span>
+    }
+     @if(productData().new){
+ <span class="product-badge new">New</span>
+     }
+    
+    <div class="product-image" [ngClass]="viewType">
+        <img src={{productData().image}} alt="Product">
+        <div class="product-actions">
+            <button class="product-action-btn"><i class="far fa-heart"></i></button>
+            <button class="product-action-btn"><i class="fas fa-shopping-cart"></i></button>
+            <button class="product-action-btn"><i class="far fa-eye"></i></button>
+        </div>
+    </div>
+    <div class=" product-body"[ngClass]="viewType">
+        <div class="product-category"[ngClass]="viewType">{{productData().category}}</div>
+        <div class=" product-title"[ngClass]="viewType">
+            <a href="product-details.html">{{productData().title}}</a>
+        </div>
+        <div class=" product-rating"[ngClass]="viewType">
+            ★★★★☆ <span>({{productData().rating}})</span>
+        </div>
+        <div class="product-price"[ngClass]="viewType">{{productData().price|currency:"USD"}}
+            @if(productData().delPrice){
+            <del>{{productData().delPrice|currency:"USD"}}</del>}</div>
+    </div>
+</div>

@@ -12,7 +12,6 @@
  .page-header {
      padding: 20px 80px;
      background-color: #f5f5f5;
-     /* background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 50%, #f8f9fa 100%); */
      text-align: start;
      display: flex;
      flex-direction: column;
