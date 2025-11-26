@@ -1,1 +1,594 @@
 /* You can add global styles to this file, and also import other style files */
+@charset "UTF-8";
+
+/*--------------------------------------------------------------
+# Font & Color Variables
+# Help: https://bootstrapmade.com/color-system/
+--------------------------------------------------------------*/
+/* Fonts */
+:root {
+  --default-font: "Roboto",  system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --heading-font: "Montserrat",  sans-serif;
+  --nav-font: "Poppins",  sans-serif;
+}
+
+/* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
+:root { 
+  --background-color: #ffffff; /* Background color for the entire website, including individual sections */
+  --default-color: #444444; /* Default color used for the majority of the text content across the entire website */
+  --heading-color: #000000; /* Color for headings, subheadings and title throughout the website */
+  --accent-color: #252223; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
+  --surface-color: #ffffff; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
+  --contrast-color: #ffffff; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
+}
+
+/* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
+:root {
+  --nav-color: rgba(255, 255, 255, 0.8);  /* The default color of the main navmenu links */
+  --nav-hover-color: #ffffff; /* Applied to main navmenu links when they are hovered over or active */
+  --nav-mobile-background-color: #ffffff; /* Used as the background color for mobile navigation menu */
+  --nav-dropdown-background-color: #ffffff; /* Used as the background color for dropdown items that appear when hovering over primary navigation items */
+  --nav-dropdown-color: #444444; /* Used for navigation links of the dropdown items in the navigation menu. */
+  --nav-dropdown-hover-color: #252223; /* Similar to --nav-hover-color, this color is applied to dropdown navigation links when they are hovered over. */
+}
+
+/* Color Presets - These classes override global colors when applied to any section or element, providing reuse of the sam color scheme. */
+
+.light-background {
+  --background-color: #f6f6f6;
+  --surface-color: #ffffff;
+}
+
+.dark-background {
+  --background-color: #000000;
+  --default-color: #ffffff;
+  --heading-color: #ffffff;
+  --accent-color: #ffffff;
+  --surface-color: #232424;
+  --contrast-color: #ffffff;
+}
+
+/* Smooth scroll */
+:root {
+  scroll-behavior: smooth;
+}
+
+/*--------------------------------------------------------------
+# General Styling & Shared Classes
+--------------------------------------------------------------*/
+body {
+  color: var(--default-color);
+  background-color: var(--background-color);
+  font-family: var(--default-font);
+}
+
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+a:hover {
+  color: color-mix(in srgb, var(--accent-color), transparent 25%);
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--heading-color);
+  font-family: var(--heading-font);
+}
+
+/* Pulsating Play Button
+------------------------------*/
+.pulsating-play-btn {
+  width: 94px;
+  height: 94px;
+  background: radial-gradient(var(--accent-color) 50%, color-mix(in srgb, var(--accent-color), transparent 75%) 52%);
+  border-radius: 50%;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+.pulsating-play-btn:before {
+  content: "";
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  animation-delay: 0s;
+  animation: pulsate-play-btn 2s;
+  animation-direction: forwards;
+  animation-iteration-count: infinite;
+  animation-timing-function: steps;
+  opacity: 1;
+  border-radius: 50%;
+  border: 5px solid color-mix(in srgb, var(--accent-color), transparent 30%);
+  top: -15%;
+  left: -15%;
+  background: rgba(198, 16, 0, 0);
+}
+
+.pulsating-play-btn:after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-40%) translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 15px solid #fff;
+  z-index: 100;
+  transition: all 400ms cubic-bezier(0.55, 0.055, 0.675, 0.19);
+}
+
+.pulsating-play-btn:hover:before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-40%) translateY(-50%);
+  width: 0;
+  height: 0;
+  border: none;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 15px solid #fff;
+  z-index: 200;
+  animation: none;
+  border-radius: 0;
+}
+
+.pulsating-play-btn:hover:after {
+  border-left: 15px solid var(--accent-color);
+  transform: scale(20);
+}
+
+@keyframes pulsate-play-btn {
+  0% {
+    transform: scale(0.6, 0.6);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1, 1);
+    opacity: 0;
+  }
+}
+
+/* PHP Email Form Messages
+------------------------------*/
+.php-email-form .error-message {
+  display: none;
+  background: #df1529;
+  color: #ffffff;
+  text-align: left;
+  padding: 15px;
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+
+.php-email-form .sent-message {
+  display: none;
+  color: #ffffff;
+  background: #059652;
+  text-align: center;
+  padding: 15px;
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+
+.php-email-form .loading {
+  display: none;
+  background: var(--surface-color);
+  text-align: center;
+  padding: 15px;
+  margin-bottom: 24px;
+}
+
+.php-email-form .loading:before {
+  content: "";
+  display: inline-block;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  margin: 0 10px -6px 0;
+  border: 3px solid var(--accent-color);
+  border-top-color: var(--surface-color);
+  animation: php-email-form-loading 1s linear infinite;
+}
+
+@keyframes php-email-form-loading {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/*--------------------------------------------------------------
+# Global Header
+--------------------------------------------------------------*/
+.header {
+  color: var(--default-color);
+  background-color: var(--background-color);
+  transition: all 0.5s;
+  z-index: 997;
+}
+
+.header .top-bar {
+  background-color: color-mix(in srgb, var(--default-color), transparent 96%);
+  font-size: 14px;
+}
+
+.header .top-bar .top-bar-item {
+  color: var(--default-color);
+}
+
+.header .top-bar .top-bar-item a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+.header .top-bar .top-bar-item a:hover {
+  text-decoration: underline;
+}
+
+.header .top-bar .top-bar-item .selected-icon {
+  color: var(--accent-color);
+  opacity: 1;
+  width: 16px;
+}
+
+.header .top-bar .announcement-slider {
+  color: var(--accent-color);
+  font-weight: 500;
+  height: 24px;
+  overflow: hidden;
+}
+
+.header .top-bar .announcement-slider .swiper-wrapper {
+  height: auto !important;
+}
+
+.header .top-bar .announcement-slider .swiper-slide {
+  text-align: center;
+  height: 24px;
+  line-height: 24px;
+}
+
+.header .top-bar .dropdown-menu {
+  min-width: 150px;
+  padding: 0.5rem 0;
+  margin-top: 0.5rem;
+  background-color: var(--surface-color);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
+  border-radius: 4px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.header .top-bar .dropdown-menu .dropdown-item {
+  padding: 0.5rem 1rem;
+  font-size: 14px;
+  color: var(--default-color);
+  display: flex;
+  align-items: center;
+}
+
+.header .top-bar .dropdown-menu .dropdown-item .selected-icon {
+  opacity: 1;
+  color: var(--accent-color);
+  width: 16px;
+}
+
+.header .top-bar .dropdown-menu .dropdown-item:hover {
+  background-color: color-mix(in srgb, var(--accent-color), transparent 90%);
+  color: var(--accent-color);
+}
+
+.header .main-header {
+  border-bottom: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
+}
+
+.header .main-header .logo {
+  line-height: 1;
+}
+
+.header .main-header .logo img {
+  max-height: 32px;
+  margin-right: 8px;
+}
+
+.header .main-header .logo h1 {
+  font-size: 26px;
+  margin: 0;
+  font-weight: 700;
+  color: var(--heading-color);
+}
+
+@media (max-width: 768px) {
+  .header .main-header .logo h1 {
+    font-size: 24px;
+  }
+}
+
+.header .main-header .desktop-search-form {
+  min-width: 400px;
+}
+
+@media (max-width: 1200px) {
+  .header .main-header .desktop-search-form {
+    display: none;
+  }
+}
+
+.header .main-header .header-actions {
+  gap: 16px;
+}
+
+.header .main-header .header-actions .header-action-btn {
+  position: relative;
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  color: var(--default-color);
+  font-size: 15px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.header .main-header .header-actions .header-action-btn i {
+  font-size: 24px;
+}
+
+.header .main-header .header-actions .header-action-btn i.bi-person {
+  font-size: 28px;
+}
+
+.header .main-header .header-actions .header-action-btn:hover {
+  color: var(--accent-color);
+}
+
+.header .main-header .header-actions .header-action-btn .badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: var(--accent-color);
+  color: var(--contrast-color);
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header .main-header .account-dropdown .dropdown-menu {
+  background-color: var(--surface-color);
+  min-width: 280px;
+  padding: 0;
+  border-radius: 6px;
+  margin-top: 0.75rem;
+  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.15);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
+}
+
+.header .main-header .account-dropdown .dropdown-menu .dropdown-header {
+  padding: 1.25rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
+}
+
+.header .main-header .account-dropdown .dropdown-menu .dropdown-header h6 {
+  margin: 0 0 0.25rem;
+  color: var(--heading-color);
+  font-size: 16px;
+}
+
+.header .main-header .account-dropdown .dropdown-menu .dropdown-header p {
+  font-size: 13px;
+  color: color-mix(in srgb, var(--default-color), transparent 40%);
+}
+
+.header .main-header .account-dropdown .dropdown-menu .dropdown-body {
+  padding: 1rem 0;
+}
+
+.header .main-header .account-dropdown .dropdown-menu .dropdown-body .dropdown-item {
+  padding: 0.5rem 1.25rem;
+  font-size: 14px;
+  color: var(--default-color);
+  transition: all 0.2s ease;
+}
+
+.header .main-header .account-dropdown .dropdown-menu .dropdown-body .dropdown-item i {
+  color: color-mix(in srgb, var(--default-color), transparent 30%);
+  transition: color 0.2s ease;
+  font-size: 16px;
+}
+
+.header .main-header .account-dropdown .dropdown-menu .dropdown-body .dropdown-item:hover {
+  background-color: color-mix(in srgb, var(--accent-color), transparent 90%);
+  color: var(--accent-color);
+}
+
+.header .main-header .account-dropdown .dropdown-menu .dropdown-body .dropdown-item:hover i {
+  color: var(--accent-color);
+}
+
+.header .main-header .account-dropdown .dropdown-menu .dropdown-footer {
+  padding: 1.25rem;
+  background-color: color-mix(in srgb, var(--default-color), transparent 97%);
+  border-top: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
+}
+
+.header .main-header .account-dropdown .dropdown-menu .dropdown-footer .btn {
+  font-size: 14px;
+  padding: 0.5rem 1rem;
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: var(--contrast-color);
+  transition: 0.3s;
+  border-radius: 50px;
+}
+
+.header .main-header .account-dropdown .dropdown-menu .dropdown-footer .btn-outline-primary {
+  border-color: var(--accent-color);
+  background-color: transparent;
+  color: var(--accent-color);
+}
+
+.header .main-header .account-dropdown .dropdown-menu .dropdown-footer .btn-outline-primary:hover {
+  background-color: var(--accent-color);
+  color: var(--contrast-color);
+}
+
+.header .search-form {
+  margin: 0;
+}
+
+.header .search-form .input-group {
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
+  border-radius: 10px;
+  overflow: visible;
+  background-color: var(--surface-color);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.header .search-form .input-group:focus-within {
+  border-color: var(--accent-color);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header .search-form .input-group .form-control {
+  border: none;
+  padding: 12px 15px;
+  font-size: 14px;
+  background-color: transparent;
+  color: var(--default-color);
+}
+
+.header .search-form .input-group .form-control::placeholder {
+  color: color-mix(in srgb, var(--default-color), transparent 50%);
+  font-size: 14px;
+}
+
+.header .search-form .input-group .form-control:focus {
+  box-shadow: none;
+}
+
+.header .search-form .input-group .btn {
+  background-color: var(--accent-color);
+  color: var(--contrast-color);
+  padding: 0 25px;
+  border: none;
+  transition: all 0.3s ease;
+  border-radius: 10px !important;
+  margin: 3px;
+}
+
+.header .search-form .input-group .btn:hover {
+  background-color: color-mix(in srgb, var(--accent-color), transparent 20%);
+}
+
+.header .search-form .input-group .btn i {
+  font-size: 16px;
+}
+
+.header .header-nav {
+  background-color: var(--accent-color);
+}
+
+@media (min-width: 1200px) {
+  .header .header-nav {
+    border-bottom: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
+  }
+}
+
+.header #mobileSearch {
+  background-color: color-mix(in srgb, var(--default-color), transparent 96%);
+  z-index: 1000;
+}
+
+.header #mobileSearch .search-form {
+  padding: 10px 0;
+}
+
+@media (max-width: 991.98px) {
+  .header .main-header .header-actions {
+    gap: 0.5rem;
+  }
+
+  .header .main-header .header-actions .header-action-btn {
+    padding: 0.25rem;
+  }
+
+  .header .main-header .header-actions .header-action-btn i {
+    font-size: 20px;
+  }
+}
+
+
+/*--------------------------------------------------------------
+# Global Sections
+--------------------------------------------------------------*/
+section,
+.section {
+  color: var(--default-color);
+  background-color: var(--background-color);
+  padding: 60px 0;
+  scroll-margin-top: 90px;
+  overflow: clip;
+}
+
+@media (max-width: 1199px) {
+
+  section,
+  .section {
+    scroll-margin-top: 66px;
+  }
+}
+
+/*--------------------------------------------------------------
+# Global Section Titles
+--------------------------------------------------------------*/
+.section-title {
+  text-align: center;
+  padding-bottom: 60px;
+  position: relative;
+}
+
+.section-title h2 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  position: relative;
+}
+
+.section-title h2:after {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 50px;
+  height: 3px;
+  background: var(--accent-color);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+.section-title p {
+  margin-bottom: 0;
+}

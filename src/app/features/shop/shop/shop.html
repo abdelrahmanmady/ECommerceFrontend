@@ -1,173 +1,458 @@
-<!-- Page Header -->
-<section class="page-header">
-    <div class="container header-flex">
-        <h1>Shop</h1>
-        <div class="breadcrumb-custom">
-            <a href="index.html">Home</a>
-            <span>/</span>
-            <span>Shop</span>
-        </div>
-    </div>
-</section>
+<!-- Page Title -->
+<div class="page-title light-background">
+  <div class="container d-lg-flex justify-content-between align-items-center">
+    <h1 class="mb-2 mb-lg-0">Category</h1>
+    <nav class="breadcrumbs">
+      <ol>
+        <li><a href="index.html">Home</a></li>
+        <li class="current">Category</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+<!-- End Page Title -->
 
 <!-- Shop Section -->
-<section class="shop-section">
-    <div class="container">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-lg-4 sidebar">
-                <div class="shop-sidebar">
-                    <!-- Categories -->
-                    <div class="sidebar-widget">
-                        <h4>Categories</h4>
-                        <ul class="category-list">
-                            <li>
-                                <label>
-                                    <input type="checkbox" value="Electronics" name="categoryType"> Electronics
-                                    <span class="category-count">(42)</span>
-                                </label>
-                            </li>
-                            <li>
-                                <label>
-                                    <input type="checkbox" value="Fashion" name="categoryType"> Fashion
-                                    <span class="category-count">(58)</span>
-                                </label>
-                            </li>
-                            <li>
-                                <label>
-                                    <input type="checkbox" value="Home & Garden" name="categoryType"> Home & Garden
-                                    <span class="category-count">(33)</span>
-                                </label>
-                            </li>
-                            <li>
-                                <label>
-                                    <input type="checkbox" value="Sports" name="categoryType"> Sports
-                                    <span class="category-count">(27)</span>
-                                </label>
-                            </li>
-                            <li>
-                                <label>
-                                    <input type="checkbox" value="Beauty" name="categoryType"> Beauty
-                                    <span class="category-count">(45)</span>
-                                </label>
-                            </li>
-                            <li>
-                                <label>
-                                    <input type="checkbox" value="Books" name="categoryType"> Books
-                                    <span class="category-count">(19)</span>
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
+<div class="container">
+  <div class="row">
+    <!-- Sidebar -->
+    <div class="col-lg-4 sidebar">
+      <div class="widgets-container">
+        <!-- Product Categories Widget -->
+        <div class="product-categories-widget widget-item">
+          <h3 class="widget-title">Categories</h3>
 
-                    <!-- Price Range -->
-                    <div class="sidebar-widget">
-                        <h4>Price Range</h4>
-                        <div class="price-values">
-                            <span>${{ minValue }}</span>
-                            <span>${{ maxValue }}</span>
-                        </div>
+          <ul class="category-tree list-unstyled mb-0">
+            <!-- Clothing Category -->
+            <li class="category-item">
+              <div
+                class="d-flex justify-content-between align-items-center category-header collapsed"
+                data-bs-toggle="collapse"
+                data-bs-target="#categories-1-clothing-subcategories"
+                aria-expanded="false"
+                aria-controls="categories-1-clothing-subcategories"
+              >
+                <a href="javascript:void(0)" class="category-link">Clothing</a>
+                <span class="category-toggle">
+                  <i class="bi bi-chevron-down"></i>
+                  <i class="bi bi-chevron-up"></i>
+                </span>
+              </div>
+              <ul
+                id="categories-1-clothing-subcategories"
+                class="subcategory-list list-unstyled collapse ps-3 mt-2"
+              >
+                <li><a href="#" class="subcategory-link">Men's Wear</a></li>
+                <li><a href="#" class="subcategory-link">Women's Wear</a></li>
+                <li><a href="#" class="subcategory-link">Kids' Clothing</a></li>
+                <li><a href="#" class="subcategory-link">Accessories</a></li>
+              </ul>
+            </li>
 
-                        <div class="range-slider">
-                            <div class="slider-track"></div>
-                            <div class="slider-progress" [style.left.%]="minPercent"
-                                [style.width.%]="maxPercent - minPercent"></div>
+            <!-- Electronics Category -->
+            <li class="category-item">
+              <div
+                class="d-flex justify-content-between align-items-center category-header collapsed"
+                data-bs-toggle="collapse"
+                data-bs-target="#categories-1-electronics-subcategories"
+                aria-expanded="false"
+                aria-controls="categories-1-electronics-subcategories"
+              >
+                <a href="javascript:void(0)" class="category-link">Electronics</a>
+                <span class="category-toggle">
+                  <i class="bi bi-chevron-down"></i>
+                  <i class="bi bi-chevron-up"></i>
+                </span>
+              </div>
+              <ul
+                id="categories-1-electronics-subcategories"
+                class="subcategory-list list-unstyled collapse ps-3 mt-2"
+              >
+                <li><a href="#" class="subcategory-link">Smartphones</a></li>
+                <li><a href="#" class="subcategory-link">Laptops</a></li>
+                <li><a href="#" class="subcategory-link">Tablets</a></li>
+                <li><a href="#" class="subcategory-link">Accessories</a></li>
+              </ul>
+            </li>
 
-                            <input type="range" min="0" max="1000" value="0" step="10" [(ngModel)]="minValue"
-                                (input)="updateSlider()" (mousedown)="onMinFocus()" (touchstart)="onMinFocus()"
-                                [style.z-index]="minZIndex" class="min-range">
+            <!-- Home & Kitchen Category -->
+            <li class="category-item">
+              <div
+                class="d-flex justify-content-between align-items-center category-header collapsed"
+                data-bs-toggle="collapse"
+                data-bs-target="#categories-1-home-subcategories"
+                aria-expanded="false"
+                aria-controls="categories-1-home-subcategories"
+              >
+                <a href="javascript:void(0)" class="category-link">Home &amp; Kitchen</a>
+                <span class="category-toggle">
+                  <i class="bi bi-chevron-down"></i>
+                  <i class="bi bi-chevron-up"></i>
+                </span>
+              </div>
+              <ul
+                id="categories-1-home-subcategories"
+                class="subcategory-list list-unstyled collapse ps-3 mt-2"
+              >
+                <li><a href="#" class="subcategory-link">Furniture</a></li>
+                <li><a href="#" class="subcategory-link">Kitchen Appliances</a></li>
+                <li><a href="#" class="subcategory-link">Home Decor</a></li>
+                <li><a href="#" class="subcategory-link">Bedding</a></li>
+              </ul>
+            </li>
 
-                            <input type="range" min="0" max="1000" value="500" step="10" class="max-range"
-                                [(ngModel)]="maxValue" (input)="updateSlider()" (mousedown)="onMaxFocus()"
-                                (touchstart)="onMaxFocus()" [style.z-index]="maxZIndex">
+            <!-- Beauty & Personal Care Category -->
+            <li class="category-item">
+              <div
+                class="d-flex justify-content-between align-items-center category-header collapsed"
+                data-bs-toggle="collapse"
+                data-bs-target="#categories-1-beauty-subcategories"
+                aria-expanded="false"
+                aria-controls="categories-1-beauty-subcategories"
+              >
+                <a href="javascript:void(0)" class="category-link">Beauty &amp; Personal Care</a>
+                <span class="category-toggle">
+                  <i class="bi bi-chevron-down"></i>
+                  <i class="bi bi-chevron-up"></i>
+                </span>
+              </div>
+              <ul
+                id="categories-1-beauty-subcategories"
+                class="subcategory-list list-unstyled collapse ps-3 mt-2"
+              >
+                <li><a href="#" class="subcategory-link">Skincare</a></li>
+                <li><a href="#" class="subcategory-link">Makeup</a></li>
+                <li><a href="#" class="subcategory-link">Hair Care</a></li>
+                <li><a href="#" class="subcategory-link">Fragrances</a></li>
+              </ul>
+            </li>
 
-                        </div>
-                        <button type="button" (click)="priceFilter()" class="price-filter btn btn-sm btn-primary w-100">
-                            Apply Filter
+            <!-- Sports & Outdoors Category -->
+            <li class="category-item">
+              <div
+                class="d-flex justify-content-between align-items-center category-header collapsed"
+                data-bs-toggle="collapse"
+                data-bs-target="#categories-1-sports-subcategories"
+                aria-expanded="false"
+                aria-controls="categories-1-sports-subcategories"
+              >
+                <a href="javascript:void(0)" class="category-link">Sports &amp; Outdoors</a>
+                <span class="category-toggle">
+                  <i class="bi bi-chevron-down"></i>
+                  <i class="bi bi-chevron-up"></i>
+                </span>
+              </div>
+              <ul
+                id="categories-1-sports-subcategories"
+                class="subcategory-list list-unstyled collapse ps-3 mt-2"
+              >
+                <li><a href="#" class="subcategory-link">Fitness Equipment</a></li>
+                <li><a href="#" class="subcategory-link">Outdoor Gear</a></li>
+                <li><a href="#" class="subcategory-link">Sports Apparel</a></li>
+                <li><a href="#" class="subcategory-link">Team Sports</a></li>
+              </ul>
+            </li>
 
-                        </button>
+            <!-- Books Category (no subcategories) -->
+            <li class="category-item">
+              <div class="d-flex justify-content-between align-items-center category-header">
+                <a href="#" class="category-link">Books</a>
+              </div>
+            </li>
 
-                    </div>
-
-                    <!-- Colors -->
-                    <!-- <div class="sidebar-widget">
-                        <h4>Colors</h4>
-                        <div class="color-options">
-                            <div class="color-option" style="background-color: #000000;"></div>
-                            <div class="color-option" style="background-color: #ffffff; border: 2px solid #ddd;"></div>
-                            <div class="color-option" style="background-color: #ff0000;"></div>
-                            <div class="color-option" style="background-color: #0000ff;"></div>
-                            <div class="color-option" style="background-color: #00ff00;"></div>
-                            <div class="color-option" style="background-color: #ffff00;"></div>
-                            <div class="color-option" style="background-color: #ff00ff;"></div>
-                            <div class="color-option" style="background-color: #00ffff;"></div>
-                        </div>
-                    </div> -->
-
-                    <!-- Sizes -->
-                    <!-- <div class="sidebar-widget">
-                        <h4>Sizes</h4>
-                        <div class="size-options">
-                            <div class="size-option">XS</div>
-                            <div class="size-option">S</div>
-                            <div class="size-option">M</div>
-                            <div class="size-option">L</div>
-                            <div class="size-option">XL</div>
-                            <div class="size-option">XXL</div>
-                        </div>
-                    </div> -->
-                </div>
-            </div>
-
-            <!-- Product Grid -->
-            <div class="col-lg-8">
-                <!-- Toolbar -->
-                <div class="shop-toolbar">
-                    <div class="showing-results">
-                        Showing 1-12 of 48 results
-                    </div>
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="view-options">
-                            <button class="view-btn" (click)="setView('grid')" [class.active]="viewType() === 'grid'">
-                                <i class="fas fa-th"></i></button>
-                            <button class="view-btn" (click)="setView('list')" [class.active]="viewType() === 'list'"><i
-                                    class="fas fa-list"></i></button>
-                        </div>
-                        <div class="sort-dropdown">
-                            <select (change)="sortProducts($event)">
-                                <option value="default">Default Sorting</option>
-                                <option value="asc"> Low to High</option>
-                                <option value="dsc">Price: High to Low</option>
-                                <option value="new">Newest First</option>
-                                <option value="pop">Popularity</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Products -->
-                <div [ngClass]="viewType()" class="products-grid">
-
-                    @if(products){
-                    @for(product of products|paginate:{ itemsPerPage: 6, currentPage: page }; track $index){
-                    <div [ngClass]="[viewType(),'product-card']">
-                        <app-product-card [viewType]="viewType()" [productData]="product"></app-product-card>
-                    </div>
-
-                    }
-                    }
-
-                </div>
-
-
-                <!-- Pagination -->
-                <div class="pagination-wrapper">
-                    <div class="pagination">
-                        <pagination-controls (pageChange)="page = $event"></pagination-controls>
-
-                    </div>
-                </div>
-            </div>
+            <!-- Toys & Games Category -->
+            <li class="category-item">
+              <div
+                class="d-flex justify-content-between align-items-center category-header collapsed"
+                data-bs-toggle="collapse"
+                data-bs-target="#categories-1-toys-subcategories"
+                aria-expanded="false"
+                aria-controls="categories-1-toys-subcategories"
+              >
+                <a href="javascript:void(0)" class="category-link">Toys &amp; Games</a>
+                <span class="category-toggle">
+                  <i class="bi bi-chevron-down"></i>
+                  <i class="bi bi-chevron-up"></i>
+                </span>
+              </div>
+              <ul
+                id="categories-1-toys-subcategories"
+                class="subcategory-list list-unstyled collapse ps-3 mt-2"
+              >
+                <li><a href="#" class="subcategory-link">Board Games</a></li>
+                <li><a href="#" class="subcategory-link">Puzzles</a></li>
+                <li><a href="#" class="subcategory-link">Action Figures</a></li>
+                <li><a href="#" class="subcategory-link">Educational Toys</a></li>
+              </ul>
+            </li>
+          </ul>
         </div>
+        <!--/Product Categories Widget -->
+
+        <!-- Pricing Range Widget -->
+        <div class="pricing-range-widget widget-item">
+          <h3 class="widget-title">Price Range</h3>
+
+          <div class="price-range-container">
+            <div class="current-range mb-3">
+              <span class="min-price">${{minValue}}</span>
+              <span class="max-price float-end">${{maxValue}}</span>
+            </div>
+
+            <div class="range-slider">
+              <div class="slider-track"></div>
+              <div class="slider-progress" [style.left.%]="minPercent"
+                                [style.width.%]="maxPercent - minPercent"></div>
+              <input type="range" class="min-range" min="0" max="1000" value="0" step="10" [(ngModel)]="minValue"
+                                (input)="updateSlider()" />
+              <input type="range" class="max-range" min="0" max="1000" value="500" step="10"
+               [(ngModel)]="maxValue" (input)="updateSlider()" />
+            </div>
+
+            <div class="price-inputs mt-3">
+              <div class="row g-2">
+                <div class="col-6">
+                  <div class="input-group input-group-sm">
+                    <span class="input-group-text">$</span>
+                    <input
+                      type="number"
+                      class="form-control min-price-input"
+                      placeholder="Min"
+                      min="0"
+                      max="1000"
+                      value="{{minValue}}"
+                      step="10"
+                    />
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="input-group input-group-sm">
+                    <span class="input-group-text">$</span>
+                    <input
+                      type="number"
+                      class="form-control max-price-input"
+                      placeholder="Max"
+                      min="0"
+                      max="1000"
+                      value="{{maxValue}}"
+                      step="10"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="filter-actions mt-3">
+              <button type="button" (click)="priceFilter()" class="btn btn-sm btn-primary w-100">Apply Filter</button>
+            </div>
+          </div>
+        </div>
+        <!--/Pricing Range Widget -->
+
+        <!-- Brand Filter Widget -->
+        <div class="brand-filter-widget widget-item">
+          <h3 class="widget-title">Filter by Brand</h3>
+
+          <div class="brand-filter-content">
+            <div class="brand-search">
+              <input type="text" class="form-control" placeholder="Search brands..." />
+              <i class="bi bi-search"></i>
+            </div>
+
+            <div class="brand-list">
+              <div class="brand-item">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="brand1" />
+                  <label class="form-check-label" for="brand1">
+                    Nike
+                    <span class="brand-count">(24)</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="brand-item">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="brand2" />
+                  <label class="form-check-label" for="brand2">
+                    Adidas
+                    <span class="brand-count">(18)</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="brand-item">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="brand3" />
+                  <label class="form-check-label" for="brand3">
+                    Puma
+                    <span class="brand-count">(12)</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="brand-item">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="brand4" />
+                  <label class="form-check-label" for="brand4">
+                    Reebok
+                    <span class="brand-count">(9)</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="brand-item">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="brand5" />
+                  <label class="form-check-label" for="brand5">
+                    Under Armour
+                    <span class="brand-count">(7)</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="brand-item">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="brand6" />
+                  <label class="form-check-label" for="brand6">
+                    New Balance
+                    <span class="brand-count">(6)</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="brand-item">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="brand7" />
+                  <label class="form-check-label" for="brand7">
+                    Converse
+                    <span class="brand-count">(5)</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="brand-item">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="brand8" />
+                  <label class="form-check-label" for="brand8">
+                    Vans
+                    <span class="brand-count">(4)</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="brand-actions">
+              <button class="btn btn-sm btn-outline-primary">Apply Filter</button>
+              <button class="btn btn-sm btn-link">Clear All</button>
+            </div>
+          </div>
+        </div>
+        <!--/Brand Filter Widget -->
+      </div>
     </div>
-</section>
+
+    <!-- Product Grid -->
+    <div class="col-lg-8" style="margin: 60px 0 20px 0px">
+      <!-- Toolbar -->
+      <!-- Category Header Section -->
+      <section id="category-header" class="category-header section">
+        <div class="container" data-aos="fade-up">
+          <!-- Filter and Sort Options -->
+          <div class="filter-container mb-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="row g-3">
+              <div class="col-12 col-md-6 col-lg-4" style="margin-right:10px ;" >
+                <div class="filter-item search-form" >
+                  <label for="productSearch" class="form-label">Search Products</label>
+                  <div class="input-group">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="productSearch"
+                      placeholder="Search for products..."
+                      aria-label="Search for products"
+                    />
+                    <button class="btn search-btn" type="button">
+                      <i class="bi bi-search"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+
+              <div class="col-12 col-md-5 col-lg-4" style="margin-right:10px ;">
+                <div class="sort-dropdown filter-item">
+                  <label for="sortBy" class="form-label">Sort By</label>
+                  <select (change)="sortProducts($event)" class="form-select" id="sortBy">
+                    <option value="default" selected="">Featured</option>
+                    <option value="asc">Low to High</option>
+                    <option value="dsc">Price: High to Low</option>
+                    <option value="new">Newest First</option>
+                    <option value="pop">Popularity</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-12 col-md-5 col-lg-2 ">
+                <div class="filter-item">
+                  <label class="form-label">View</label>
+                  <div class="d-flex align-items-center">
+                    <div class="view-options me-3">
+                      <button
+                        class="view-btn"
+                        (click)="setView('grid')"
+                        [class.active]="viewType() === 'grid'"
+                      >
+                        <i class="bi bi-grid-3x3-gap-fill"></i>
+                      </button>
+                      <button
+                        class="view-btn"
+                        (click)="setView('list')"
+                        [class.active]="viewType() === 'list'"
+                      >
+                        <i class="bi bi-list-ul"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-12" data-aos="fade-up" data-aos-delay="200">
+                <div class="active-filters">
+                  <span class="active-filter-label">Active Filters:</span>
+                  <div class="filter-tags">
+                    <span class="filter-tag">
+                      Electronics <button class="filter-remove"><i class="bi bi-x"></i></button>
+                    </span>
+                    <span class="filter-tag">
+                      $50 to $100 <button class="filter-remove"><i class="bi bi-x"></i></button>
+                    </span>
+                    <button class="clear-all-btn">Clear All</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- Products -->
+      <section [ngClass]="viewType()" class="products-grid category-product-list section">
+        @if(products){ @for(product of products|paginate:{ itemsPerPage: 6, currentPage: page };
+        track $index){
+        <div [ngClass]="[viewType(), 'product-card']">
+          <app-product-card [viewType]="viewType()" [productData]="product"></app-product-card>
+        </div>
+
+        } }
+      </section>
+
+      <!-- Pagination -->
+      <div class="pagination-wrapper">
+        <div class="pagination">
+          <pagination-controls (pageChange)="page = $event"></pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
