@@ -1,0 +1,285 @@
+/* Top Header Bar */
+.top-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    padding: 12px 0;
+    font-size: 13px;
+    border-bottom: 1px solid #e9ecef;
+    letter-spacing: 0.3px;
+}
+
+.top-header-left i {
+    margin-right: 8px;
+    color: #2b2b2b;
+}
+
+.top-header-right {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+/* Main Header */
+.main-header {
+    padding: 25px 0;
+    background-color: #fff;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.06);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.logo {
+    font-size: 36px;
+    font-weight: 700;
+    color: #2b2b2b;
+    font-family: 'Playfair Display', serif;
+    letter-spacing: 2px;
+    position: relative;
+    display: inline-block;
+}
+
+.logo::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 50%;
+    height: 2px;
+    background: linear-gradient(90deg, #2b2b2b 0%, transparent 100%);
+}
+
+/* Search Bar */
+.search-bar {
+    position: relative;
+    max-width: 520px;
+}
+
+.search-bar input {
+    border-radius: 30px;
+    padding: 14px 25px;
+    border: 2px solid #e9ecef;
+    width: 100%;
+    padding-right: 65px;
+    transition: all 0.3s;
+    font-size: 14px;
+}
+
+.search-bar input:focus {
+    border-color: #2b2b2b;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    outline: none;
+}
+
+.search-bar button {
+    position: absolute;
+    right: 3px;
+    top: 3px;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #2b2b2b 0%, #1a1a1a 100%);
+    color: white;
+    border: none;
+    padding: 11px 28px;
+    transition: all 0.3s;
+}
+
+.search-bar button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Header Icons */
+.header-icons {
+    display: flex;
+    gap: 25px;
+    align-items: center;
+    font-size: 22px;
+}
+
+.header-icons i {
+    cursor: pointer;
+    transition: all 0.3s;
+    color: #2b2b2b;
+}
+
+.header-icons i:hover {
+    transform: translateY(-3px);
+    color: #555;
+}
+
+.icon-badge {
+    position: relative;
+}
+
+.icon-badge .badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: linear-gradient(135deg, #2b2b2b 0%, #000 100%);
+    color: white;
+    border-radius: 50%;
+    font-size: 10px;
+    padding: 4px 7px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* User Dropdown */
+.user-dropdown {
+    position: relative;
+}
+
+.user-dropdown-menu {
+    position: absolute;
+    top: 45px;
+    right: 0;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    min-width: 280px;
+    padding: 25px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 2000;
+}
+
+.user-dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.user-dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    right: 20px;
+    width: 16px;
+    height: 16px;
+    background: white;
+    transform: rotate(45deg);
+    box-shadow: -3px -3px 5px rgba(0,0,0,0.05);
+}
+
+.dropdown-header {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.dropdown-header h5 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.dropdown-header p {
+    font-size: 13px;
+    color: #6c757d;
+    margin: 0;
+}
+
+.dropdown-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #2b2b2b;
+    transition: all 0.3s;
+    margin-bottom: 5px;
+}
+
+.dropdown-menu-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+}
+
+.dropdown-menu-item i {
+    font-size: 18px;
+    color: #6c757d;
+}
+
+.dropdown-menu-item span {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.dropdown-buttons {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #f0f0f0;
+}
+
+.dropdown-btn {
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-bottom: 10px;
+}
+
+.dropdown-btn-primary {
+    background: linear-gradient(135deg, #2b2b2b 0%, #1a1a1a 100%);
+    color: white;
+}
+
+.dropdown-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.dropdown-btn-secondary {
+    background: white;
+    color: #2b2b2b;
+    border: 2px solid #2b2b2b;
+}
+
+.dropdown-btn-secondary:hover {
+    background: #f8f9fa;
+}
+
+/* Navigation */
+.navbar {
+    background: linear-gradient(135deg, #2b2b2b 0%, #1a1a1a 100%) !important;
+    padding: 16px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.navbar-nav .nav-link {
+    color: white !important;
+    margin: 0 18px;
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    position: relative;
+    transition: all 0.3s;
+}
+
+.navbar-nav .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background-color: #ffc107;
+    transition: width 0.3s;
+}
+
+.navbar-nav .nav-link:hover::after {
+    width: 70%;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #ffc107 !important;
+}
