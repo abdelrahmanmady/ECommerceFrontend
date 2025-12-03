@@ -43,13 +43,37 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/faq/faq').then(m => m.Faq)
             },
             {
-                path:'account',
+                path: 'account',
                 loadComponent: () => import('./features/account/account').then(m => m.Account)
             },
+        ]
+
+    },
+    {
+        path: 'admin',
+        loadComponent: () => import('./layouts/admin-layout/admin-layout').then(m => m.AdminLayout),
+        children: [
             {
-                path: '**',
-                loadComponent: () => import('./features/not-found/not-found').then(m => m.NotFound)
+                path: '',
+                redirectTo: 'products',
+                pathMatch: 'full'
+            },
+            {
+                path: 'products',
+                loadComponent: () => import('./admin/product/getall/getall').then(m => m.Getall)
+            },
+            {
+                path: 'products/edit/:id',
+                loadComponent: () => import('./admin/product/edit/edit').then(m => m.Edit)
+            },
+            {
+                path: 'products/add',
+                loadComponent: () => import('./admin/product/add/add').then(m => m.Add)
             }
         ]
     },
+    {
+        path: '**',
+        loadComponent: () => import('./features/not-found/not-found').then(m => m.NotFound)
+    }
 ];

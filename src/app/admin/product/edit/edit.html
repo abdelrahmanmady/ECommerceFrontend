@@ -1,0 +1,193 @@
+<div class="admin-container">
+  
+  <!-- Edit Form (Remove loading state since we're using mock data) -->
+  <div>
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="header-top">
+        <a href="#" class="back-link">
+          <i class="fas fa-arrow-left"></i>
+          <span>Back to Products</span>
+        </a>
+      </div>
+      <div class="header-title-row">
+        <div>
+          <h1 class="page-title">Edit Product</h1>
+          <p class="page-subtitle">Update product information and manage inventory</p>
+        </div>
+        <div class="product-id-badge">
+          <span>Product Name: Headphones</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Container -->
+    <div class="form-container">
+      <form>
+        
+        <!-- Basic Information Section -->
+        <div class="form-section">
+          <div class="section-header">
+            <i class="fas fa-info-circle"></i>
+            <h3>Basic Information</h3>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label for="name">Product Name <span class="required">*</span></label>
+              <input 
+                type="text" 
+                id="name"
+                value="Premium Wireless Headphones"
+                class="form-control" 
+                placeholder="Enter product name">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label for="description">Description</label>
+              <textarea 
+                id="description"
+                class="form-control" 
+                rows="4" 
+                placeholder="Enter detailed product description (optional)">High-quality noise-cancelling headphones with superior sound quality and long battery life. Features include 40-hour battery, premium comfort ear cushions, and wireless Bluetooth 5.0 connectivity.</textarea>
+              <div class="char-count">
+                172 / 2000 characters
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Category and Seller Section -->
+        <div class="form-section">
+          <div class="section-header">
+            <i class="fas fa-tag"></i>
+            <h3>Category</h3>
+          </div>
+
+          <div class="form-row col-md-6 col-sm-12">
+            <div class="form-group">
+              <label for="categoryId">Category <span class="required">*</span></label>
+              <select 
+                id="categoryId"
+                class="form-control">
+                <option value="">Select a category</option>
+                <option value="1" selected>Electronics</option>
+                <option value="2">Fashion</option>
+                <option value="3">Clothing</option>
+                <option value="4">Accessories</option>
+                <option value="5">Home & Kitchen</option>
+                <option value="6">Footwear</option>
+                <option value="7">Sports</option>
+                <option value="8">Beauty</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pricing and Stock Section -->
+        <div class="form-section">
+          <div class="section-header">
+            <i class="fas fa-dollar-sign"></i>
+            <h3>Pricing & Inventory</h3>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="price">Price <span class="required">*</span></label>
+              <div class="input-with-icon">
+                <span class="input-icon">$</span>
+                <input 
+                  type="number" 
+                  id="price"
+                  value="299.99"
+                  class="form-control with-icon" 
+                  placeholder="0.00" 
+                  step="0.01">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="stock">Stock Quantity <span class="required">*</span></label>
+              <input 
+                type="number" 
+                id="stock"
+                value="45"
+                class="form-control" 
+                placeholder="0">
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Images Section -->
+        <div class="form-section">
+          <div class="section-header">
+            <i class="fas fa-image"></i>
+            <h3>Product Images</h3>
+          </div>
+
+          <!-- Existing Images -->
+          <div>
+            <label>Current Images</label>
+            <div class="image-preview-container existing">
+              <div class="preview-item">
+                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300" alt="Existing image">
+                <div class="image-badge">Existing</div>
+                <button type="button" class="remove-image">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div class="preview-item">
+                <img src="https://images.unsplash.com/photo-1484704849700-f032a568e944?w=300" alt="Existing image">
+                <div class="image-badge">Existing</div>
+                <button type="button" class="remove-image">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div class="preview-item">
+                <img src="https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=300" alt="Existing image">
+                <div class="image-badge">Existing</div>
+                <button type="button" class="remove-image">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upload New Images -->
+          <div class="form-row col-md-3 col-sm-6" style="margin-top: 25px;">
+            <div class="form-group full-width">
+              <label>Upload New Images (Optional)</label>
+              <div class="file-upload-area">
+                <input 
+                  type="file" 
+                  multiple 
+                  accept="image/*" 
+                  id="fileInput" 
+                  class="file-input">
+                <label for="fileInput" class="file-upload-label">
+                  <i class="fas fa-cloud-upload-alt"></i>
+                  <h4>Click to upload new images</h4>
+                  <p>PNG, JPG, JPEG up to 10MB each</p>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary">
+            <i class="fas fa-times"></i>
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i>
+            Update Product
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
