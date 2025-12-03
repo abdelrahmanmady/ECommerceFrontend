@@ -1,0 +1,71 @@
+.pagination-wrapper {
+  margin-top: 50px;
+  margin-bottom: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.pagination {
+  display: flex;
+  gap: 10px;
+}
+
+::ng-deep .ngx-pagination {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex !important;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+::ng-deep .ngx-pagination li a {
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #444444;
+  background-color: #ffffff;
+  font-weight: 600;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 2px 4px color-mix(in srgb, #444444, transparent 90%);
+}
+
+::ng-deep .ngx-pagination li a i {
+  padding: 8px;
+  font-size: 12px;
+}
+
+::ng-deep .ngx-pagination li:hover {
+  border-radius: 8px;
+  transition: all 0.3s ease-in-out;
+
+  background-color: color-mix(in srgb, #252223, transparent 90%);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px color-mix(in srgb, #444444, transparent 85%);
+}
+
+::ng-deep .ngx-pagination li.current {
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border: 2px solid #e9ecef;
+  text-decoration: none;
+  border-color: #2b2b2b;
+  background-color: #2b2b2b;
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 2px 4px color-mix(in srgb, #444444, transparent 90%);
+}

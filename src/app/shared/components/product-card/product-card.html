@@ -1,0 +1,43 @@
+<div class="product-card" [ngClass]="viewType()" data-aos="zoom-in">
+  <div class="product-image" [ngClass]="viewType()">
+    <img src="assets/img/product/product-m-1.webp" class="main-image img-fluid" alt="Product" />
+    <img
+      src="assets/img/product/product-m-2.webp"
+      class="hover-image img-fluid"
+      alt="Product Variant"
+    />
+    <div class="product-overlay">
+      <div class="product-actions">
+        <button type="button" class="action-btn" data-bs-toggle="tooltip" title="Quick View">
+          <i class="bi bi-eye"></i>
+        </button>
+        <button type="button" class="action-btn" data-bs-toggle="tooltip" title="Add to Cart">
+          <i class="bi bi-cart-plus"></i>
+        </button>
+      </div>
+    </div>
+    @if(productData().new){
+    <div class="product-badge new">New</div>
+    } @if(productData().sale){
+    <div class="product-badge sale">-25%</div>
+    }
+  </div>
+  <div class="product-details" [ngClass]="viewType()">
+    <div class="product-category" [ngClass]="viewType()">{{ productData().category }}</div>
+    <h4 class="product-title" [ngClass]="viewType()">
+      <a href="product-details.html">{{ productData().title }}</a>
+    </h4>
+    <div class="product-meta">
+      <div class="product-price" [ngClass]="viewType()">
+        {{ productData().price | currency : 'USD' }}
+        @if(productData().delPrice){
+        <span class="original-price">{{ productData().delPrice | currency : 'USD' }}</span>
+        }
+      </div>
+      <div class="product-rating" [ngClass]="viewType">
+        <i class="bi bi-star-fill"></i>
+        4.6 <span>({{ productData().rating }})</span>
+      </div>
+    </div>
+  </div>
+</div>

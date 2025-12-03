@@ -1,0 +1,73 @@
+.product-card.list {
+  display: flex;
+  align-items: stretch;
+  gap: 20px;
+  max-height: 300px; /* Removed max-height restriction */
+}
+.product-image.list  {
+    flex: 0 0 1;
+  width: 300px;
+  height: auto;
+  overflow: hidden;
+  aspect-ratio: 3/4;
+  position: relative;
+}
+.product-image.list img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.list .product-details {
+    flex: 1;
+  padding: 10px 20px;
+}
+
+.list .product-category {
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+
+.list .product-title {
+  font-size: 28px;
+  margin-bottom: 12px;
+}
+
+.list .product-rating {
+  font-size: 20px;
+  margin-left: 12px;
+}
+
+.list .product-rating span {
+  color: #6c757d;
+  font-size: 16px;
+  margin-left: 8px;
+}
+
+.list .product-price {
+  font-size: 28px;
+}
+
+.grid .product-price del {
+  font-size: 17px;
+  margin-left: 12px;
+}
+
+.list .product-price del {
+  font-size: 20px;
+  margin-left: 12px;
+}
+
+.product-card.list .product-overlay {
+  position: absolute;
+  top: 70px;
+  right: 80px;
+}
+
+.product-card.list .product-actions {
+  display: flex;
+  gap: 8px;
+  opacity: 1;
+  transform: none;
+  position: static;
+}
