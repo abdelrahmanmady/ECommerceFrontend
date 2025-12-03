@@ -1,0 +1,159 @@
+<div class="admin-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-top">
+      <a routerLink="/admin-categories" class="back-link">
+        <i class="fas fa-arrow-left"></i>
+        <span>Back to Categories</span>
+      </a>
+    </div>
+    <div class="header-title-row">
+      <div>
+        <h1 class="page-title">Edit Category</h1>
+        <p class="page-subtitle">Update category information and hierarchy</p>
+      </div>
+      <div class="product-id-badge">
+        <span>Category ID: #1</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Container -->
+  <div class="form-container">
+    <form>
+      
+      <!-- Basic Information Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <i class="fas fa-info-circle"></i>
+          <h3>Category Information</h3>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="name">Category Name <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="name"
+              value="Electronics"
+              class="form-control" 
+              placeholder="Enter category name">
+            <div class="help-text">
+              <i class="fas fa-info-circle"></i>
+              Maximum 200 characters
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="description">Description</label>
+            <textarea 
+              id="description"
+              class="form-control" 
+              rows="4" 
+              placeholder="Enter category description (optional)">All electronic devices and gadgets including computers, smartphones, tablets, and accessories</textarea>
+            <div class="char-count">
+              105 / 1000 characters
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hierarchy Section -->
+        <div class="section-header">
+          <i class="fas fa-sitemap"></i>
+          <h3>Category Hierarchy</h3>
+        </div>
+<div class="form-row flex-wrap "> 
+        <div class="col-lg-3 col-sm-12">
+          <div class="form-group full-width">
+            <label for="parentCategoryId">Parent Category</label>
+            <select 
+              id="parentCategoryId"
+              class="form-control">
+              <option value="" selected>None (Root Category)</option>
+              <option value="3">Fashion</option>
+              <option value="6">Home & Kitchen</option>
+              <option value="7">Sports & Fitness</option>
+              <option value="8">Books & Media</option>
+              <option value="10">Beauty & Personal Care</option>
+            </select>
+            <div class="help-text">
+              <i class="fas fa-info-circle"></i>
+              Select a parent category to create a subcategory
+            </div>
+          </div>
+        </div>
+
+        <!-- Subcategories Info -->
+        <div class="subcategories-info col-lg-5 col-sm-12">
+          <div class="info-header">
+            <i class="fas fa-layer-group"></i>
+            <h4>Subcategories (3)</h4>
+          </div>
+          <div class="subcategory-list">
+            <div class="subcategory-item">
+              <i class="fas fa-mobile-alt"></i>
+              <span>Smartphones</span>
+            </div>
+            <div class="subcategory-item">
+              <i class="fas fa-laptop"></i>
+              <span>Computers</span>
+            </div>
+            <div class="subcategory-item">
+              <i class="fas fa-gamepad"></i>
+              <span>Gaming</span>
+            </div>
+          </div>
+          <div class="info-note">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Note: Moving this category will also move all its subcategories</span>
+          </div>
+        </div>
+        <!-- Category Preview -->
+        <div class="category-preview col-lg-3 col-sm-12">
+          <div class="preview-header">
+            <i class="fas fa-eye"></i>
+            <h4>Category Preview</h4>
+          </div>
+          <div class="preview-content">
+            <div class="preview-item">
+              <i class="fas fa-layer-group"></i>
+              <div class="preview-details">
+                <span class="preview-label">Category Path:</span>
+                <span class="preview-value">Root → Electronics</span>
+              </div>
+            </div>
+            <div class="preview-item">
+              <i class="fas fa-calendar-alt"></i>
+              <div class="preview-details">
+                <span class="preview-label">Created:</span>
+                <span class="preview-value">January 10, 2024</span>
+              </div>
+            </div>
+            <div class="preview-item">
+              <i class="fas fa-clock"></i>
+              <div class="preview-details">
+                <span class="preview-label">Last Updated:</span>
+                <span class="preview-value">November 28, 2024</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary">
+          <i class="fas fa-times"></i>
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-save"></i>
+          Update Category
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
