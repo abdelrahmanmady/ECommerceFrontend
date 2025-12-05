@@ -82,6 +82,14 @@ export const routes: Routes = [
                 path: 'categories/add',
                 loadComponent: () => import('./admin/Category/add/add').then(m => m.Add)
             },
+            {
+                path: 'orders',
+                loadComponent: () => import('./admin/orders/orders').then(m => m.OrdersListComponent)
+            },
+            {
+                path: 'orders/edit/:id',
+                loadComponent: () => import('./admin/orders/edit-order/edit-order').then(m => m.OrderEditComponent)
+            }
         ]
     },
     {

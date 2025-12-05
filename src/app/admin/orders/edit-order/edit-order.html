@@ -1,0 +1,192 @@
+<!-- Edit Order View -->
+<div class="container py-4">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="d-flex justify-content-between align-items-center flex-wrap">
+      <div>
+        <h1><i class="fas fa-edit me-3"></i>Edit Order</h1>
+        <p>Update order information and status</p>
+      </div>
+      <button class="btn btn-cancel" routerLink="/orders">
+        <i class="fas fa-arrow-left me-2"></i>Back to Orders
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-3 text-muted">Loading order details...</p>
+    </div>
+  }
+
+  <!-- Order Content -->
+  @if (!isLoading && currentOrder) {
+    <div class="row">
+      <div class="col-lg-8">
+
+        <!-- Order Information -->
+        <div class="order-details-card">
+          <h3><i class="fas fa-info-circle me-2"></i>Order Information</h3>
+
+          <div class="detail-row">
+            <span class="detail-label">Order ID:</span>
+            <span class="detail-value">{{ currentOrder.id }}</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Customer:</span>
+            <span class="detail-value">{{ currentOrder.userName }}</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">User ID:</span>
+            <span class="detail-value">{{ currentOrder.userId }}</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Order Total:</span>
+            <span class="detail-value">{{ currentOrder.total | currency }}</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Created At:</span>
+            <span class="detail-value">{{ currentOrder.createdAt | date: 'MMM d, y, h:mm a' }}</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Last Updated:</span>
+            <span class="detail-value">{{ currentOrder.updatedAt | date: 'MMM d, y, h:mm a' }}</span>
+          </div>
+        </div>
+
+        <!-- Order Items -->
+        <div class="order-details-card">
+          <h3><i class="fas fa-box me-2"></i>Order Items</h3>
+
+          <div class="order-items-section">
+            @for (item of currentOrder.orderItems; track item.id) {
+              <div class="item-row">
+                <img 
+                  [src]="item.product.imageUrl" 
+                  [alt]="item.product.name" 
+                  class="item-image">
+                <div class="item-details">
+                  <div class="item-name">{{ item.product.name }}</div>
+                  <div class="item-meta">
+                    Product ID: {{ item.product.id }} | Quantity: {{ item.quantity }}
+                  </div>
+                </div>
+                <div class="item-price">{{ item.price * item.quantity | currency }}</div>
+              </div>
+            }
+          </div>
+        </div>
+
+      </div>
+
+      <div class="col-lg-4">
+
+        <!-- Edit Form -->
+        <div class="edit-form">
+          <h3 class="mb-4"><i class="fas fa-cog me-2"></i>Update Order</h3>
+
+          <form [formGroup]="updateOrderForm" (ngSubmit)="onSubmit()">
+
+            <!-- Status Field -->
+            <div class="form-group">
+              <label class="form-label" for="orderStatus">
+                <i class="fas fa-flag me-2"></i>Order Status *
+              </label>
+              <select 
+                class="form-select" 
+                id="orderStatus" 
+                formControlName="status">
+                <option value="">Select Status</option>
+                <option value="pending">Pending</option>
+                <option value="processing">Processing</option>
+                <option value="shipped">Shipped</option>
+                <option value="delivered">Delivered</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+              @if (updateOrderForm.get('status')?.invalid && updateOrderForm.get('status')?.touched) {
+                <div class="text-danger mt-2">
+                  <small>Status is required</small>
+                </div>
+              }
+            </div>
+
+            <!-- Address ID Field -->
+            <div class="form-group">
+              <label class="form-label" for="addressId">
+                <i class="fas fa-map-marker-alt me-2"></i>Address ID *
+              </label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="addressId" 
+                formControlName="addressId" 
+                placeholder="Enter Address ID">
+              <small class="text-muted d-block mt-2">
+                Enter the unique identifier for the delivery address
+              </small>
+              @if (updateOrderForm.get('addressId')?.invalid && updateOrderForm.get('addressId')?.touched) {
+                <div class="text-danger mt-2">
+                  <small>Address ID is required</small>
+                </div>
+              }
+            </div>
+
+            <!-- Current Address Display -->
+            <div class="info-card">
+              <h5><i class="fas fa-location-arrow me-2"></i>Current Delivery Address</h5>
+              <div class="address-card">
+                <strong>Address ID: {{ currentOrder.address.id }}</strong>
+                <p>{{ currentOrder.address.street }}</p>
+                <p>{{ currentOrder.address.city }}, {{ currentOrder.address.state }} {{ currentOrder.address.zipCode }}</p>
+                <p>{{ currentOrder.address.country }}</p>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="form-group">
+              <button 
+                type="submit" 
+                class="btn btn-submit w-100"
+                [disabled]="updateOrderForm.invalid || isSubmitting">
+                <i class="fas fa-save me-2"></i>
+                {{ isSubmitting ? 'Updating...' : 'Update Order' }}
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-cancel w-100 mt-3" 
+                routerLink="/admin/orders"
+                [disabled]="isSubmitting">
+                <i class="fas fa-times me-2"></i>Cancel
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+  }
+
+  <!-- Order Not Found -->
+  @if (!isLoading && !currentOrder) {
+    <div class="text-center py-5">
+      <i class="fas fa-exclamation-circle fa-3x mb-3 text-danger"></i>
+      <h3>Order Not Found</h3>
+      <p class="text-muted">The order you're looking for doesn't exist.</p>
+      <button class="btn btn-submit mt-3" routerLink="/admin/orders">
+        <i class="fas fa-arrow-left me-2"></i>Back to Orders
+      </button>
+    </div>
+  }
+
+</div>

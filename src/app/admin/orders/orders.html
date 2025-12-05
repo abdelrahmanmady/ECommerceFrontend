@@ -1,0 +1,137 @@
+<!-- Orders List View -->
+<div class="container py-4">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1><i class="fas fa-shopping-bag me-3"></i>Orders Management</h1>
+    <p>View and manage all customer orders</p>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="row align-items-center">
+      <div class="col-md-5 mb-3 mb-md-0">
+        <div class="search-box">
+          <input 
+            type="text" 
+            class="form-control" 
+            placeholder="Search by Order ID, User Name, or Email..." 
+            [(ngModel)]="searchTerm"
+            (input)="filterOrders()">
+          <i class="fas fa-search"></i>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3 mb-md-0">
+        <select 
+          class="form-select filter-select" 
+          [(ngModel)]="statusFilter"
+          (change)="filterOrders()">
+          <option value="">All Status</option>
+          <option value="pending">Pending</option>
+          <option value="processing">Processing</option>
+          <option value="shipped">Shipped</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div class="col-md-2 mb-3 mb-md-0">
+        <select 
+          class="form-select filter-select" 
+          [(ngModel)]="sortBy"
+          (change)="sortOrders()">
+          <option value="newest">Newest First</option>
+          <option value="oldest">Oldest First</option>
+          <option value="highest">Highest Total</option>
+          <option value="lowest">Lowest Total</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-submit w-100" (click)="filterOrders()">
+          <i class="fas fa-filter me-2"></i>Filter
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Orders Table -->
+  <div class="orders-table">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ORDER ID</th>
+            <th>CUSTOMER</th>
+            <th>STATUS</th>
+            <th>TOTAL</th>
+            <th>ITEMS</th>
+            <th>DATE</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of filteredOrders; track order.id) {
+            <tr>
+              <td><strong>{{ order.id }}</strong></td>
+              <td>{{ order.userName }}</td>
+              <td>
+                <span class="status-badge status-{{ order.status }}">
+                  {{ order.status }}
+                </span>
+              </td>
+              <td><strong>{{ order.total | currency }}</strong></td>
+              <td>{{ order.orderItems.length }} item(s)</td>
+              <td>{{ order.createdAt | date: 'MMM d, y' }}</td>
+              <td>
+                <button 
+                  class="action-btn btn-edit" 
+                  [routerLink]="['/admin/orders/edit', order.id]"
+                  title="Edit Order">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button 
+                  class="action-btn btn-delete" 
+                  (click)="deleteOrder(order.id)"
+                  title="Delete Order">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="text-center py-5">
+                <i class="fas fa-inbox fa-3x mb-3 text-muted"></i>
+                <p class="text-muted">No orders found</p>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-wrapper">
+      <nav>
+        <ul class="pagination">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <a class="page-link" (click)="changePage(currentPage - 1)">
+              <i class="fas fa-chevron-left"></i>
+            </a>
+          </li>
+          @for (page of pages; track page) {
+            <li 
+              class="page-item" 
+              [class.active]="page === currentPage">
+              <a class="page-link" (click)="changePage(page)">{{ page }}</a>
+            </li>
+          }
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <a class="page-link" (click)="changePage(currentPage + 1)">
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+</div>
