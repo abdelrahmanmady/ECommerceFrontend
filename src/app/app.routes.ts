@@ -48,27 +48,27 @@ export const routes: Routes = [
             },
             {
                 path: 'shipinginfo',
-                loadComponent: () => import('./features/shiping-info/shiping-info').then(m =>m.ShipingInfo)
+                loadComponent: () => import('./features/shiping-info/shiping-info').then(m => m.ShipingInfo)
             },
             {
                 path: 'orderconfirmation',
-                loadComponent: () => import('./features/order-confirmation/order-confirmation').then(m =>m.OrderConfirmation)
+                loadComponent: () => import('./features/order-confirmation/order-confirmation').then(m => m.OrderConfirmation)
             },
             {
                 path: 'paymentmethods',
-                loadComponent: () => import('./features/payment-methods/payment-methods').then(m =>m.PaymentMethods)
+                loadComponent: () => import('./features/payment-methods/payment-methods').then(m => m.PaymentMethods)
             },
             {
                 path: 'privacy',
-                loadComponent: () => import('./features/privacy/privacy').then(m =>m.Privacy)
+                loadComponent: () => import('./features/privacy/privacy').then(m => m.Privacy)
             },
             {
                 path: 'returnpolicy',
-                loadComponent: () => import('./features/return-policy/return-policy').then(m =>m.ReturnPolicy)
+                loadComponent: () => import('./features/return-policy/return-policy').then(m => m.ReturnPolicy)
             },
             {
                 path: 'searchresults',
-                loadComponent: () => import('./features/search-results/search-results').then(m =>m.SearchResults)
+                loadComponent: () => import('./features/search-results/search-results').then(m => m.SearchResults)
             }
         ]
 
@@ -113,6 +113,18 @@ export const routes: Routes = [
             {
                 path: 'orders/edit/:id',
                 loadComponent: () => import('./admin/orders/edit-order/edit-order').then(m => m.OrderEditComponent)
+            },
+            {
+                path: 'users',
+                loadComponent: () => import('./admin/users/users').then(m => m.UsersListComponent)
+            },
+            {
+                path: 'users/edit/:id',
+                loadComponent: () => import('./admin/users/user-edit/user-edit').then(m => m.UserEditComponent)
+            },
+            {
+                path: 'home',
+                loadComponent: () => import('./admin/home/home').then(m => m.AdminDashboard)
             }
         ]
     },
