@@ -1,6 +1,7 @@
 import { NgClass } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -9,6 +10,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './login.css',
 })
 export class Login {
+  toastr=inject(ToastrService);
   email: string = '';
   password: string = '';
   showPassword: boolean = false;
@@ -20,7 +22,8 @@ export class Login {
 
   onLogin(): void {
     if (!this.email || !this.password) {
-      alert('Please enter your email and password');
+
+      this.toastr.error('Please enter your email and password!')
       return;
     }
 
@@ -29,6 +32,6 @@ export class Login {
     console.log('Password:', this.password);
     console.log('Remember Me:', this.rememberMe);
 
-    alert('Login successful! (demo)');
+    this.toastr.success('Login successful!')
   }
 }
