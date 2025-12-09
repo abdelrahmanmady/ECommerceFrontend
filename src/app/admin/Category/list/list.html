@@ -7,7 +7,7 @@
         <p class="page-subtitle">Organize and manage your product categories</p>
       </div>
       <div class="header-right">
-        <a routerLink="/admin-category-add" class="btn btn-primary">
+        <a routerLink="/admin/categories/add" class="btn btn-primary">
           <i class="fas fa-plus-circle"></i>
           <span>Add New Category</span>
         </a>
@@ -22,12 +22,13 @@
       <input 
         type="text" 
         placeholder="Search by category name or description..."
-        class="search-input">
+        class="search-input"
+        (input)="onSearch($event)">
     </div>
     <div class="filter-actions">
       <span class="product-count">
         <i class="fas fa-layer-group"></i>
-        12 Categories
+        {{ categoryCount() }} Categories
       </span>
     </div>
   </div>
@@ -47,425 +48,43 @@
         </tr>
       </thead>
       <tbody>
-        <!-- Category 1 -->
-        <tr class="table-row">
-          <td>
-            <span class="product-id">#1</span>
-          </td>
-          <td>
-            <div class="category-name-cell">
-              <i class="fas fa-laptop category-icon"></i>
-              <h5>Electronics</h5>
-            </div>
-          </td>
-          <td>
-            <p class="category-description">All electronic devices and gadgets</p>
-          </td>
-          <td>
-            <span class="parent-badge none">Root Category</span>
-          </td>
-          <td>
-            <span class="date-text">Jan 10, 2024</span>
-          </td>
-          <td>
-            <span class="date-text">Nov 28, 2024</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <a routerLink="/admin-category-edit/1" class="btn-icon btn-edit" title="Edit Category">
-                <i class="fas fa-edit"></i>
-              </a>
-              <button class="btn-icon btn-delete" title="Delete Category">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Category 2 -->
-        <tr class="table-row">
-          <td>
-            <span class="product-id">#2</span>
-          </td>
-          <td>
-            <div class="category-name-cell">
-              <i class="fas fa-mobile-alt category-icon"></i>
-              <h5>Smartphones</h5>
-            </div>
-          </td>
-          <td>
-            <p class="category-description">Mobile phones and accessories</p>
-          </td>
-          <td>
-            <span class="parent-badge">Electronics</span>
-          </td>
-          <td>
-            <span class="date-text">Jan 15, 2024</span>
-          </td>
-          <td>
-            <span class="date-text">Nov 25, 2024</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <a routerLink="/admin-category-edit/2" class="btn-icon btn-edit" title="Edit Category">
-                <i class="fas fa-edit"></i>
-              </a>
-              <button class="btn-icon btn-delete" title="Delete Category">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Category 3 -->
-        <tr class="table-row">
-          <td>
-            <span class="product-id">#3</span>
-          </td>
-          <td>
-            <div class="category-name-cell">
-              <i class="fas fa-tshirt category-icon"></i>
-              <h5>Fashion</h5>
-            </div>
-          </td>
-          <td>
-            <p class="category-description">Clothing, shoes, and fashion accessories</p>
-          </td>
-          <td>
-            <span class="parent-badge none">Root Category</span>
-          </td>
-          <td>
-            <span class="date-text">Feb 05, 2024</span>
-          </td>
-          <td>
-            <span class="date-text">Nov 20, 2024</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <a routerLink="/admin-category-edit/3" class="btn-icon btn-edit" title="Edit Category">
-                <i class="fas fa-edit"></i>
-              </a>
-              <button class="btn-icon btn-delete" title="Delete Category">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Category 4 -->
-        <tr class="table-row">
-          <td>
-            <span class="product-id">#4</span>
-          </td>
-          <td>
-            <div class="category-name-cell">
-              <i class="fas fa-user-tie category-icon"></i>
-              <h5>Men's Clothing</h5>
-            </div>
-          </td>
-          <td>
-            <p class="category-description">Fashion items for men</p>
-          </td>
-          <td>
-            <span class="parent-badge">Fashion</span>
-          </td>
-          <td>
-            <span class="date-text">Feb 08, 2024</span>
-          </td>
-          <td>
-            <span class="date-text">Nov 18, 2024</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <a routerLink="/admin-category-edit/4" class="btn-icon btn-edit" title="Edit Category">
-                <i class="fas fa-edit"></i>
-              </a>
-              <button class="btn-icon btn-delete" title="Delete Category">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Category 5 -->
-        <tr class="table-row">
-          <td>
-            <span class="product-id">#5</span>
-          </td>
-          <td>
-            <div class="category-name-cell">
-              <i class="fas fa-female category-icon"></i>
-              <h5>Women's Clothing</h5>
-            </div>
-          </td>
-          <td>
-            <p class="category-description">Fashion items for women</p>
-          </td>
-          <td>
-            <span class="parent-badge">Fashion</span>
-          </td>
-          <td>
-            <span class="date-text">Feb 08, 2024</span>
-          </td>
-          <td>
-            <span class="date-text">Nov 18, 2024</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <a routerLink="/admin-category-edit/5" class="btn-icon btn-edit" title="Edit Category">
-                <i class="fas fa-edit"></i>
-              </a>
-              <button class="btn-icon btn-delete" title="Delete Category">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Category 6 -->
-        <tr class="table-row">
-          <td>
-            <span class="product-id">#6</span>
-          </td>
-          <td>
-            <div class="category-name-cell">
-              <i class="fas fa-home category-icon"></i>
-              <h5>Home & Kitchen</h5>
-            </div>
-          </td>
-          <td>
-            <p class="category-description">Home decor and kitchen essentials</p>
-          </td>
-          <td>
-            <span class="parent-badge none">Root Category</span>
-          </td>
-          <td>
-            <span class="date-text">Mar 12, 2024</span>
-          </td>
-          <td>
-            <span class="date-text">Nov 15, 2024</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <a routerLink="/admin-category-edit/6" class="btn-icon btn-edit" title="Edit Category">
-                <i class="fas fa-edit"></i>
-              </a>
-              <button class="btn-icon btn-delete" title="Delete Category">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Category 7 -->
-        <tr class="table-row">
-          <td>
-            <span class="product-id">#7</span>
-          </td>
-          <td>
-            <div class="category-name-cell">
-              <i class="fas fa-running category-icon"></i>
-              <h5>Sports & Fitness</h5>
-            </div>
-          </td>
-          <td>
-            <p class="category-description">Athletic equipment and sportswear</p>
-          </td>
-          <td>
-            <span class="parent-badge none">Root Category</span>
-          </td>
-          <td>
-            <span class="date-text">Apr 20, 2024</span>
-          </td>
-          <td>
-            <span class="date-text">Nov 10, 2024</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <a routerLink="/admin-category-edit/7" class="btn-icon btn-edit" title="Edit Category">
-                <i class="fas fa-edit"></i>
-              </a>
-              <button class="btn-icon btn-delete" title="Delete Category">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Category 8 -->
-        <tr class="table-row">
-          <td>
-            <span class="product-id">#8</span>
-          </td>
-          <td>
-            <div class="category-name-cell">
-              <i class="fas fa-book category-icon"></i>
-              <h5>Books & Media</h5>
-            </div>
-          </td>
-          <td>
-            <p class="category-description">Books, magazines, and digital media</p>
-          </td>
-          <td>
-            <span class="parent-badge none">Root Category</span>
-          </td>
-          <td>
-            <span class="date-text">May 15, 2024</span>
-          </td>
-          <td>
-            <span class="date-text">Nov 05, 2024</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <a routerLink="/admin-category-edit/8" class="btn-icon btn-edit" title="Edit Category">
-                <i class="fas fa-edit"></i>
-              </a>
-              <button class="btn-icon btn-delete" title="Delete Category">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Category 9 -->
-        <tr class="table-row">
-          <td>
-            <span class="product-id">#9</span>
-          </td>
-          <td>
-            <div class="category-name-cell">
-              <i class="fas fa-gem category-icon"></i>
-              <h5>Jewelry & Watches</h5>
-            </div>
-          </td>
-          <td>
-            <p class="category-description">Luxury accessories and timepieces</p>
-          </td>
-          <td>
-            <span class="parent-badge">Fashion</span>
-          </td>
-          <td>
-            <span class="date-text">Jun 08, 2024</span>
-          </td>
-          <td>
-            <span class="date-text">Oct 30, 2024</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <a routerLink="/admin-category-edit/9" class="btn-icon btn-edit" title="Edit Category">
-                <i class="fas fa-edit"></i>
-              </a>
-              <button class="btn-icon btn-delete" title="Delete Category">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Category 10 -->
-        <tr class="table-row">
-          <td>
-            <span class="product-id">#10</span>
-          </td>
-          <td>
-            <div class="category-name-cell">
-              <i class="fas fa-spa category-icon"></i>
-              <h5>Beauty & Personal Care</h5>
-            </div>
-          </td>
-          <td>
-            <p class="category-description">Cosmetics, skincare, and personal hygiene</p>
-          </td>
-          <td>
-            <span class="parent-badge none">Root Category</span>
-          </td>
-          <td>
-            <span class="date-text">Jul 22, 2024</span>
-          </td>
-          <td>
-            <span class="date-text">Oct 25, 2024</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <a routerLink="/admin-category-edit/10" class="btn-icon btn-edit" title="Edit Category">
-                <i class="fas fa-edit"></i>
-              </a>
-              <button class="btn-icon btn-delete" title="Delete Category">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Category 11 -->
-        <tr class="table-row">
-          <td>
-            <span class="product-id">#11</span>
-          </td>
-          <td>
-            <div class="category-name-cell">
-              <i class="fas fa-gamepad category-icon"></i>
-              <h5>Gaming</h5>
-            </div>
-          </td>
-          <td>
-            <p class="category-description">Video games, consoles, and gaming accessories</p>
-          </td>
-          <td>
-            <span class="parent-badge">Electronics</span>
-          </td>
-          <td>
-            <span class="date-text">Aug 10, 2024</span>
-          </td>
-          <td>
-            <span class="date-text">Oct 20, 2024</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <a routerLink="/admin-category-edit/11" class="btn-icon btn-edit" title="Edit Category">
-                <i class="fas fa-edit"></i>
-              </a>
-              <button class="btn-icon btn-delete" title="Delete Category">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Category 12 -->
-        <tr class="table-row">
-          <td>
-            <span class="product-id">#12</span>
-          </td>
-          <td>
-            <div class="category-name-cell">
-              <i class="fas fa-couch category-icon"></i>
-              <h5>Furniture</h5>
-            </div>
-          </td>
-          <td>
-            <p class="category-description">Indoor and outdoor furniture pieces</p>
-          </td>
-          <td>
-            <span class="parent-badge">Home & Kitchen</span>
-          </td>
-          <td>
-            <span class="date-text">Sep 05, 2024</span>
-          </td>
-          <td>
-            <span class="date-text">Oct 15, 2024</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <a routerLink="/admin-category-edit/12" class="btn-icon btn-edit" title="Edit Category">
-                <i class="fas fa-edit"></i>
-              </a>
-              <button class="btn-icon btn-delete" title="Delete Category">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
+        @for (category of filteredCategories(); track category.id) {
+          <tr class="table-row">
+            <td>
+              <span class="product-id">#{{ category.id }}</span>
+            </td>
+            <td>
+              <div class="category-name-cell">
+                <i class="fas {{ category.icon }} category-icon"></i>
+                <h5>{{ category.name }}</h5>
+              </div>
+            </td>
+            <td>
+              <p class="category-description">{{ category.description }}</p>
+            </td>
+            <td>
+              <span [class]="category.parentCategory ? 'parent-badge' : 'parent-badge none'">
+                {{ category.parentCategory || 'Root Category' }}
+              </span>
+            </td>
+            <td>
+              <span class="date-text">{{ category.createdDate }}</span>
+            </td>
+            <td>
+              <span class="date-text">{{ category.updatedDate }}</span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <a [routerLink]="['/admin/categories/edit', category.id]" class="btn-icon btn-edit" title="Edit Category">
+                  <i class="fas fa-edit"></i>
+                </a>
+                <button (click)="deleteCategory(category.id)" class="btn-icon btn-delete" title="Delete Category">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
       </tbody>
     </table>
   </div>

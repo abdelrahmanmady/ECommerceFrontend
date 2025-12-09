@@ -1,0 +1,241 @@
+<!-- Edit User View -->
+<div class="container py-4">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="d-flex justify-content-between align-items-center flex-wrap">
+      <div>
+        <h1><i class="fas fa-user-edit me-3"></i>Edit User</h1>
+        <p>Update user information and assign roles</p>
+      </div>
+      <button class="btn btn-cancel" routerLink="/admin/users">
+        <i class="fas fa-arrow-left me-2"></i>Back to Users
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-3 text-muted">Loading user details...</p>
+    </div>
+  }
+
+  <!-- User Content -->
+  @if (!isLoading && currentUser) {
+    <div class="row">
+      <div class="col-lg-8">
+
+        <!-- User Information -->
+        <div class="order-details-card">
+          <h3><i class="fas fa-info-circle me-2"></i>User Information</h3>
+
+          <div class="detail-row">
+            <span class="detail-label">User ID:</span>
+            <span class="detail-value">{{ currentUser.id }}</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Name:</span>
+            <span class="detail-value">{{ currentUser.name }}</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Email:</span>
+            <span class="detail-value">{{ currentUser.email }}</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Phone:</span>
+            <span class="detail-value">{{ currentUser.phone || 'Not provided' }}</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Current Role:</span>
+            <span class="detail-value">
+              <span class="status-badge role-{{ currentUser.role.name.toLowerCase() }}">
+                {{ currentUser.role.name }}
+              </span>
+            </span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Products Listed:</span>
+            <span class="detail-value">{{ currentUser.products.length }} items</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Orders Placed:</span>
+            <span class="detail-value">{{ currentUser.orders.length }} orders</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Created At:</span>
+            <span class="detail-value">{{ currentUser.createdAt | date: 'MMM d, y, h:mm a' }}</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Last Updated:</span>
+            <span class="detail-value">{{ currentUser.updatedAt | date: 'MMM d, y, h:mm a' }}</span>
+          </div>
+        </div>
+
+        <!-- User Products -->
+        @if (currentUser.products.length > 0) {
+          <div class="order-details-card">
+            <h3><i class="fas fa-box-open me-2"></i>User Products</h3>
+
+            <div class="order-items-section">
+              @for (product of currentUser.products; track product.id) {
+                <div class="item-row">
+                  <img 
+                    [src]="product.imageUrl" 
+                    [alt]="product.name" 
+                    class="item-image">
+                  <div class="item-details">
+                    <div class="item-name">{{ product.name }}</div>
+                    <div class="item-meta">
+                      Product ID: {{ product.id }} | Stock: {{ product.stock }}
+                    </div>
+                  </div>
+                  <div class="item-price">{{ product.price | currency }}</div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- User Addresses -->
+        @if (currentUser.addresses.length > 0) {
+          <div class="order-details-card">
+            <h3><i class="fas fa-map-marked-alt me-2"></i>Saved Addresses</h3>
+
+            <div class="row">
+              @for (address of currentUser.addresses; track address.id) {
+                <div class="col-md-6 mb-3">
+                  <div class="address-card">
+                    <strong>{{ address.street }}</strong>
+                    <p>{{ address.city }}, {{ address.state }} {{ address.zipCode }}</p>
+                    <p>{{ address.country }}</p>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+      </div>
+
+      <div class="col-lg-4">
+
+        <!-- Edit Form -->
+        <div class="edit-form">
+          <h3 class="mb-4"><i class="fas fa-user-cog me-2"></i>Update User Role</h3>
+
+          <form [formGroup]="updateUserForm" (ngSubmit)="onSubmit()">
+
+            <!-- Role Selection -->
+            <div class="form-group">
+              <label class="form-label" for="userRole">
+                <i class="fas fa-user-tag me-2"></i>User Role *
+              </label>
+              <select 
+                class="form-select" 
+                id="userRole" 
+                formControlName="roleId">
+                <option value="">Select Role</option>
+                @for (role of availableRoles; track role.id) {
+                  <option [value]="role.id">{{ role.name }}</option>
+                }
+              </select>
+              @if (updateUserForm.get('roleId')?.invalid && updateUserForm.get('roleId')?.touched) {
+                <div class="text-danger mt-2">
+                  <small>Role is required</small>
+                </div>
+              }
+            </div>
+
+            <!-- Role Information -->
+            <div class="info-card">
+              <h5><i class="fas fa-info-circle me-2"></i>Role Information</h5>
+              <div class="mt-3">
+                <p><strong>Admin:</strong> Full system access and control</p>
+                <p><strong>Seller:</strong> Can list and manage products</p>
+                <p><strong>Customer:</strong> Can browse and purchase products</p>
+              </div>
+            </div>
+
+            <!-- Current Role Warning -->
+            @if (currentUser.role.name === 'Admin') {
+              <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Warning:</strong> Changing admin role may affect system permissions.
+              </div>
+            }
+
+            <!-- Action Buttons -->
+            <div class="form-group">
+              <button 
+                type="submit" 
+                class="btn btn-submit w-100"
+                [disabled]="updateUserForm.invalid || isSubmitting">
+                <i class="fas fa-save me-2"></i>
+                {{ isSubmitting ? 'Updating...' : 'Update User Role' }}
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-cancel w-100 mt-3" 
+                routerLink="/admin/users"
+                [disabled]="isSubmitting">
+                <i class="fas fa-times me-2"></i>Cancel
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+        <!-- Statistics Card -->
+        <div class="edit-form mt-4">
+          <h3 class="mb-4"><i class="fas fa-chart-bar me-2"></i>User Statistics</h3>
+
+          <div class="detail-row">
+            <span class="detail-label">Total Products:</span>
+            <span class="detail-value"><strong>{{ currentUser.products.length }}</strong></span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Total Orders:</span>
+            <span class="detail-value"><strong>{{ currentUser.orders.length }}</strong></span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Saved Addresses:</span>
+            <span class="detail-value"><strong>{{ currentUser.addresses.length }}</strong></span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Account Age:</span>
+            <span class="detail-value"><strong>{{ getAccountAge() }} days</strong></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  }
+
+  <!-- User Not Found -->
+  @if (!isLoading && !currentUser) {
+    <div class="text-center py-5">
+      <i class="fas fa-user-slash fa-3x mb-3 text-danger"></i>
+      <h3>User Not Found</h3>
+      <p class="text-muted">The user you're looking for doesn't exist.</p>
+      <button class="btn btn-submit mt-3" routerLink="/admin/users">
+        <i class="fas fa-arrow-left me-2"></i>Back to Users
+      </button>
+    </div>
+  }
+
+</div>

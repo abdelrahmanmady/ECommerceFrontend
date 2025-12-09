@@ -2,7 +2,7 @@
   <!-- Page Header -->
   <div class="page-header">
     <div class="header-top">
-      <a href="#" class="back-link">
+      <a routerLink="/admin/products" class="back-link">
         <i class="fas fa-arrow-left"></i>
         <span>Back to Products</span>
       </a>
@@ -13,7 +13,7 @@
 
   <!-- Form Container -->
   <div class="form-container">
-    <form>
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
       
       <!-- Basic Information Section -->
       <div class="form-section">
@@ -28,8 +28,13 @@
             <input 
               type="text" 
               id="name"
-              class="form-control" 
+              formControlName="name"
+              class="form-control"
+              [class.error]="hasError('name')"
               placeholder="Enter product name">
+            @if (hasError('name')) {
+              <div class="error-text">{{ getErrorMessage('name') }}</div>
+            }
           </div>
         </div>
 
@@ -38,39 +43,44 @@
             <label for="description">Description</label>
             <textarea 
               id="description"
+              formControlName="description"
               class="form-control" 
               rows="4" 
+              [class.error]="hasError('description')"
               placeholder="Enter detailed product description (optional)"></textarea>
             <div class="char-count">
-              0 / 2000 characters
+              {{ characterCountDisplay() }}
             </div>
+            @if (hasError('description')) {
+              <div class="error-text">{{ getErrorMessage('description') }}</div>
+            }
           </div>
         </div>
       </div>
 
-      <!-- Category and Seller Section -->
+      <!-- Category Section -->
       <div class="form-section">
         <div class="section-header">
           <i class="fas fa-tag"></i>
           <h3>Category</h3>
         </div>
 
-        <div class="form-row col-md-6 col-sm-12">
-          <div class="form-group">
+        <div class="form-row">
+          <div class="form-group col-md-6 col-sm-12">
             <label for="categoryId">Category <span class="required">*</span></label>
             <select 
               id="categoryId"
-              class="form-control">
+              formControlName="categoryId"
+              class="form-control"
+              [class.error]="hasError('categoryId')">
               <option value="">Select a category</option>
-              <option value="1">Electronics</option>
-              <option value="2">Fashion</option>
-              <option value="3">Clothing</option>
-              <option value="4">Accessories</option>
-              <option value="5">Home & Kitchen</option>
-              <option value="6">Footwear</option>
-              <option value="7">Sports</option>
-              <option value="8">Beauty</option>
+              @for (category of categories(); track category.id) {
+                <option [value]="category.id">{{ category.name }}</option>
+              }
             </select>
+            @if (hasError('categoryId')) {
+              <div class="error-text">{{ getErrorMessage('categoryId') }}</div>
+            }
           </div>
         </div>
       </div>
@@ -90,10 +100,15 @@
               <input 
                 type="number" 
                 id="price"
-                class="form-control with-icon" 
+                formControlName="price"
+                class="form-control with-icon"
+                [class.error]="hasError('price')"
                 placeholder="0.00" 
                 step="0.01">
             </div>
+            @if (hasError('price')) {
+              <div class="error-text">{{ getErrorMessage('price') }}</div>
+            }
           </div>
 
           <div class="form-group">
@@ -101,8 +116,13 @@
             <input 
               type="number" 
               id="stock"
-              class="form-control" 
+              formControlName="stock"
+              class="form-control"
+              [class.error]="hasError('stock')"
               placeholder="0">
+            @if (hasError('stock')) {
+              <div class="error-text">{{ getErrorMessage('stock') }}</div>
+            }
           </div>
         </div>
       </div>
@@ -114,7 +134,24 @@
           <h3>Product Images</h3>
         </div>
 
-        <div class="form-row col-md-3 col-sm-6">
+        @if (imagePreviews().length > 0) {
+          <div class="image-preview-container">
+            @for (image of imagePreviews(); track $index) {
+              <div class="preview-item">
+                <img [src]="image.url" [alt]="'Preview ' + ($index + 1)">
+                <div class="image-badge">New</div>
+                <button 
+                  type="button" 
+                  class="remove-image"
+                  (click)="removeImage($index)">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            }
+          </div>
+        }
+
+        <div class="form-row" [style.margin-top]="imagePreviews().length > 0 ? '25px' : '0'">
           <div class="form-group full-width">
             <label>Upload Images</label>
             <div class="file-upload-area">
@@ -123,7 +160,8 @@
                 multiple 
                 accept="image/*" 
                 id="fileInput" 
-                class="file-input">
+                class="file-input"
+                (change)="onFileSelected($event)">
               <label for="fileInput" class="file-upload-label">
                 <i class="fas fa-cloud-upload-alt"></i>
                 <h4>Click to upload or drag and drop</h4>
@@ -136,11 +174,14 @@
 
       <!-- Form Actions -->
       <div class="form-actions">
-        <button type="button" class="btn btn-secondary">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">
           <i class="fas fa-times"></i>
           Cancel
         </button>
-        <button type="submit" class="btn btn-primary">
+        <button 
+          type="submit" 
+          class="btn btn-primary"
+          [disabled]="productForm.invalid">
           <i class="fas fa-check"></i>
           Add Product
         </button>
