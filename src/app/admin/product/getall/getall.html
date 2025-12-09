@@ -22,417 +22,113 @@
       <input 
         type="text" 
         placeholder="Search by product name, description, category, or ID..."
-        class="search-input">
+        class="search-input"
+        [value]="searchQuery()"
+        (input)="onSearchChange($event)">
+      @if (searchQuery()) {
+        <button class="clear-search" (click)="clearSearch()">
+          <i class="fas fa-times"></i>
+        </button>
+      }
     </div>
     <div class="filter-actions">
       <span class="product-count">
         <i class="fas fa-box"></i>
-        10 Products
+        {{ productCount() }} Products
       </span>
     </div>
   </div>
 
   <!-- Products Table -->
   <div class="table-container">
-    <table class="products-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Image</th>
-          <th>Product Name</th>
-          <th>Category</th>
-          <th>Price</th>
-          <th>Stock</th>
-          <th>Status</th>
-          <th>Created Date</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Product 1 -->
-        <tr class="table-row">
-          <td>
-            <span class="product-id">#1</span>
-          </td>
-          <td>
-            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200" alt="Premium Wireless Headphones" class="product-image">
-          </td>
-          <td>
-            <div class="product-name-cell">
-              <h5>Premium Wireless Headphones</h5>
-              <p class="product-description">High-quality noise-cancelling headphones with superior sound quality</p>
-            </div>
-          </td>
-          <td>
-            <span class="category-badge">Electronics</span>
-          </td>
-          <td>
-            <span class="price-text">$299.99</span>
-          </td>
-          <td>
-            <span class="stock-number">45</span>
-          </td>
-          <td>
-            <span class="stock-badge stock-in">In Stock</span>
-          </td>
-          <td>
-            <span class="date-text">Jan 15, 2024</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <a routerLink="/admin/products/edit/1" class="btn-icon btn-edit" title="Edit Product">
-                <i class="fas fa-edit"></i>
-              </a>
-              <button class="btn-icon btn-delete" title="Delete Product">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Product 2 -->
-        <tr class="table-row">
-          <td>
-            <span class="product-id">#2</span>
-          </td>
-          <td>
-            <img src="https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=200" alt="Designer Leather Bag" class="product-image">
-          </td>
-          <td>
-            <div class="product-name-cell">
-              <h5>Designer Leather Bag</h5>
-              <p class="product-description">Elegant handcrafted leather handbag with premium materials</p>
-            </div>
-          </td>
-          <td>
-            <span class="category-badge">Fashion</span>
-          </td>
-          <td>
-            <span class="price-text">$189.00</span>
-          </td>
-          <td>
-            <span class="stock-number">23</span>
-          </td>
-          <td>
-            <span class="stock-badge stock-in">In Stock</span>
-          </td>
-          <td>
-            <span class="date-text">Feb 10, 2024</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <a href="#" class="btn-icon btn-edit" title="Edit Product">
-                <i class="fas fa-edit"></i>
-              </a>
-              <button class="btn-icon btn-delete" title="Delete Product">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Product 3 -->
-        <tr class="table-row">
-          <td>
-            <span class="product-id">#3</span>
-          </td>
-          <td>
-            <img src="https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=200" alt="Smart Fitness Tracker" class="product-image">
-          </td>
-          <td>
-            <div class="product-name-cell">
-              <h5>Smart Fitness Tracker</h5>
-              <p class="product-description">Track your health and fitness goals with advanced sensors</p>
-            </div>
-          </td>
-          <td>
-            <span class="category-badge">Electronics</span>
-          </td>
-          <td>
-            <span class="price-text">$129.99</span>
-          </td>
-          <td>
-            <span class="stock-number">67</span>
-          </td>
-          <td>
-            <span class="stock-badge stock-in">In Stock</span>
-          </td>
-          <td>
-            <span class="date-text">Mar 05, 2024</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <a href="#" class="btn-icon btn-edit" title="Edit Product">
-                <i class="fas fa-edit"></i>
-              </a>
-              <button class="btn-icon btn-delete" title="Delete Product">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Product 4 -->
-        <tr class="table-row">
-          <td>
-            <span class="product-id">#4</span>
-          </td>
-          <td>
-            <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200" alt="Organic Cotton T-Shirt" class="product-image">
-          </td>
-          <td>
-            <div class="product-name-cell">
-              <h5>Organic Cotton T-Shirt</h5>
-              <p class="product-description">Sustainable and comfortable everyday wear made from organic cotton</p>
-            </div>
-          </td>
-          <td>
-            <span class="category-badge">Clothing</span>
-          </td>
-          <td>
-            <span class="price-text">$45.00</span>
-          </td>
-          <td>
-            <span class="stock-number">120</span>
-          </td>
-          <td>
-            <span class="stock-badge stock-in">In Stock</span>
-          </td>
-          <td>
-            <span class="date-text">Apr 12, 2024</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <a href="#" class="btn-icon btn-edit" title="Edit Product">
-                <i class="fas fa-edit"></i>
-              </a>
-              <button class="btn-icon btn-delete" title="Delete Product">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Product 5 -->
-        <tr class="table-row">
-          <td>
-            <span class="product-id">#5</span>
-          </td>
-          <td>
-            <img src="https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=200" alt="Stainless Steel Water Bottle" class="product-image">
-          </td>
-          <td>
-            <div class="product-name-cell">
-              <h5>Stainless Steel Water Bottle</h5>
-              <p class="product-description">Insulated bottle keeps drinks cold for 24 hours</p>
-            </div>
-          </td>
-          <td>
-            <span class="category-badge">Accessories</span>
-          </td>
-          <td>
-            <span class="price-text">$32.50</span>
-          </td>
-          <td>
-            <span class="stock-number">89</span>
-          </td>
-          <td>
-            <span class="stock-badge stock-in">In Stock</span>
-          </td>
-          <td>
-            <span class="date-text">May 20, 2024</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <a href="#" class="btn-icon btn-edit" title="Edit Product">
-                <i class="fas fa-edit"></i>
-              </a>
-              <button class="btn-icon btn-delete" title="Delete Product">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Product 6 -->
-        <tr class="table-row">
-          <td>
-            <span class="product-id">#6</span>
-          </td>
-          <td>
-            <img src="https://images.unsplash.com/photo-1595225476474-87563907a212?w=200" alt="Mechanical Gaming Keyboard" class="product-image">
-          </td>
-          <td>
-            <div class="product-name-cell">
-              <h5>Mechanical Gaming Keyboard</h5>
-              <p class="product-description">RGB backlit mechanical keyboard with customizable keys</p>
-            </div>
-          </td>
-          <td>
-            <span class="category-badge">Electronics</span>
-          </td>
-          <td>
-            <span class="price-text">$159.99</span>
-          </td>
-          <td>
-            <span class="stock-number">34</span>
-          </td>
-          <td>
-            <span class="stock-badge stock-in">In Stock</span>
-          </td>
-          <td>
-            <span class="date-text">Jun 08, 2024</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <a href="#" class="btn-icon btn-edit" title="Edit Product">
-                <i class="fas fa-edit"></i>
-              </a>
-              <button class="btn-icon btn-delete" title="Delete Product">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Product 7 (Low Stock) -->
-        <tr class="table-row">
-          <td>
-            <span class="product-id">#7</span>
-          </td>
-          <td>
-            <img src="https://images.unsplash.com/photo-1627123424574-724758594e93?w=200" alt="Leather Wallet" class="product-image">
-          </td>
-          <td>
-            <div class="product-name-cell">
-              <h5>Leather Wallet</h5>
-              <p class="product-description">Minimalist genuine leather wallet with RFID protection</p>
-            </div>
-          </td>
-          <td>
-            <span class="category-badge">Accessories</span>
-          </td>
-          <td>
-            <span class="price-text">$68.00</span>
-          </td>
-          <td>
-            <span class="stock-number">15</span>
-          </td>
-          <td>
-            <span class="stock-badge stock-low">Low Stock</span>
-          </td>
-          <td>
-            <span class="date-text">Jul 14, 2024</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <a href="#" class="btn-icon btn-edit" title="Edit Product">
-                <i class="fas fa-edit"></i>
-              </a>
-              <button class="btn-icon btn-delete" title="Delete Product">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Product 8 (Out of Stock) -->
-        <tr class="table-row">
-          <td>
-            <span class="product-id">#8</span>
-          </td>
-          <td>
-            <img src="https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=200" alt="Wireless Bluetooth Speaker" class="product-image">
-          </td>
-          <td>
-            <div class="product-name-cell">
-              <h5>Wireless Bluetooth Speaker</h5>
-              <p class="product-description">Portable waterproof speaker with 360-degree sound</p>
-            </div>
-          </td>
-          <td>
-            <span class="category-badge">Electronics</span>
-          </td>
-          <td>
-            <span class="price-text">$89.99</span>
-          </td>
-          <td>
-            <span class="stock-number">0</span>
-          </td>
-          <td>
-            <span class="stock-badge stock-out">Out of Stock</span>
-          </td>
-          <td>
-            <span class="date-text">Aug 22, 2024</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <a href="#" class="btn-icon btn-edit" title="Edit Product">
-                <i class="fas fa-edit"></i>
-              </a>
-              <button class="btn-icon btn-delete" title="Delete Product">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Product 9 -->
-        <tr class="table-row">
-          <td>
-            <span class="product-id">#9</span>
-          </td>
-          <td>
-            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200" alt="Running Shoes" class="product-image">
-          </td>
-          <td>
-            <div class="product-name-cell">
-              <h5>Running Shoes</h5>
-              <p class="product-description">Lightweight performance running shoes with cushioning</p>
-            </div>
-          </td>
-          <td>
-            <span class="category-badge">Footwear</span>
-          </td>
-          <td>
-            <span class="price-text">$135.00</span>
-          </td>
-          <td>
-            <span class="stock-number">58</span>
-          </td>
-          <td>
-            <span class="stock-badge stock-in">In Stock</span>
-          </td>
-          <td>
-            <span class="date-text">Sep 18, 2024</span>
-          </td>
-          <td>
-            <div class="action-buttons">
-              <a routerLink="/admin-edit/9" class="btn-icon btn-edit" title="Edit Product">
-                <i class="fas fa-edit"></i>
-              </a>
-              <button class="btn-icon btn-delete" title="Delete Product">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Product 10 -->
-        <tr class="table-row">
-          <td>
-            <span class="product-id">#10</span>
-          </td>
-          <td>
-            <img src="https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=200" alt="Ceramic Coffee Mug Set" class="product-image">
-          </td>
-          <td>
-            <div class="product-name-cell">
-              <h5>Ceramic Coffee Mug Set</h5>
-              <p class="product-description">Set of 4 handmade ceramic mugs with unique patterns</p>
-            </div>
-          </td>
-          <td>
-            <span class="category-badge">Home & Kitchen</span>
-          </td>
-          <td>
+    @if (filteredProducts().length > 0) {
+      <table class="products-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Image</th>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Status</th>
+            <th>Created Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (product of filteredProducts(); track product.id) {
+            <tr class="table-row">
+              <td>
+                <span class="product-id">#{{ product.id }}</span>
+              </td>
+              <td>
+                <img 
+                  [src]="product.imageUrl" 
+                  [alt]="product.name" 
+                  class="product-image">
+              </td>
+              <td>
+                <div class="product-name-cell">
+                  <h5>{{ product.name }}</h5>
+                  <p class="product-description">{{ product.description }}</p>
+                </div>
+              </td>
+              <td>
+                <span class="category-badge">{{ product.category }}</span>
+              </td>
+              <td>
+                <span class="price-text">\${{ product.price | number:'1.2-2' }}</span>
+              </td>
+              <td>
+                <span class="stock-number">{{ product.stock }}</span>
+              </td>
+              <td>
+                <span class="stock-badge" [ngClass]="getStockBadgeClass(product.status)">
+                  {{ product.status }}
+                </span>
+              </td>
+              <td>
+                <span class="date-text">{{ product.createdDate }}</span>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <a 
+                    [routerLink]="['/admin/products/edit', product.id]" 
+                    class="btn-icon btn-edit" 
+                    title="Edit Product">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <button 
+                    class="btn-icon btn-delete" 
+                    title="Delete Product"
+                    (click)="deleteProduct(product.id)">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else {
+      <div class="empty-state">
+        <i class="fas fa-box-open"></i>
+        <h3>No products found</h3>
+        <p>
+          @if (searchQuery()) {
+            Try adjusting your search terms
+          } @else {
+            Get started by adding your first product
+          }
+        </p>
+        @if (!searchQuery()) {
+          <a routerLink="/admin/products/add" class="btn btn-primary">
+            <i class="fas fa-plus-circle"></i>
+            Add Your First Product
+          </a>
+        }
+      </div>
+    }
+  </div>
+</div>

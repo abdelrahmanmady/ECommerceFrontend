@@ -79,20 +79,20 @@ export const routes: Routes = [
         children: [
             {
                 path: '',
-                redirectTo: 'products',
+                redirectTo: 'home',
                 pathMatch: 'full'
             },
             {
                 path: 'products',
-                loadComponent: () => import('./admin/product/getall/getall').then(m => m.Getall)
+                loadComponent: () => import('./admin/product/getall/getall').then(m => m.ProductListComponent)
             },
             {
                 path: 'products/edit/:id',
-                loadComponent: () => import('./admin/product/edit/edit').then(m => m.Edit)
+                loadComponent: () => import('./admin/product/edit/edit').then(m => m.ProductEditComponent)
             },
             {
                 path: 'products/add',
-                loadComponent: () => import('./admin/product/add/add').then(m => m.Add)
+                loadComponent: () => import('./admin/product/add/add').then(m => m.ProductAddComponent)
             },
             {
                 path: 'categories',
