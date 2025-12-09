@@ -20,9 +20,10 @@
           <!-- Product Categories Widget -->
           <div class="product-categories-widget widget-item">
             <h3 class="widget-title">Categories</h3>
+            @if(allCategories().length > 0){
 
             <ul class="category-tree list-unstyled mb-0">
-              <!-- Clothing Category -->
+              @for(parent of categoryTree();track $index){
               <li class="category-item">
                 <div
                   class="d-flex justify-content-between align-items-center category-header collapsed"
@@ -31,160 +32,38 @@
                   aria-expanded="false"
                   aria-controls="categories-1-clothing-subcategories"
                 >
-                  <a href="javascript:void(0)" class="category-link">Clothing</a>
+                  <a (click)="sortByCategory(parent)" class="category-link">{{ parent.name }}</a>
+                  @if(parent.children.length > 0){
                   <span class="category-toggle">
                     <i class="bi bi-chevron-down"></i>
                     <i class="bi bi-chevron-up"></i>
                   </span>
+                  }
                 </div>
+                @if(parent.children.length > 0){
+
                 <ul
                   id="categories-1-clothing-subcategories"
                   class="subcategory-list list-unstyled collapse ps-3 mt-2"
                 >
-                  <li><a href="#" class="subcategory-link">Men's Wear</a></li>
-                  <li><a href="#" class="subcategory-link">Women's Wear</a></li>
-                  <li><a href="#" class="subcategory-link">Kids' Clothing</a></li>
-                  <li><a href="#" class="subcategory-link">Accessories</a></li>
+                  @for(child of parent.children; track $index){
+                  <li>
+                    <a
+                      (click)="sortByCategory(child)"
+                      class="subcategory-link"
+                      style="cursor: pointer"
+                      >{{ child.name }}</a
+                    >
+                  </li>
+
+                  }
                 </ul>
+                }
               </li>
 
-              <!-- Electronics Category -->
-              <li class="category-item">
-                <div
-                  class="d-flex justify-content-between align-items-center category-header collapsed"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#categories-1-electronics-subcategories"
-                  aria-expanded="false"
-                  aria-controls="categories-1-electronics-subcategories"
-                >
-                  <a href="javascript:void(0)" class="category-link">Electronics</a>
-                  <span class="category-toggle">
-                    <i class="bi bi-chevron-down"></i>
-                    <i class="bi bi-chevron-up"></i>
-                  </span>
-                </div>
-                <ul
-                  id="categories-1-electronics-subcategories"
-                  class="subcategory-list list-unstyled collapse ps-3 mt-2"
-                >
-                  <li><a href="#" class="subcategory-link">Smartphones</a></li>
-                  <li><a href="#" class="subcategory-link">Laptops</a></li>
-                  <li><a href="#" class="subcategory-link">Tablets</a></li>
-                  <li><a href="#" class="subcategory-link">Accessories</a></li>
-                </ul>
-              </li>
-
-              <!-- Home & Kitchen Category -->
-              <li class="category-item">
-                <div
-                  class="d-flex justify-content-between align-items-center category-header collapsed"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#categories-1-home-subcategories"
-                  aria-expanded="false"
-                  aria-controls="categories-1-home-subcategories"
-                >
-                  <a href="javascript:void(0)" class="category-link">Home &amp; Kitchen</a>
-                  <span class="category-toggle">
-                    <i class="bi bi-chevron-down"></i>
-                    <i class="bi bi-chevron-up"></i>
-                  </span>
-                </div>
-                <ul
-                  id="categories-1-home-subcategories"
-                  class="subcategory-list list-unstyled collapse ps-3 mt-2"
-                >
-                  <li><a href="#" class="subcategory-link">Furniture</a></li>
-                  <li><a href="#" class="subcategory-link">Kitchen Appliances</a></li>
-                  <li><a href="#" class="subcategory-link">Home Decor</a></li>
-                  <li><a href="#" class="subcategory-link">Bedding</a></li>
-                </ul>
-              </li>
-
-              <!-- Beauty & Personal Care Category -->
-              <li class="category-item">
-                <div
-                  class="d-flex justify-content-between align-items-center category-header collapsed"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#categories-1-beauty-subcategories"
-                  aria-expanded="false"
-                  aria-controls="categories-1-beauty-subcategories"
-                >
-                  <a href="javascript:void(0)" class="category-link">Beauty &amp; Personal Care</a>
-                  <span class="category-toggle">
-                    <i class="bi bi-chevron-down"></i>
-                    <i class="bi bi-chevron-up"></i>
-                  </span>
-                </div>
-                <ul
-                  id="categories-1-beauty-subcategories"
-                  class="subcategory-list list-unstyled collapse ps-3 mt-2"
-                >
-                  <li><a href="#" class="subcategory-link">Skincare</a></li>
-                  <li><a href="#" class="subcategory-link">Makeup</a></li>
-                  <li><a href="#" class="subcategory-link">Hair Care</a></li>
-                  <li><a href="#" class="subcategory-link">Fragrances</a></li>
-                </ul>
-              </li>
-
-              <!-- Sports & Outdoors Category -->
-              <li class="category-item">
-                <div
-                  class="d-flex justify-content-between align-items-center category-header collapsed"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#categories-1-sports-subcategories"
-                  aria-expanded="false"
-                  aria-controls="categories-1-sports-subcategories"
-                >
-                  <a href="javascript:void(0)" class="category-link">Sports &amp; Outdoors</a>
-                  <span class="category-toggle">
-                    <i class="bi bi-chevron-down"></i>
-                    <i class="bi bi-chevron-up"></i>
-                  </span>
-                </div>
-                <ul
-                  id="categories-1-sports-subcategories"
-                  class="subcategory-list list-unstyled collapse ps-3 mt-2"
-                >
-                  <li><a href="#" class="subcategory-link">Fitness Equipment</a></li>
-                  <li><a href="#" class="subcategory-link">Outdoor Gear</a></li>
-                  <li><a href="#" class="subcategory-link">Sports Apparel</a></li>
-                  <li><a href="#" class="subcategory-link">Team Sports</a></li>
-                </ul>
-              </li>
-
-              <!-- Books Category (no subcategories) -->
-              <li class="category-item">
-                <div class="d-flex justify-content-between align-items-center category-header">
-                  <a href="#" class="category-link">Books</a>
-                </div>
-              </li>
-
-              <!-- Toys & Games Category -->
-              <li class="category-item">
-                <div
-                  class="d-flex justify-content-between align-items-center category-header collapsed"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#categories-1-toys-subcategories"
-                  aria-expanded="false"
-                  aria-controls="categories-1-toys-subcategories"
-                >
-                  <a href="javascript:void(0)" class="category-link">Toys &amp; Games</a>
-                  <span class="category-toggle">
-                    <i class="bi bi-chevron-down"></i>
-                    <i class="bi bi-chevron-up"></i>
-                  </span>
-                </div>
-                <ul
-                  id="categories-1-toys-subcategories"
-                  class="subcategory-list list-unstyled collapse ps-3 mt-2"
-                >
-                  <li><a href="#" class="subcategory-link">Board Games</a></li>
-                  <li><a href="#" class="subcategory-link">Puzzles</a></li>
-                  <li><a href="#" class="subcategory-link">Action Figures</a></li>
-                  <li><a href="#" class="subcategory-link">Educational Toys</a></li>
-                </ul>
-              </li>
+              }
             </ul>
+            }
           </div>
           <!--/Product Categories Widget -->
 
@@ -528,6 +407,7 @@
                         id="productSearch"
                         placeholder="Search for products..."
                         aria-label="Search for products"
+                        (input)="search.set($event.target.value)"
                       />
                       <button class="btn search-btn" type="button">
                         <i class="bi bi-search"></i>
@@ -539,13 +419,17 @@
                 <div class="col-12 col-md-6 col-lg-2">
                   <div class="filter-item">
                     <label for="priceRange" class="form-label">Price Range</label>
-                    <select class="form-select" id="priceRange">
-                      <option selected="">All Prices</option>
-                      <option>Under $25</option>
-                      <option>$25 to $50</option>
-                      <option>$50 to $100</option>
-                      <option>$100 to $200</option>
-                      <option>$200 &amp; Above</option>
+                    <select
+                      class="form-select"
+                      id="priceRange"
+                      (change)="filterProductsPrice($event)"
+                    >
+                      <option value="default" selected="">All Prices</option>
+                      <option value="Under $25">Under $25</option>
+                      <option value="$25 to $50">$25 to $50</option>
+                      <option value="$50 to $100">$50 to $100</option>
+                      <option value="$100 to $200">$100 to $200</option>
+                      <option value="$200">$200 &amp; Above</option>
                     </select>
                   </div>
                 </div>
@@ -589,35 +473,42 @@
                           <i class="bi bi-list-ul"></i>
                         </button>
                       </div>
-                      <div class="items-per-page">
+                      <!-- <div class="items-per-page">
                         <select class="form-select" id="itemsPerPage" aria-label="Items per page">
                           <option value="12">12 per page</option>
                           <option value="24">24 per page</option>
                           <option value="48">48 per page</option>
                           <option value="96">96 per page</option>
                         </select>
-                      </div>
+                      </div> -->
                     </div>
                   </div>
                 </div>
               </div>
+              @if(activeFilters().length > 0){
 
               <div class="row mt-3">
                 <div class="col-12" data-aos="fade-up" data-aos-delay="200">
                   <div class="active-filters">
                     <span class="active-filter-label">Active Filters:</span>
                     <div class="filter-tags">
+                      @for(filter of activeFilters();track $index){
+
                       <span class="filter-tag">
+                        {{ filter }} <button class="filter-remove"><i class="bi bi-x"></i></button>
+                      </span>
+                      }
+
+                      <!-- <span class="filter-tag">
                         Electronics <button class="filter-remove"><i class="bi bi-x"></i></button>
-                      </span>
-                      <span class="filter-tag">
-                        $50 to $100 <button class="filter-remove"><i class="bi bi-x"></i></button>
-                      </span>
-                      <button class="clear-all-btn">Clear All</button>
+                      </span> -->
+
+                      <button class="clear-all-btn" (click)="clearAllFilters()">Clear All</button>
                     </div>
                   </div>
                 </div>
               </div>
+              }
             </div>
           </div>
         </section>
@@ -625,24 +516,24 @@
 
         <!-- Category Product List Section -->
         <section
-  [ngClass]="viewType()"
-  id="category-product-list"
-  class="category-product-list section"
->
-  <div class="container" data-aos="fade-up" data-aos-delay="100">
-    <div class="row g-4">
-      @if(products){ 
-        @for(product of products | paginate : { itemsPerPage: 6, currentPage: page }; track $index) {
+          [ngClass]="viewType()"
+          id="category-product-list"
+          class="category-product-list section"
+        >
+          <div class="container" data-aos="fade-up" data-aos-delay="100">
+            <div class="row g-4">
+              @if(allProducts()){ 
+                @for(product of allProducts() | paginate : { itemsPerPage:
+              pageSize, currentPage: pageNum(), totalItems: totalPages()}; track $index) {
 
-          <div [ngClass]="viewType() === 'grid' ? 'col-6 col-xl-4' : 'col-12'">
-            <app-product-card
-              [viewType]="viewType()"
-              [productData]="product"
-            ></app-product-card>
-          </div>
+              <div [ngClass]="viewType() === 'grid' ? 'col-6 col-xl-4' : 'col-12'">
+                <app-product-card
+                  [viewType]="viewType()"
+                  [productData]="product"
+                ></app-product-card>
+              </div>
 
-      }}
-        
+              }}
             </div>
           </div>
         </section>
@@ -650,10 +541,10 @@
 
         <!-- Category Pagination Section -->
         <div class="pagination-wrapper">
-        <div class="pagination">
-          <pagination-controls (pageChange)="page = $event"></pagination-controls>
+          <div class="pagination">
+            <pagination-controls  (pageChange)="pageNum.set($event); loadProducts()"></pagination-controls>
+          </div>
         </div>
-      </div>
 
         <!-- /Category Pagination Section -->
       </div>
