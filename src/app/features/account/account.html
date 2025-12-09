@@ -6,7 +6,7 @@
       <h1 class="mb-2 mb-lg-0">Account</h1>
       <nav class="breadcrumbs">
         <ol>
-          <li><a href="index.html">Home</a></li>
+          <li><a routerLink="/home">Home</a></li>
           <li class="current">Account</li>
         </ol>
       </nav>
@@ -47,39 +47,39 @@
             <nav class="menu-nav">
               <ul class="nav flex-column" role="tablist">
                 <li class="nav-item">
-                  <a class="nav-link active" data-bs-toggle="tab" href="#orders">
+                  <a class="nav-link active" data-bs-toggle="tab" routerLink="/orders">
                     <i class="bi bi-box-seam"></i>
                     <span>My Orders</span>
                     <span class="badge">3</span>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" data-bs-toggle="tab" href="#wishlist">
+                  <a class="nav-link" data-bs-toggle="tab" routerLink="/wishlist">
                     <i class="bi bi-heart"></i>
                     <span>Wishlist</span>
                     <span class="badge">12</span>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" data-bs-toggle="tab" href="#wallet">
+                  <a class="nav-link" data-bs-toggle="tab" routerLink="/paymentmethods">
                     <i class="bi bi-wallet2"></i>
                     <span>Payment Methods</span>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" data-bs-toggle="tab" href="#reviews">
+                  <a class="nav-link" data-bs-toggle="tab" routerLink="/reviews">
                     <i class="bi bi-star"></i>
                     <span>My Reviews</span>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" data-bs-toggle="tab" href="#addresses">
+                  <a class="nav-link" data-bs-toggle="tab" routerLink="/addresses">
                     <i class="bi bi-geo-alt"></i>
                     <span>Addresses</span>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" data-bs-toggle="tab" href="#settings">
+                  <a class="nav-link" data-bs-toggle="tab" routerLink="/settings">
                     <i class="bi bi-gear"></i>
                     <span>Account Settings</span>
                   </a>
@@ -87,11 +87,11 @@
               </ul>
 
               <div class="menu-footer">
-                <a href="#" class="help-link">
+                <a routerLink="/contact-us" class="help-link">
                   <i class="bi bi-question-circle"></i>
                   <span>Help Center</span>
                 </a>
-                <a href="#" class="logout-link">
+                <a routerLink="/logout" class="logout-link">
                   <i class="bi bi-box-arrow-right"></i>
                   <span>Log Out</span>
                 </a>

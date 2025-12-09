@@ -6,7 +6,7 @@
         <h1 class="mb-2 mb-lg-0">Checkout</h1>
         <nav class="breadcrumbs">
           <ol>
-            <li><a href="/home">Home</a></li>
+            <li><a routerLink="/home">Home</a></li>
             <li class="current">Checkout</li>
           </ol>
         </nav>
@@ -190,7 +190,7 @@
                     <div class="form-check terms-check">
                       <input class="form-check-input" type="checkbox" id="terms" name="terms" required="">
                       <label class="form-check-label" for="terms">
-                        I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a> and <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy</a>
+                        I agree to the <a routerLink="/tos" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a> and <a routerLink="/privacy" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy</a>
                       </label>
                     </div>
                     <div class="success-message d-none">Your order has been placed successfully! Thank you for your purchase.</div>
