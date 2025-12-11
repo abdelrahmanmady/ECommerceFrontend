@@ -1,9 +1,9 @@
 import { CurrencyPipe, NgClass } from '@angular/common';
 import { Component, effect, inject, Input, input, signal, Signal } from '@angular/core';
 import { IProduct } from '../../../features/shop/shop/shop';
-import { CategoryService } from '../../../serices/category-service';
+import { CategoryService } from '../../../core/services/category-service';
 import { Router, RouterLink } from '@angular/router';
-import { CartItemsService } from '../../../serices/cart-items-service';
+import { CartItemsService } from '../../../core/services/cart-items-service';
 
 @Component({
   selector: 'app-product-card',

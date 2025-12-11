@@ -1,28 +1,41 @@
 import { Component } from '@angular/core';
-import { RouterLink } from "@angular/router";
+import { FormsModule, NgForm } from '@angular/forms';
+import { Router, RouterLink } from "@angular/router";
+import { AuthService } from '../../../core/services/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-register',
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
 export class Register {
+  showPassword = false;
 
-  togglePassword(el : HTMLInputElement, event:Event) {
-        // const passwordField = document.getElementById(id) ;
-        const icon = event.target as HTMLElement ;
+  constructor(
+    private readonly authService: AuthService,
+    private readonly toastr: ToastrService,
+    private readonly router: Router
+  ) {}
 
-        if (el?.type === 'password') {
-            el.type = 'text';
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
-        } else {
-            el.type = 'password';
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-        }
+  togglePassword() {
+    this.showPassword = !this.showPassword;
+  }
+
+  register(form: NgForm) {
+    if (form.invalid) {
+      console.log("Form invalid");
+      return;
     }
- 
 
+    console.log("Form Values:", form.value);
+    this.authService.register(form.value.email.split('@')[0], form.value.email, form.value.phone, form.value.password).subscribe({
+      next: (res) => {
+        console.log(res);
+        this.toastr.success('Registration successful!, please login');
+        this.router.navigate(['login']);
+      }
+    });
+  }
 }

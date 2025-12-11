@@ -1,8 +1,10 @@
 import { NgClass } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms'
+import { Router, RouterLink } from "@angular/router";
+import { AuthService } from '../../../core/services/auth.service';
+import { UserService } from '../../../core/services/user-service';
 import { ToastrService } from 'ngx-toastr';
-import { RouterLink } from "@angular/router";
 
 
 @Component({
@@ -12,28 +14,43 @@ import { RouterLink } from "@angular/router";
   styleUrl: './login.css',
 })
 export class Login {
-  toastr=inject(ToastrService);
-  email: string = '';
-  password: string = '';
   showPassword: boolean = false;
   rememberMe: boolean = false;
+
+  email: string = '';
+  password: string = '';
+
+
+  constructor(
+    private readonly authService: AuthService,
+    private readonly router: Router,
+    private readonly userService: UserService,
+    private readonly toastr: ToastrService
+  ) {}
+
 
   togglePassword(): void {
     this.showPassword = !this.showPassword;
   }
 
-  onLogin(): void {
-    if (!this.email || !this.password) {
-
-      this.toastr.error('Please enter your email and password!')
+  login() {
+    console.log(this.email, this.password);
+    if(!this.email || !this.password) {
       return;
     }
 
+    this.authService.login(this.email, this.password, this.rememberMe).subscribe({
+      next: (res) => {
+        this.toastr.success('Login successful!');
+        console.log(res);
 
-    console.log('Email:', this.email);
-    console.log('Password:', this.password);
-    console.log('Remember Me:', this.rememberMe);
+        localStorage.setItem('acessToken', res.accessToken);
 
-    this.toastr.success('Login successful!')
+        this.userService.user.set(res.user);
+        this.userService.roles.set(res.roles);
+        this.router.navigate(['home']);
+      }
+    })
+    
   }
 }

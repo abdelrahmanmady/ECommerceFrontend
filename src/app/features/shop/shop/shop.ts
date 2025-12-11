@@ -3,11 +3,11 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ProductCard } from '../../../shared/components/product-card/product-card';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { ProductService } from '../../../serices/product-service';
+import { ProductService } from '../../../core/services/product-service';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { debounceTime } from 'rxjs/internal/operators/debounceTime';
 import { distinctUntilChanged } from 'rxjs';
-import { CategoryService } from '../../../serices/category-service';
+import { CategoryService } from '../../../core/services/category-service';
 
 export interface IProduct {
   new?: boolean;

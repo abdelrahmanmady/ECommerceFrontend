@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ProductService } from '../../../serices/product-service';
-import { CartItemsService } from '../../../serices/cart-items-service';
+import { ProductService } from '../../../core/services/product-service';
+import { CartItemsService } from '../../../core/services/cart-items-service';
 
 @Component({
   selector: 'app-product-details',

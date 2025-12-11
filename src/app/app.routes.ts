@@ -15,20 +15,20 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/home/home').then(m => m.Home)
             },
             {
-                path: 'productsdetails/:id',
-                loadComponent: () => import('./features/shop/product-details/product-details').then(m => m.ProductDetails)
-            },
-            {
-                path: 'shop',
-                loadComponent: () => import('./features/shop/shop/shop').then(m => m.Shop)
-            },
-            {
                 path: 'register',
                 loadComponent: () => import('./features/auth/register/register').then(m => m.Register)
             },
             {
                 path: "login",
                 loadComponent: () => import('./features/auth/login/login').then(m => m.Login)
+            },
+            {
+                path: 'productsdetails/:id',
+                loadComponent: () => import('./features/shop/product-details/product-details').then(m => m.ProductDetails)
+            },
+            {
+                path: 'shop',
+                loadComponent: () => import('./features/shop/shop/shop').then(m => m.Shop)
             },
             {
                 path: "cart",

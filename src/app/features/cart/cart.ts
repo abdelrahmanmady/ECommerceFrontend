@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { CartService } from '../../serices/cart-service';
-import { CartItemsService } from '../../serices/cart-items-service';
+import { CartService } from '../../core/services/cart-service';
+import { CartItemsService } from '../../core/services/cart-items-service';
 
 @Component({
   selector: 'app-cart',
