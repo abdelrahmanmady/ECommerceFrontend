@@ -23,12 +23,12 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/auth/login/login').then(m => m.Login)
             },
             {
-                path: 'productsdetails/:id',
-                loadComponent: () => import('./features/shop/product-details/product-details').then(m => m.ProductDetails)
+                path: 'products',
+                loadComponent: () => import('./features/shop/shop/shop').then(m => m.Shop)
             },
             {
-                path: 'shop',
-                loadComponent: () => import('./features/shop/shop/shop').then(m => m.Shop)
+                path: 'products/:id',
+                loadComponent: () => import('./features/shop/product-details/product-details').then(m => m.ProductDetails)
             },
             {
                 path: "cart",

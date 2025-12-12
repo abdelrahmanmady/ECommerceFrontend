@@ -8,6 +8,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { debounceTime } from 'rxjs/internal/operators/debounceTime';
 import { distinctUntilChanged } from 'rxjs';
 import { CategoryService } from '../../../core/services/category-service';
+import { RouterLink } from "@angular/router";
 
 export interface IProduct {
   new?: boolean;
@@ -21,7 +22,7 @@ export interface IProduct {
 }
 @Component({
   selector: 'app-shop',
-  imports: [FormsModule, CommonModule, ProductCard, NgxPaginationModule],
+  imports: [FormsModule, CommonModule, ProductCard, NgxPaginationModule, RouterLink],
   templateUrl: './shop.html',
   styleUrl: './shop.css',
 })
@@ -36,8 +37,8 @@ export class Shop {
   minPercent: number = 0;
   maxPercent: number = 50;
   viewType = signal<'grid' | 'list'>('grid');
-  pageNum = signal(1);
-  pageSize = 2;
+  pageIndex = signal(1);
+  pageSize = 10;
   totalPages = signal(0);
   minPrice?: number | undefined;
   maxPrice?: number | undefined;
@@ -50,7 +51,7 @@ export class Shop {
   categoryTree = computed(() => {
     const cats = this.allCategories();
     return cats
-      .filter((c) => c.parentCategoryId === null)
+      .filter(c => !("parentCategoryId" in c))
       .map((parent) => ({
         ...parent,
         children: cats.filter((c) => c.parentCategoryId === parent.id),
@@ -59,17 +60,17 @@ export class Shop {
 
   constructor() {
     this.search$.subscribe((search) => {
-      this.loadProducts(this.pageNum(), this.pageSize,undefined, undefined, search);
+      this.loadProducts(this.pageIndex(), this.pageSize,undefined, undefined, search);
     });
     this.activeFilters.set([]);
     this.loadProducts();
     this.loadCategories();
   }
 
-  loadProducts(pageNum?: number, pageSize?: number,minPrice?: number, maxPrice?: number, search?: string, categoryId?: string) {
+  loadProducts(pageIndex?: number, pageSize?: number,minPrice?: number, maxPrice?: number, search?: string, categoryId?: string) {
     this.productService
       .getAllProducts({
-        pageNum: pageNum ?? this.pageNum(),
+        pageIndex: pageIndex ?? this.pageIndex(),
         pageSize: pageSize ?? this.pageSize,
         minPrice: minPrice ?? null,
         maxPrice: maxPrice ?? null,
@@ -77,14 +78,18 @@ export class Shop {
         categoryId: categoryId ?? null,
       })
       .subscribe((data) => {
-        this.allProducts.set(data.products);
+        console.log("products data", data);
+        this.allProducts.set(data.items);
         this.totalPages.set(data.totalCount);
+        
       });
   }
 
   loadCategories() {
     this.categoryService.getAllCategories().subscribe((data) => {
       this.allCategories.set(data);
+
+      console.log("sssssss", this.allCategories());
     });
   }
 
@@ -93,7 +98,7 @@ export class Shop {
   }
 
   sortByCategory(cat: any) {
-    this.pageNum.set(1);
+    this.pageIndex.set(1);
     this.activeFilters.set([cat.name]);
     this.loadProducts(undefined, undefined, undefined, cat.name);
   }
@@ -109,7 +114,7 @@ export class Shop {
   //sort products by price asc or dsc
   sortProducts(event: any) {
     const value = event.target.value;
-    this.pageNum.set(1);
+    this.pageIndex.set(1);
     this.allProducts.set(
       [...this.allProducts()].sort((a, b) => {
         if (value === 'asc') return a.price - b.price;
@@ -122,7 +127,7 @@ export class Shop {
   //filter products by price as under $25, $25 to $50, $50 to $100, $100 to $200
   filterProductsPrice(event: any) {
     const value = event.target.value;
-    this.pageNum.set(1);
+    this.pageIndex.set(1);
     switch (value) {
       case 'Under $25':
         this.minPrice = 0;

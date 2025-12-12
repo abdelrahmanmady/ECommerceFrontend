@@ -8,7 +8,7 @@ import { filter, Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ProductService {
-  private readonly baseUrl: string = environment.url + 'api/Product/';
+  private readonly baseUrl: string = `${environment.url}/api/Products/`;
   private http = inject(HttpClient);
 
   getAllProducts(filters:any):Observable<any>{ 
@@ -37,15 +37,15 @@ export class ProductService {
     return this.http.get(this.baseUrl,{params});
   }
   getProductById(id:string):Observable<any>{
-    return this.http.get(this.baseUrl + id);
+    return this.http.get(`${this.baseUrl}/${id}`);
   }
   AddProduct(product:any):Observable<any>{
    return this.http.post(this.baseUrl,product);
   }
   UpdateProduct(id:string,product:any):Observable<any>{
-    return this.http.put(this.baseUrl + id,product);
+    return this.http.put(`${this.baseUrl}/${id}`,product);
   }
   DeleteProduct(id:string):Observable<any>{
-    return this.http.delete(this.baseUrl + id);
+    return this.http.delete(`${this.baseUrl}/${id}`);
   }
 }

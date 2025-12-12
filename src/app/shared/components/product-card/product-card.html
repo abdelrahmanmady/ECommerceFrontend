@@ -1,6 +1,6 @@
 <div class="product-card" [ngClass]="viewType()" data-aos="zoom-in">
   <div class="product-image" [ngClass]="viewType()">
-    <img src={{productData().image}} class="main-image img-fluid" alt="Product" />
+    <img src={{productData().imageUrl}} class="main-image img-fluid" alt="Product" />
     <img
       src="assets/img/product/product-m-2.webp"
       class="hover-image img-fluid"
@@ -8,7 +8,7 @@
     />
     <div class="product-overlay">
       <div class="product-actions">
-        <button [routerLink]="['/product-details', productData().id]" type="button" class="action-btn" data-bs-toggle="tooltip" title="Quick View">
+        <button [routerLink]="['/products', productData().id]" type="button" class="action-btn" data-bs-toggle="tooltip" title="Quick View">
           <i class="bi bi-eye"></i>
         </button>
         <button type="button" class="action-btn" data-bs-toggle="tooltip" title="Add to Cart" (click)="addToCart()">
@@ -25,7 +25,7 @@
   <div class="product-details" [ngClass]="viewType()">
     <div class="product-category" [ngClass]="viewType()">{{ categoryName() }}</div>
     <h4 class="product-title" [ngClass]="viewType()">
-      <a [routerLink]="['/product-details', productData().id]">{{ productData().name }}</a>
+      <a [routerLink]="['/products', productData().id]">{{ productData().name }}</a>
     </h4>
     <div class="product-meta">
       <div class="product-price" [ngClass]="viewType()">
