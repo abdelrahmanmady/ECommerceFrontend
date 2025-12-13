@@ -9,8 +9,7 @@ import { Observable } from 'rxjs';
 export class UserService {
   private readonly baseUrl: string = environment.url + 'api/User/';
   private http = inject(HttpClient);
-  user = signal<any>(null);
-  roles = signal<any>(null);
+
 
 
   getAllUsers():Observable<any> {

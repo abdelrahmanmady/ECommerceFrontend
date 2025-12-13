@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -8,7 +8,9 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
 
-private readonly baseUrl: string = `${environment.url}/api/auth/`;
+  private readonly baseUrl: string = `${environment.url}/api/auth/`;
+
+  user = signal<any>(null);
 
   constructor(private http: HttpClient) {}
 
@@ -16,8 +18,17 @@ private readonly baseUrl: string = `${environment.url}/api/auth/`;
     return this.http.post(`${this.baseUrl}login`, { identifier: email, password, rememberMe });
   }
 
-  register(userName: string, email: string, phoneNumber: string, password: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}register`, { userName, email, phoneNumber, password });
+  register(firstName: string, lastName: string, userName: string, email: string, phoneNumber: string, password: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}register`, { firstName, lastName, userName, email, phoneNumber, password });
+  }
+
+  refreshToken(): Observable<any> {
+    return this.http.post(`${this.baseUrl}refresh-token`, {});
+  }
+
+  logout(): Observable<any> {
+    localStorage.clear();
+    return this.http.post(`${this.baseUrl}revoke-token`, {});
   }
   
 }

@@ -2,9 +2,8 @@ import { NgClass } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms'
 import { Router, RouterLink } from "@angular/router";
-import { AuthService } from '../../../core/services/auth.service';
-import { UserService } from '../../../core/services/user-service';
 import { ToastrService } from 'ngx-toastr';
+import { AuthService, UserService } from '../../../core/services';
 
 
 @Component({
@@ -44,10 +43,9 @@ export class Login {
         this.toastr.success('Login successful!');
         console.log(res);
 
-        localStorage.setItem('acessToken', res.accessToken);
+        localStorage.setItem('accessToken', res.accessToken);
 
-        this.userService.user.set(res.user);
-        this.userService.roles.set(res.roles);
+        this.authService.user.set(res.user);
         this.router.navigate(['home']);
       }
     })

@@ -1,9 +1,9 @@
 import { CurrencyPipe, NgClass } from '@angular/common';
-import { Component, effect, inject, Input, input, OnInit, signal, Signal } from '@angular/core';
-import { IProduct } from '../../../features/shop/shop/shop';
-import { CategoryService } from '../../../core/services/category-service';
+import { Component, inject, Input, input, OnInit, signal, Signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { CartItemsService } from '../../../core/services/cart-items-service';
+import { CartService, CategoryService } from '../../../core/services';
+import { ToastrService } from 'ngx-toastr';
+
 
 @Component({
   selector: 'app-product-card',
@@ -14,10 +14,13 @@ import { CartItemsService } from '../../../core/services/cart-items-service';
 export class ProductCard implements OnInit {
   productData = input.required<any>();
   viewType = input.required<string>();
+  
   categoryService = inject(CategoryService);
-  cartItemService = inject(CartItemsService);
-  categoryName = signal<string>('');
+  cartService = inject(CartService);
   router = inject(Router);
+  toastr = inject(ToastrService);
+
+  categoryName = signal<string>('');
 
   constructor() {
   }
@@ -27,18 +30,18 @@ export class ProductCard implements OnInit {
   }
   addToCart(){
     
-    this.cartItemService.AddCartItems({
-      cartId:"1",
-      productId: this.productData().id,
-      quantity: 1,
-    }).subscribe({
+    productId: this.productData().id,
+    this.cartService.AddCartItem(this.productData().id).subscribe({
       next:(res)=>{
         console.log(res);
+        this.toastr.success('Product added to cart');
+        this.router.navigate(['/cart']);
       },
       error:(err)=>{
         console.log(err);
+        this.toastr.error(err.error);
       }
-    });
-console.log ("added to cart");
+    })
+
   }
 }

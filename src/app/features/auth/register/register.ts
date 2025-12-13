@@ -30,7 +30,7 @@ export class Register {
     }
 
     console.log("Form Values:", form.value);
-    this.authService.register(form.value.email.split('@')[0], form.value.email, form.value.phone, form.value.password).subscribe({
+    this.authService.register(form.value.firstName, form.value.lastName, form.value.email.split('@')[0], form.value.email, form.value.phone, form.value.password).subscribe({
       next: (res) => {
         console.log(res);
         this.toastr.success('Registration successful!, please login');

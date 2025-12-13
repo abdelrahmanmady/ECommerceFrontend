@@ -68,7 +68,7 @@
                 </div>
                 <div class="col-lg-2 col-12 mt-3 mt-lg-0 text-center">
                   <div class="quantity-selector">
-                    <button class="quantity-btn decrease" (click)="decreaseQty(item)">
+                    <button class="quantity-btn decrease" (click)="removeCartItem(item.id)">
                       <i class="bi bi-dash"></i>
                     </button>
                     <input
@@ -79,7 +79,7 @@
                       max="{{ item.product.stock }}"
                       
                     />
-                    <button class="quantity-btn increase" (click)="increaseQty(item)">
+                    <button class="quantity-btn increase" (click)="addCartItem(item)">
                       <i class="bi bi-plus"></i>
                     </button>
                   </div>
@@ -98,19 +98,8 @@
         
 
             <div class="cart-actions">
-              <div class="row">
-                <div class="col-lg-6 mb-3 mb-lg-0">
-                  <div class="coupon-form">
-                    <div class="input-group">
-                      <input type="text" class="form-control" placeholder="Coupon code" />
-                      <button class="btn btn-outline-accent" type="button">Apply Coupon</button>
-                    </div>
-                  </div>
-                </div>
+              <div class="row justify-content-end">
                 <div class="col-lg-6 text-md-end">
-                  <button class="btn btn-outline-heading me-2" (click)="updateCartItem()">
-                    <i class="bi bi-arrow-clockwise"></i> Update Cart
-                  </button>
                   <button class="btn btn-outline-remove" (click)="clearCart()">
                     <i class="bi bi-trash"></i> Clear Cart
                   </button>
@@ -177,7 +166,7 @@
             </div>
 
             <div class="continue-shopping">
-              <a routerLink="/shop" class="btn btn-link w-100">
+              <a routerLink="/products" class="btn btn-link w-100">
                 <i class="bi bi-arrow-left"></i> Continue Shopping
               </a>
             </div>

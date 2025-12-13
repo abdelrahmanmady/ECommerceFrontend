@@ -1,7 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { ProductService } from '../../../core/services/product-service';
-import { CartItemsService } from '../../../core/services/cart-items-service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ProductService } from '../../../core/services/product.service';
+import { CartService } from '../../../core/services';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-product-details',
@@ -12,11 +13,15 @@ import { CartItemsService } from '../../../core/services/cart-items-service';
 export class ProductDetails {
   activeRoute = inject(ActivatedRoute);
   productService = inject(ProductService);
-  cartItemService = inject(CartItemsService);
+  cartService = inject(CartService);
+  toastr = inject(ToastrService);
+  router = inject(Router);
+
   productData = signal<any>({});
-  productId = this.activeRoute.snapshot.paramMap.get('id');
   mainImage = signal<any>({});
   activeImage = signal(0);
+  
+  productId = this.activeRoute.snapshot.paramMap.get('id');
   quantity: number = 1;
 
   constructor() {
@@ -53,15 +58,17 @@ export class ProductDetails {
     }
   }
   addToCart(){
-    this.cartItemService.AddCartItems({
-      cartId:"1",
-      productId: this.productId,
-      quantity: this.quantity,
-    }).subscribe({
+    this.cartService.AddCartItem(this.productData().id).subscribe({
+      next:(res)=>{
+        console.log(res);
+        this.cartService.setCartCount(res.cartItems.length);
+        this.toastr.success('Product added to cart');
+        this.router.navigate(['/cart']);
+      },
       error:(err)=>{
         console.log(err);
+        this.toastr.error(err.error);
       }
-    });
-console.log ("added to cart");
+    })
   }
 }

@@ -9,9 +9,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      
-      toastr.error(error.error.message);
+      if(!req.url.includes('refresh-token')){
+        toastr.error(error.error.message);
+      }
       return throwError(() => new Error(error.error.message));
+      
     })
   );
 };
