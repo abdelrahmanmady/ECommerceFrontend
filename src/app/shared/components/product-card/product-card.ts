@@ -35,7 +35,7 @@ export class ProductCard implements OnInit {
       next:(res)=>{
         console.log(res);
         this.toastr.success('Product added to cart');
-        this.router.navigate(['/cart']);
+        // this.router.navigate(['/cart']);
       },
       error:(err)=>{
         console.log(err);

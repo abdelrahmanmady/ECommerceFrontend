@@ -8,7 +8,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   req = req.clone({ withCredentials: true });
 
-  if (req.url.includes('refresh-token')) {
+  if (req.url.includes('refresh-token') || req.url.includes('login') || req.url.includes('register')) {
     return next(req);
   }
   

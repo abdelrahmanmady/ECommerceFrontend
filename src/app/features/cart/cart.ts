@@ -11,6 +11,7 @@ import { CartService } from '../../core/services/cart.service';
 export class Cart {
   cartService = inject(CartService);
   cartItems = signal<any>({});
+  cartTotal = signal(0);
 
   ngOnInit() {
     this.loadCartItems();
@@ -21,6 +22,8 @@ export class Cart {
       next:(res)=>{
         console.log(res);
         this.cartItems.set(res.items);
+        this.cartTotal.set(res.cartTotal);
+        this.cartService.setCartCount(res.items.length);
       },
       error:(err)=>{
         console.log(err.message);
@@ -29,11 +32,13 @@ export class Cart {
 
   }
 
-  addCartItem(id:string){
-    this.cartService.AddCartItem(id).subscribe({
+  addCartItem(productId:string){
+    this.cartService.AddCartItem(productId).subscribe({
       next:(res)=>{
         console.log(res);
-        this.loadCartItems();
+        this.cartItems.set(res.items);
+        this.cartTotal.set(res.cartTotal);
+        this.cartService.setCartCount(res.items.length);
       },
       error:(err)=>{
         console.log(err.message);
@@ -41,11 +46,13 @@ export class Cart {
     })
   }
 
-  removeCartItem(id:string){
-    this.cartService.DeleteCartItem(id).subscribe({
+  removeCartItem(productId:string){
+    this.cartService.DeleteCartItem(productId).subscribe({
       next:(res)=>{
         console.log(res);
-        this.loadCartItems();
+        this.cartItems.set(res.items);
+        this.cartTotal.set(res.cartTotal);
+        this.cartService.setCartCount(res.items.length);
       },
       error:(err)=>{
         console.log(err.message);
@@ -57,7 +64,9 @@ export class Cart {
     this.cartService.clearCart().subscribe({
       next:(res)=>{
         console.log(res);
-        this.loadCartItems();
+        this.cartItems.set(res.items);
+        this.cartTotal.set(res.cartTotal);
+        this.cartService.setCartCount(res.items.length);
       },
       error:(err)=>{
         console.log(err.message);

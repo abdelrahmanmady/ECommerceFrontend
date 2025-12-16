@@ -63,7 +63,7 @@ export class ProductDetails {
         console.log(res);
         this.cartService.setCartCount(res.cartItems.length);
         this.toastr.success('Product added to cart');
-        this.router.navigate(['/cart']);
+        // this.router.navigate(['/cart']);
       },
       error:(err)=>{
         console.log(err);

@@ -31,7 +31,7 @@ export class CartService {
     return this.http.post(`${this.baseUrl}/items/${productId}`,null);
   }
 
-  DeleteCartItem(id:any):Observable<any>{
-    return this.http.delete(`${this.baseUrl}/items/${id}`);
+  DeleteCartItem(productId:any):Observable<any>{
+    return this.http.delete(`${this.baseUrl}/items/${productId}`);
   }
 }
