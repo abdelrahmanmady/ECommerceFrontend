@@ -1,110 +1,143 @@
-<!-- Register Section -->
-<section class="register-section flex-row justify-content-center align-items-center  ">
+<section class="register-section">
     <div class="container">
         <div class="register-container">
-            <div class="register-box card">
-                <div class="shape-square-1"></div>
-                <div class="shape-square-2"></div>
+            <div class="register-box">
                 <div class="register-header">
                     <h1>Create Account</h1>
                     <p>Create your account and start shopping with us</p>
                 </div>
 
                 <form #registerForm="ngForm" (ngSubmit)="register(registerForm)">
+                    <!-- Name Row -->
                     <div class="form-row">
-                        <div class="form-floating form-outline">
-                            <input class="form-control" id="FN" name="firstName" ngModel required
-                                placeholder="First Name" />
-                            <label class="form-label" for="FN">First Name</label>
+                        <div class="form-group" [class.has-error]="errors.firstName">
+                            <label>First Name *</label>
+                            <input type="text" name="firstName" [(ngModel)]="firstName"
+                                (ngModelChange)="validateFirstName()" required placeholder="John" />
+                            @if (errors.firstName) {
+                            <span class="field-error">{{ errors.firstName }}</span>
+                            }
                         </div>
-
-                        <div class="form-floating form-outline">
-                            <input class="form-control" id="LN" name="lastName" ngModel required
-                                placeholder="Last Name" />
-                            <label class="form-label" for="LN">Last Name</label>
+                        <div class="form-group" [class.has-error]="errors.lastName">
+                            <label>Last Name *</label>
+                            <input type="text" name="lastName" [(ngModel)]="lastName"
+                                (ngModelChange)="validateLastName()" required placeholder="Doe" />
+                            @if (errors.lastName) {
+                            <span class="field-error">{{ errors.lastName }}</span>
+                            }
                         </div>
                     </div>
 
+                    <!-- Username & Email Row -->
                     <div class="form-row">
-                        <div class="form-floating form-outline">
-                            <input class="form-control" id="email" name="email" ngModel required type="email"
-                                placeholder="Email" />
-                            <label for="email">Email Address</label>
+                        <div class="form-group" [class.has-error]="errors.userName">
+                            <label>Username *</label>
+                            <input type="text" name="userName" [(ngModel)]="userName"
+                                (ngModelChange)="validateUserName()" required placeholder="johndoe" />
+                            @if (errors.userName) {
+                            <span class="field-error">{{ errors.userName }}</span>
+                            }
                         </div>
-
-                        <div class="form-floating form-outline">
-                            <input class="form-control" id="phone" name="phone" ngModel type="tel"
-                                placeholder="Phone" />
-                            <label for="phone">Phone</label>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-floating mb-3 position-relative">
-                            <input class="form-control" [type]="showPassword ? 'text' : 'password'" name="password"
-                                ngModel required placeholder="Password">
-                            <label>Password</label>
-                            <i class="fas fa-eye-slash password-toggle" (click)="togglePassword()"></i>
-                        </div>
-
-                        <div class="form-floating mb-3 position-relative">
-                            <input class="form-control" [type]="showPassword ? 'text' : 'password'"
-                                name="confirmPassword" ngModel required placeholder="Confirm Password">
-                            <label>Confirm Password</label>
-                            <i class="fas fa-eye-slash password-toggle" (click)="togglePassword()"></i>
+                        <div class="form-group" [class.has-error]="errors.email">
+                            <label>Email Address *</label>
+                            <input type="email" name="email" [(ngModel)]="email" (ngModelChange)="validateEmailField()"
+                                required placeholder="your@email.com" />
+                            @if (errors.email) {
+                            <span class="field-error">{{ errors.email }}</span>
+                            }
                         </div>
                     </div>
 
-                    <div class="checkBox-container">
-                        <div class="checkbox-group dark">
-                            <input type="checkbox" id="agree-terms" name="agreeTerms" ngModel required>
-                            <label for="agree-terms">I agree to the Terms</label>
+                    <!-- Mobile Number -->
+                    <div class="form-group" [class.has-error]="errors.phoneNumber">
+                        <label>Mobile Number</label>
+                        <div class="phone-input-group">
+                            <div class="country-code-display">
+                                <img src="https://flagcdn.com/w20/eg.png" alt="EG" class="country-flag" />
+                                <span>+20</span>
+                            </div>
+                            <input type="tel" name="phoneNumber" [(ngModel)]="phoneNumber"
+                                (ngModelChange)="validatePhoneField()" placeholder="1012 345 678"
+                                class="phone-number-input" maxlength="12" />
                         </div>
+                        @if (errors.phoneNumber) {
+                        <span class="field-error">{{ errors.phoneNumber }}</span>
+                        }
+                    </div>
 
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="newsletter" name="newsletter" ngModel>
-                            <label for="newsletter">Subscribe to newsletter</label>
+                    <!-- Password -->
+                    <div class="form-group" [class.has-error]="errors.password">
+                        <label>Password *</label>
+                        <div class="password-field">
+                            <input [type]="showPassword ? 'text' : 'password'" name="password" [(ngModel)]="password"
+                                (ngModelChange)="checkPasswordRequirements()" required
+                                placeholder="Create a password" />
+                            <i class="fas password-toggle" [class.fa-eye]="!showPassword"
+                                [class.fa-eye-slash]="showPassword" (click)="togglePassword()"></i>
+                        </div>
+                        @if (errors.password) {
+                        <span class="field-error">{{ errors.password }}</span>
+                        }
+                        <!-- Password Requirements -->
+                        <div class="password-requirements">
+                            <p class="requirements-title">Password must contain:</p>
+                            <ul class="requirements-list">
+                                <li class="requirement" [class.met]="passwordRequirements.minLength"
+                                    [class.unmet]="!passwordRequirements.minLength">
+                                    <i class="bi" [class.bi-check-circle-fill]="passwordRequirements.minLength"
+                                        [class.bi-x-circle-fill]="!passwordRequirements.minLength"></i>
+                                    At least 8 characters
+                                </li>
+                                <li class="requirement" [class.met]="passwordRequirements.hasUppercase"
+                                    [class.unmet]="!passwordRequirements.hasUppercase">
+                                    <i class="bi" [class.bi-check-circle-fill]="passwordRequirements.hasUppercase"
+                                        [class.bi-x-circle-fill]="!passwordRequirements.hasUppercase"></i>
+                                    At least one uppercase letter (A-Z)
+                                </li>
+                                <li class="requirement" [class.met]="passwordRequirements.hasDigit"
+                                    [class.unmet]="!passwordRequirements.hasDigit">
+                                    <i class="bi" [class.bi-check-circle-fill]="passwordRequirements.hasDigit"
+                                        [class.bi-x-circle-fill]="!passwordRequirements.hasDigit"></i>
+                                    At least one digit (0-9)
+                                </li>
+                            </ul>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn-register start-50 translate-middle-x">
-                        Create Account
+                    <!-- Confirm Password -->
+                    <div class="form-group" [class.has-error]="errors.confirmPassword">
+                        <label>Confirm Password *</label>
+                        <div class="password-field">
+                            <input [type]="showPassword ? 'text' : 'password'" name="confirmPassword"
+                                [(ngModel)]="confirmPassword" (ngModelChange)="validateConfirmPasswordField()" required
+                                placeholder="Confirm your password" />
+                        </div>
+                        @if (errors.confirmPassword) {
+                        <span class="field-error">{{ errors.confirmPassword }}</span>
+                        }
+                    </div>
+
+                    <!-- Options -->
+                    <div class="form-options">
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="agree-terms" name="agreeTerms" [(ngModel)]="agreeTerms"
+                                required />
+                            <label for="agree-terms">I agree to the <a routerLink="/tos">Terms &
+                                    Conditions</a></label>
+                        </div>
+                        @if (errors.agreeTerms) {
+                        <span class="field-error terms-error">{{ errors.agreeTerms }}</span>
+                        }
+                    </div>
+
+                    <button type="submit" class="btn-register" [disabled]="isSubmitting">
+                        {{ isSubmitting ? 'Creating Account...' : 'Create Account' }}
                     </button>
                 </form>
 
                 <div class="login-link">
                     Already have an account? <a routerLink="/login">Sign In</a>
                 </div>
-
-                <!-- <div class="divider">
-                    <span>Or register with</span>
-                </div>
-
-                <div class="social-register row">
-                    <div class="col-4">
-                        <a href="#" class="social-btn google">
-                            <i class="fab fa-google"></i>
-                            Google
-                        </a>
-                    </div>
-                    <div class="col-4">
-                        <a href="#" class="social-btn facebook">
-                            <i class="fab fa-facebook-f"></i>
-                            Facebook
-                        </a>
-                    </div>
-                    <div class="col-4">
-                        <a href="#" class="social-btn twitter">
-                            <i class="fab fa-twitter"></i>
-                            Twitter
-                        </a>
-                    </div>
-
-
-
-                </div> -->
-
-
             </div>
         </div>
     </div>

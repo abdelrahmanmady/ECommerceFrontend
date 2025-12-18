@@ -21,7 +21,13 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error: HttpErrorResponse) => {
       const errorMessage = getErrorMessage(error);
 
-      if (!req.url.includes('refresh-token')) {
+      // Skip toast for refresh-token requests
+      const isRefreshToken = req.url.includes('refresh-token');
+      // Skip toast for validation/conflict errors on register - these are handled inline
+      const isRegisterValidation = req.url.includes('auth/register') &&
+        (error.status === 400 || error.status === 409);
+
+      if (!isRefreshToken && !isRegisterValidation) {
         toastr.error(errorMessage);
       }
       return throwError(() => error);

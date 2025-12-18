@@ -23,7 +23,7 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${this.baseUrl}login`, { identifier: email, password, rememberMe });
   }
 
-  register(firstName: string, lastName: string, userName: string, email: string, phoneNumber: string, password: string): Observable<AuthResponse> {
+  register(firstName: string, lastName: string, userName: string, email: string, phoneNumber: string | null, password: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.baseUrl}register`, { firstName, lastName, userName, email, phoneNumber, password });
   }
 
