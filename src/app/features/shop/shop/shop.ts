@@ -250,9 +250,9 @@ export class Shop {
   parentCategoryId = signal<any[]>([]);
   selectedCategory = signal<string | null>(null);
   minValue: number = 0;
-  maxValue: number = 500;
+  maxValue: number = 5000;
   minPercent: number = 0;
-  maxPercent: number = 50;
+  maxPercent: number = 100;
   viewType = signal<'grid' | 'list'>('grid');
   pageIndex = signal(1);
   pageSize = 10;
@@ -361,9 +361,9 @@ export class Shop {
     if (this.minValue > this.maxValue) {
       this.minValue = this.maxValue;
     }
-    // Convert values to %
-    this.minPercent = (this.minValue / 1000) * 100;
-    this.maxPercent = (this.maxValue / 1000) * 100;
+    // Convert values to % (max is 5000)
+    this.minPercent = (this.minValue / 5000) * 100;
+    this.maxPercent = (this.maxValue / 5000) * 100;
   }
 
   //sort products by price asc or dsc
@@ -428,9 +428,9 @@ export class Shop {
 
     // Reset slider to default values
     this.minValue = 0;
-    this.maxValue = 500;
+    this.maxValue = 5000;
     this.minPercent = 0;
-    this.maxPercent = 50;
+    this.maxPercent = 100;
 
     // Reset sorting dropdown (optional, if using a select element)
     const sortSelect = document.getElementById('sortBy') as HTMLSelectElement;

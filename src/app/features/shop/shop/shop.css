@@ -253,6 +253,11 @@
   overflow: visible !important;
 }
 
+/* Fix price range slider track overflow */
+.pricing-range-widget .range-slider {
+  overflow: hidden;
+}
+
 .filter-btn {
   display: flex;
   align-items: center;
