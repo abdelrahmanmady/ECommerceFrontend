@@ -261,13 +261,20 @@
 
                 <div class="col col-lg-auto ms-lg-auto">
                   <div class="filter-item">
-                    <select class="form-select w-100" (change)="sortProducts($event)" id="sortBy">
-                      <option value="default" selected="">Featured</option>
-                      <option value="asc">Price: Low to High</option>
-                      <option value="dsc">Price: High to Low</option>
-                      <option value="new">Customer Rating</option>
-                      <option value="pop">Newest Arrivals</option>
-                    </select>
+                    <div class="dropdown sort-dropdown">
+                      <button class="filter-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-sort-alpha-down"></i>
+                        <span>Sort By</span>
+                        <i class="bi bi-chevron-down"></i>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li><a class="dropdown-item active" href="#">Featured</a></li>
+                        <li><a class="dropdown-item" href="#">Price: Low to High</a></li>
+                        <li><a class="dropdown-item" href="#">Price: High to Low</a></li>
+                        <li><a class="dropdown-item" href="#">Customer Rating</a></li>
+                        <li><a class="dropdown-item" href="#">Newest Arrivals</a></li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
 

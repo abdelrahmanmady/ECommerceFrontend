@@ -234,3 +234,91 @@
 .view-toggle .view-btn.active:hover {
   background-color: #1a1a1a;
 }
+
+/* Sort Dropdown Styles */
+.sort-dropdown {
+  position: relative;
+}
+
+/* Fix dropdown overflow clipping */
+.filter-item {
+  overflow: visible;
+}
+
+.filter-container {
+  overflow: visible;
+}
+
+.category-header {
+  overflow: visible !important;
+}
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 16px;
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  color: #444444;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  white-space: nowrap;
+}
+
+.filter-btn:hover {
+  background-color: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+.filter-btn:focus {
+  outline: none;
+  border-color: #2b2b2b;
+  box-shadow: 0 0 0 3px rgba(43, 43, 43, 0.1);
+}
+
+.filter-btn i {
+  font-size: 14px;
+}
+
+.filter-btn .bi-sort-alpha-down {
+  font-size: 18px;
+}
+
+.filter-btn .bi-chevron-down {
+  font-size: 12px;
+  transition: transform 0.2s ease;
+}
+
+.filter-btn[aria-expanded="true"] .bi-chevron-down {
+  transform: rotate(180deg);
+}
+
+.sort-dropdown .dropdown-menu {
+  min-width: 200px;
+  padding: 8px 0;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.sort-dropdown .dropdown-item {
+  padding: 10px 16px;
+  color: #444444;
+  font-size: 0.9rem;
+  transition: all 0.15s ease;
+}
+
+.sort-dropdown .dropdown-item:hover {
+  background-color: #f8f9fa;
+  color: #2b2b2b;
+}
+
+.sort-dropdown .dropdown-item.active {
+  background-color: #2b2b2b;
+  color: #ffffff;
+}
