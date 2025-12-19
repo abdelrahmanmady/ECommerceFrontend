@@ -144,95 +144,30 @@
 
             <div class="brand-filter-content">
               <div class="brand-search">
-                <input type="text" class="form-control" placeholder="Search brands..." />
+                <input type="text" class="form-control" placeholder="Search brands..."
+                  (input)="brandSearch.set($event.target.value)">
                 <i class="bi bi-search"></i>
               </div>
 
               <div class="brand-list">
+                @for(brand of filteredBrands(); track brand.id) {
                 <div class="brand-item">
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="brand1" />
-                    <label class="form-check-label" for="brand1">
-                      Nike
-                      <span class="brand-count">(24)</span>
+                    <input class="form-check-input" type="checkbox" [id]="'brand-'+brand.id"
+                      [checked]="pendingSelectedBrands().includes(brand.id)" (click)="toggleBrand(brand.id)">
+                    <label class="form-check-label" [for]="'brand-'+brand.id">
+                      {{brand.name}}
+                      <span class="brand-count">({{brand.count}})</span>
                     </label>
                   </div>
                 </div>
-
-                <div class="brand-item">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="brand2" />
-                    <label class="form-check-label" for="brand2">
-                      Adidas
-                      <span class="brand-count">(18)</span>
-                    </label>
-                  </div>
-                </div>
-
-                <div class="brand-item">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="brand3" />
-                    <label class="form-check-label" for="brand3">
-                      Puma
-                      <span class="brand-count">(12)</span>
-                    </label>
-                  </div>
-                </div>
-
-                <div class="brand-item">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="brand4" />
-                    <label class="form-check-label" for="brand4">
-                      Reebok
-                      <span class="brand-count">(9)</span>
-                    </label>
-                  </div>
-                </div>
-
-                <div class="brand-item">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="brand5" />
-                    <label class="form-check-label" for="brand5">
-                      Under Armour
-                      <span class="brand-count">(7)</span>
-                    </label>
-                  </div>
-                </div>
-
-                <div class="brand-item">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="brand6" />
-                    <label class="form-check-label" for="brand6">
-                      New Balance
-                      <span class="brand-count">(6)</span>
-                    </label>
-                  </div>
-                </div>
-
-                <div class="brand-item">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="brand7" />
-                    <label class="form-check-label" for="brand7">
-                      Converse
-                      <span class="brand-count">(5)</span>
-                    </label>
-                  </div>
-                </div>
-
-                <div class="brand-item">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="brand8" />
-                    <label class="form-check-label" for="brand8">
-                      Vans
-                      <span class="brand-count">(4)</span>
-                    </label>
-                  </div>
-                </div>
+                }
               </div>
 
               <div class="brand-actions">
-                <button class="btn btn-sm btn-outline-primary">Apply Filter</button>
-                <button class="btn btn-sm btn-link">Clear All</button>
+                <button class="btn btn-sm btn-outline-primary" (click)="applyBrandFilter()">Apply Filter</button>
+                <button class="btn btn-sm btn-link" (click)="pendingSelectedBrands.set([]); applyBrandFilter()">Clear
+                  All</button>
               </div>
             </div>
           </div>
@@ -250,11 +185,11 @@
                 <div class="col-12 col-lg-6">
                   <div class="filter-item search-form">
                     <div class="input-group">
-                      <input type="text" class="form-control" id="productSearch" placeholder="Search for products..."
-                        aria-label="Search for products" (input)="search.set($event.target.value)" />
-                      <button class="btn search-btn" type="button">
+                      <span class="input-group-text search-icon">
                         <i class="bi bi-search"></i>
-                      </button>
+                      </span>
+                      <input type="text" class="form-control" id="productSearch" placeholder="Search for products..."
+                        aria-label="Search for products" [value]="search()" (input)="search.set($event.target.value)" />
                     </div>
                   </div>
                 </div>
@@ -264,15 +199,20 @@
                     <div class="dropdown sort-dropdown">
                       <button class="filter-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-sort-alpha-down"></i>
-                        <span>Sort By</span>
+                        <span>{{ selectedSort() }}</span>
                         <i class="bi bi-chevron-down"></i>
                       </button>
                       <ul class="dropdown-menu">
-                        <li><a class="dropdown-item active" href="#">Featured</a></li>
-                        <li><a class="dropdown-item" href="#">Price: Low to High</a></li>
-                        <li><a class="dropdown-item" href="#">Price: High to Low</a></li>
-                        <li><a class="dropdown-item" href="#">Customer Rating</a></li>
-                        <li><a class="dropdown-item" href="#">Newest Arrivals</a></li>
+                        <li><a class="dropdown-item" [class.active]="selectedSort() === 'Featured'"
+                            (click)="setSort('default', 'Featured')">Featured</a></li>
+                        <li><a class="dropdown-item" [class.active]="selectedSort() === 'Price: Low to High'"
+                            (click)="setSort('asc', 'Price: Low to High')">Price: Low to High</a></li>
+                        <li><a class="dropdown-item" [class.active]="selectedSort() === 'Price: High to Low'"
+                            (click)="setSort('dsc', 'Price: High to Low')">Price: High to Low</a></li>
+                        <li><a class="dropdown-item" [class.active]="selectedSort() === 'Customer Rating'"
+                            (click)="setSort('rating', 'Customer Rating')">Customer Rating</a></li>
+                        <li><a class="dropdown-item" [class.active]="selectedSort() === 'Newest Arrivals'"
+                            (click)="setSort('new', 'Newest Arrivals')">Newest Arrivals</a></li>
                       </ul>
                     </div>
                   </div>
@@ -294,25 +234,22 @@
                 </div>
               </div>
               @if(activeFilters().length > 0){
-
               <div class="row mt-3">
                 <div class="col-12" data-aos="fade-up" data-aos-delay="200">
                   <div class="active-filters">
                     <span class="active-filter-label">Active Filters:</span>
                     <div class="filter-tags">
-                      @for(filter of activeFilters();track $index){
-
+                      @for(filter of activeFilters(); track $index){
                       <span class="filter-tag">
-                        {{ filter }} <button class="filter-remove"><i class="bi bi-x"></i></button>
+                        <span class="filter-type">{{ filter.label }}:</span> {{ filter.value }}
+                        <button class="filter-remove" (click)="removeFilter(filter.type, filter.id)" type="button"
+                          aria-label="Remove filter">
+                          <i class="bi bi-x"></i>
+                        </button>
                       </span>
                       }
-
-                      <!-- <span class="filter-tag">
-                        Electronics <button class="filter-remove"><i class="bi bi-x"></i></button>
-                      </span> -->
-
-                      <button class="clear-all-btn" (click)="clearAllFilters()">Clear All</button>
                     </div>
+                    <button class="clear-all-btn" (click)="clearAllFilters()" type="button">Clear All</button>
                   </div>
                 </div>
               </div>

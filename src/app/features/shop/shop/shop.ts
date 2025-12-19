@@ -260,8 +260,58 @@ export class Shop {
   minPrice?: number | undefined;
   maxPrice?: number | undefined;
   search = signal('');
-  activeFilters = signal<string[]>([]);
   categorySort = signal('');
+
+  // Active Filters System
+  selectedSort = signal('Sort By');
+  selectedSortKey = signal<string | null>(null);  // Sort key for API (asc, dsc, rating, new)
+  selectedBrands = signal<string[]>([]); // Multi-select brands (IDs) - COMMITTED
+  pendingSelectedBrands = signal<string[]>([]); // Multi-select brands (IDs) - PENDING
+  brandSearch = signal(''); // Local search for brand list
+  // Signal to track applied price range for reactivity
+  appliedPriceRange = signal({ min: 0, max: 5000 });
+
+  filteredBrands = computed(() => {
+    const search = this.brandSearch().toLowerCase();
+    if (!search) return this.allBrands();
+    return this.allBrands().filter(b => b.name.toLowerCase().includes(search));
+  });
+
+  // Computed active filters for display
+  activeFilters = computed(() => {
+    const filters: { type: string; label: string; value: string; id?: string }[] = [];
+
+    // Search filter
+    if (this.search() && this.search().trim() !== '') {
+      filters.push({ type: 'search', label: 'Search', value: this.search() });
+    }
+
+    // Category filter
+    if (this.selectedCategory()) {
+      const cat = this.findCategoryById(this.selectedCategory()!);
+      if (cat) {
+        filters.push({ type: 'category', label: 'Category', value: cat.name });
+      }
+    }
+
+    // Price range filter (only if not full range)
+    const price = this.appliedPriceRange();
+    if (price.min > 0 || price.max < 5000) {
+      const maxDisplay = price.max >= 5000 ? '5000+' : price.max.toString();
+      filters.push({ type: 'price', label: 'Price', value: `${price.min}-${maxDisplay} EGP` });
+    }
+
+    // Brand filter (multi-select)
+    this.selectedBrands().forEach(brandId => {
+      const brand = this.allBrands().find(b => b.id === brandId);
+      if (brand) {
+        // Use brandId as value to uniquely identify for removal
+        filters.push({ type: 'brand', label: 'Brand', value: brand.name, id: brandId });
+      }
+    });
+
+    return filters;
+  });
 
   search$ = toObservable(this.search).pipe(debounceTime(3000), distinctUntilChanged());
 
@@ -285,35 +335,37 @@ export class Shop {
   }
 
   constructor() {
-    this.search$.subscribe((search) => {
-      this.loadProducts(this.pageIndex(), this.pageSize, undefined, undefined, search);
+    // When search changes, reload products
+    this.search$.subscribe(() => {
+      this.loadProducts();
     });
-    this.activeFilters.set([]);
     this.loadProducts();
     this.loadCategories();
     this.loadBrands();
   }
 
-  loadProducts(pageIndex?: number, pageSize?: number, minPrice?: number, maxPrice?: number, search?: string, categoryId?: string) {
+  loadProducts() {
     // DESIGN MODE: Using placeholder data instead of API
+    // In production, API handles filtering/sorting based on query params
     this.allProducts.set(DUMMY_PRODUCTS);
     this.totalPages.set(DUMMY_PRODUCTS.length);
 
     /* ORIGINAL API CALL - Uncomment when ready for integration
     this.productService
       .getAllProducts({
-        pageIndex: pageIndex ?? this.pageIndex(),
-        pageSize: pageSize ?? this.pageSize,
-        minPrice: minPrice ?? null,
-        maxPrice: maxPrice ?? null,
-        search: search ?? null,
-        categoryId: categoryId ?? null,
+        pageIndex: this.pageIndex(),
+        pageSize: this.pageSize,
+        minPrice: this.appliedPriceRange().min > 0 ? this.appliedPriceRange().min : null,
+        maxPrice: this.appliedPriceRange().max < 5000 ? this.appliedPriceRange().max : null,
+        search: this.search() || null,
+        categoryId: this.selectedCategory() || null,
+        brandIds: this.selectedBrands().length ? this.selectedBrands().join(',') : null,
+        sortBy: this.selectedSortKey() || null,
       })
       .subscribe((data) => {
         console.log("products data", data);
         this.allProducts.set(data.items);
         this.totalPages.set(data.totalCount);
-        
       });
     */
   }
@@ -344,14 +396,11 @@ export class Shop {
     // Toggle: if already selected, deselect; otherwise select
     if (this.selectedCategory() === cat.id) {
       this.selectedCategory.set(null);
-      this.activeFilters.set([]);
-      this.loadProducts();
     } else {
       this.selectedCategory.set(cat.id);
       this.pageIndex.set(1);
-      this.activeFilters.set([cat.name]);
-      this.loadProducts(undefined, undefined, undefined, undefined, undefined, cat.id);
     }
+    this.loadProducts();
   }
 
   sortByCategory(cat: any) {
@@ -366,79 +415,100 @@ export class Shop {
     this.maxPercent = (this.maxValue / 5000) * 100;
   }
 
-  //sort products by price asc or dsc
-  sortProducts(event: any) {
-    const value = event.target.value;
-    this.pageIndex.set(1);
-    this.allProducts.set(
-      [...this.allProducts()].sort((a, b) => {
-        if (value === 'asc') return a.price - b.price;
-        if (value === 'dsc') return b.price - a.price;
-        return 0;
-      })
-    );
-    this.activeFilters.set([value]);
-  }
-  //filter products by price as under $25, $25 to $50, $50 to $100, $100 to $200
-  filterProductsPrice(event: any) {
-    const value = event.target.value;
-    this.pageIndex.set(1);
-    switch (value) {
-      case 'Under $25':
-        this.minPrice = 0;
-        this.maxPrice = 25;
-        break;
-      case '$25 to $50':
-        this.minPrice = 25;
-        this.maxPrice = 50;
-        break;
-      case '$50 to $100':
-        this.minPrice = 50;
-        this.maxPrice = 100;
-        break;
-      case '$100 to $200':
-        this.minPrice = 100;
-        this.maxPrice = 200;
-        break;
-      case '$200':
-        this.minPrice = 200;
-        this.maxPrice = undefined;
-        break;
-      default:
-        this.minPrice = undefined;
-        this.maxPrice = undefined;
-    }
-    this.activeFilters.set([value]);
-    this.loadProducts(this.minPrice!, this.maxPrice!);
-  }
-  //filter products by price slider
+  // NOTE: sortProducts and filterProductsPrice removed - API handles sorting/filtering
+  // These methods are no longer needed as loadProducts() sends all filter state to API
+  //filter products by price slider - just updates state and calls loadProducts
   priceFilter() {
-    this.allProducts.set(
-      this.allProducts().filter(
-        (p) => Number(p.price) >= this.minValue && Number(p.price) <= this.maxValue
-      )
-    );
+    this.pageIndex.set(1);
+    this.appliedPriceRange.set({ min: this.minValue, max: this.maxValue });
+    this.loadProducts();
   }
 
   clearAllFilters() {
-    this.activeFilters.set([]);
     this.minPrice = undefined;
     this.maxPrice = undefined;
     this.search.set('');
+    this.selectedCategory.set(null);
+    this.selectedBrands.set([]);
+    this.pendingSelectedBrands.set([]);
 
     // Reset slider to default values
     this.minValue = 0;
     this.maxValue = 5000;
     this.minPercent = 0;
     this.maxPercent = 100;
-
-    // Reset sorting dropdown (optional, if using a select element)
-    const sortSelect = document.getElementById('sortBy') as HTMLSelectElement;
-    if (sortSelect) sortSelect.value = 'default';
-
-    const priceRange = document.getElementById('priceRange') as HTMLSelectElement;
-    if (priceRange) priceRange.value = 'default';
+    this.appliedPriceRange.set({ min: 0, max: 5000 });
 
     this.loadProducts();
   }
+
+  // Remove individual filter by type
+  removeFilter(type: string, id?: string) {
+    switch (type) {
+      case 'search':
+        this.search.set('');
+        break;
+      case 'category':
+        this.selectedCategory.set(null);
+        break;
+      case 'price':
+        this.minValue = 0;
+        this.maxValue = 5000;
+        this.minPercent = 0;
+        this.maxPercent = 100;
+        this.appliedPriceRange.set({ min: 0, max: 5000 });
+        break;
+      case 'brand':
+        let newBrands: string[] = [];
+        if (id) {
+          newBrands = this.selectedBrands().filter(b => b !== id);
+        }
+        this.selectedBrands.set(newBrands);
+        this.pendingSelectedBrands.set(newBrands); // Sync pending
+        break;
+    }
+    this.loadProducts();
+  }
+
+  // Toggle brand selection (pending state)
+  toggleBrand(brandId: string) {
+    const current = this.pendingSelectedBrands();
+    if (current.includes(brandId)) {
+      this.pendingSelectedBrands.set(current.filter(id => id !== brandId));
+    } else {
+      this.pendingSelectedBrands.set([...current, brandId]);
+    }
+  }
+
+  // Apply pending brand filters
+  applyBrandFilter() {
+    this.selectedBrands.set(this.pendingSelectedBrands());
+    this.pageIndex.set(1);
+    this.loadProducts();
+  }
+
+  // Helper to find category by ID
+  findCategoryById(id: string): any {
+    const searchInChildren = (categories: any[]): any => {
+      for (const cat of categories) {
+        if (cat.id === id || cat.id.toString() === id) return cat;
+        if (cat.children?.length) {
+          const found = searchInChildren(cat.children);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+    return searchInChildren(this.allCategories());
+  }
+
+  // Set sort option - just updates state and calls loadProducts
+  setSort(sortKey: string, label: string) {
+    this.selectedSort.set(label);
+    this.selectedSortKey.set(sortKey === 'default' ? null : sortKey);
+    this.pageIndex.set(1);
+    this.loadProducts();
+  }
+
+
 }

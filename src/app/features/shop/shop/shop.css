@@ -327,3 +327,100 @@
   background-color: #2b2b2b;
   color: #ffffff;
 }
+
+/* Active Filter Tag Styling */
+.filter-type {
+  font-weight: 600;
+  color: #666666;
+}
+
+/* Search Icon Styling */
+.search-icon {
+  background-color: transparent;
+  color: #666666;
+  border: 1px solid #dee2e6;
+  border-right: none !important;
+  border-radius: 8px 0 0 8px;
+  transition: none !important;
+  position: relative;
+  z-index: 6;
+}
+
+/* Separator line after icon */
+.search-icon::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 1px;
+  background-color: #dee2e6;
+}
+
+.search-form .form-control {
+  border: 1px solid #dee2e6 !important;
+  border-left: none !important;
+  border-right: 1px solid #dee2e6 !important;
+  border-radius: 0 8px 8px 0 !important;
+  transition: none !important;
+}
+
+.search-form .form-control:focus {
+  box-shadow: none !important;
+  border-color: #2b2b2b !important;
+  border-left: none !important;
+}
+
+.search-form .input-group:focus-within .search-icon {
+  border-color: #2b2b2b !important;
+}
+
+.search-form .input-group:focus-within .search-icon::after {
+  background-color: #dee2e6;
+}
+
+/* Active Filters Layout */
+.active-filters {
+  display: flex !important;
+  align-items: flex-start !important;
+  /* Pins label and button to top */
+  flex-wrap: nowrap !important;
+  /* Prevents button from wrapping */
+  gap: 12px;
+  width: 100%;
+}
+
+.active-filter-label {
+  font-weight: 600;
+  color: #444;
+  white-space: nowrap;
+  padding-top: 6px;
+  flex-shrink: 0;
+  /* Prevents shrinking */
+}
+
+.filter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex: 1;
+  /* Takes all available middle space */
+  min-width: 0;
+  /* Allows flex child to shrink properly if needed */
+}
+
+/* Layout-only style for Clear All to match 3-column alignment */
+.clear-all-btn {
+  padding: 6px 8px 0 8px;
+  /* Alignment */
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Brand List Scroll */
+.brand-list {
+  max-height: 240px;
+  overflow-y: auto;
+  padding-right: 4px;
+  /* Space for scrollbar */
+}
