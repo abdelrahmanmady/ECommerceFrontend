@@ -1,4 +1,4 @@
-import { AsyncPipe, CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ProductCard } from '../../../shared/components/product-card/product-card';
@@ -8,6 +8,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { debounceTime } from 'rxjs/internal/operators/debounceTime';
 import { distinctUntilChanged } from 'rxjs';
 import { CategoryService } from '../../../core/services/category.service';
+import { Category } from '../../../core/models/category.model';
 import { RouterLink, ActivatedRoute } from "@angular/router";
 
 export interface IProduct {
@@ -130,108 +131,6 @@ const DUMMY_PRODUCTS = [
   },
 ];
 
-const DUMMY_CATEGORIES = [
-  {
-    id: 1,
-    name: 'Electronics',
-    description: 'All electronic gadgets',
-    hierarchyPath: 'Electronics',
-    parentId: null,
-    children: [
-      {
-        id: 2,
-        name: 'Computers',
-        description: 'Desktops and Laptops',
-        hierarchyPath: 'Electronics\\Computers',
-        parentId: 1,
-        children: [
-          {
-            id: 3,
-            name: 'Laptops',
-            description: 'Portable computers',
-            hierarchyPath: 'Electronics\\Computers\\Laptops',
-            parentId: 2,
-            children: []
-          },
-          {
-            id: 4,
-            name: 'Desktops',
-            description: 'Workstations',
-            hierarchyPath: 'Electronics\\Computers\\Desktops',
-            parentId: 2,
-            children: []
-          }
-        ]
-      },
-      {
-        id: 5,
-        name: 'Smartphones',
-        description: 'Mobile phones',
-        hierarchyPath: 'Electronics\\Smartphones',
-        parentId: 1,
-        children: []
-      },
-      {
-        id: 6,
-        name: 'Audio',
-        description: 'Speakers and headphones',
-        hierarchyPath: 'Electronics\\Audio',
-        parentId: 1,
-        children: []
-      }
-    ]
-  },
-  {
-    id: 7,
-    name: 'Fashion',
-    description: 'Clothing and Apparel',
-    hierarchyPath: 'Fashion',
-    parentId: null,
-    children: [
-      {
-        id: 8,
-        name: 'Men',
-        description: "Men's clothing",
-        hierarchyPath: 'Fashion\\Men',
-        parentId: 7,
-        children: []
-      },
-      {
-        id: 9,
-        name: 'Women',
-        description: "Women's clothing",
-        hierarchyPath: 'Fashion\\Women',
-        parentId: 7,
-        children: []
-      },
-      {
-        id: 10,
-        name: 'Accessories',
-        description: 'Bags, belts, etc.',
-        hierarchyPath: 'Fashion\\Accessories',
-        parentId: 7,
-        children: []
-      }
-    ]
-  },
-  {
-    id: 11,
-    name: 'Home & Living',
-    description: 'Furniture and decor',
-    hierarchyPath: 'Home & Living',
-    parentId: null,
-    children: []
-  },
-  {
-    id: 12,
-    name: 'Sports',
-    description: 'Sports and fitness',
-    hierarchyPath: 'Sports',
-    parentId: null,
-    children: []
-  }
-];
-
 const DUMMY_BRANDS = [
   { id: '1', name: 'Nike', count: 24 },
   { id: '2', name: 'Adidas', count: 18 },
@@ -254,10 +153,10 @@ export class Shop {
   categoryService = inject(CategoryService);
   activatedRoute = inject(ActivatedRoute);
   allProducts = signal<any[]>([]);
-  allCategories = signal<any[]>([]);
+  allCategories = signal<Category[]>([]);
   allBrands = signal<any[]>([]);
   parentCategoryId = signal<any[]>([]);
-  selectedCategory = signal<string | null>(null);
+  selectedCategory = signal<number | null>(null);
   minValue: number = 0;
   maxValue: number = 5000;
   minPercent: number = 0;
@@ -322,26 +221,26 @@ export class Shop {
   categoryTree = computed(() => this.allCategories());
 
 
-  hasChildSelected(category: any): boolean {
+  hasChildSelected(category: Category): boolean {
     const selected = this.selectedCategory();
-    if (!selected || !category.children?.length) return false;
+    if (!selected || category.subcategories.length === 0) return false;
 
-    const checkChildren = (children: any[]): boolean => {
-      for (const child of children) {
+    const checkChildren = (subcategories: Category[]): boolean => {
+      for (const child of subcategories) {
         if (child.id === selected) return true;
-        if (child.children?.length && checkChildren(child.children)) return true;
+        if (child.subcategories.length > 0 && checkChildren(child.subcategories)) return true;
       }
       return false;
     };
 
-    return checkChildren(category.children);
+    return checkChildren(category.subcategories);
   }
 
   constructor() {
     this.activatedRoute.queryParams.subscribe(params => {
       const catId = params['categoryId'];
       if (catId) {
-        this.selectedCategory.set(catId);
+        this.selectedCategory.set(Number(catId));
         this.pageIndex.set(1);
         this.loadProducts();
       }
@@ -361,7 +260,14 @@ export class Shop {
   }
 
   loadCategories() {
-    this.allCategories.set(DUMMY_CATEGORIES);
+    this.categoryService.getAllCategories().subscribe({
+      next: (categories) => {
+        this.allCategories.set(categories);
+      },
+      error: () => {
+        this.allCategories.set([]);
+      }
+    });
   }
 
   loadBrands() {
@@ -469,18 +375,18 @@ export class Shop {
     this.loadProducts();
   }
 
-  findCategoryById(id: string): any {
-    const searchInChildren = (categories: any[]): any => {
+  findCategoryById(id: number): Category | null {
+    const searchInCategories = (categories: Category[]): Category | null => {
       for (const cat of categories) {
-        if (cat.id === id || cat.id.toString() === id) return cat;
-        if (cat.children?.length) {
-          const found = searchInChildren(cat.children);
+        if (cat.id === id) return cat;
+        if (cat.subcategories?.length) {
+          const found = searchInCategories(cat.subcategories);
           if (found) return found;
         }
       }
       return null;
     };
-    return searchInChildren(this.allCategories());
+    return searchInCategories(this.allCategories());
   }
 
   setSort(sortKey: string, label: string) {

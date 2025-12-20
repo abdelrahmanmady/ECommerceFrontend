@@ -3,16 +3,8 @@ import { inject } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { ApiError } from '../models/api-error.model';
 
-/**
- * Backend unified error response structure
- */
-interface ApiError {
-  statusCode: number;
-  message: string;
-  detail: string;
-  timeStamp: string;
-}
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const toastr = inject(ToastrService);

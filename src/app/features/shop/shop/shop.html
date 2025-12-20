@@ -24,7 +24,6 @@
             <div class="category-list">
               @for(parent of categoryTree(); track parent.id){
               <div class="category-group">
-                <!-- Level 1: Parent Category -->
                 <div class="category-item parent-category">
                   <div class="form-check">
                     <input class="form-check-input" type="checkbox" [id]="'cat-' + parent.id"
@@ -34,17 +33,16 @@
                       {{ parent.name }}
                     </label>
                   </div>
-                  @if(parent.children?.length > 0){
+                  @if(parent.subcategories.length > 0){
                   <button class="btn btn-link btn-sm category-expand p-0" type="button" data-bs-toggle="collapse"
                     [attr.data-bs-target]="'#subcats-' + parent.id" aria-expanded="false">
                     <i class="bi bi-chevron-down"></i>
                   </button>
                   }
                 </div>
-                <!-- Level 2: Subcategories -->
-                @if(parent.children?.length > 0){
+                @if(parent.subcategories.length > 0){
                 <div class="collapse subcategory-list" [id]="'subcats-' + parent.id">
-                  @for(child of parent.children; track child.id){
+                  @for(child of parent.subcategories; track child.id){
                   <div class="category-item-wrapper">
                     <div class="category-item subcategory">
                       <div class="form-check">
@@ -55,17 +53,16 @@
                           {{ child.name }}
                         </label>
                       </div>
-                      @if(child.children?.length > 0){
+                      @if(child.subcategories.length > 0){
                       <button class="btn btn-link btn-sm category-expand p-0" type="button" data-bs-toggle="collapse"
                         [attr.data-bs-target]="'#subcats-' + child.id" aria-expanded="false">
                         <i class="bi bi-chevron-down"></i>
                       </button>
                       }
                     </div>
-                    <!-- Level 3: Sub-subcategories -->
-                    @if(child.children?.length > 0){
+                    @if(child.subcategories.length > 0){
                     <div class="collapse subcategory-list level-3" [id]="'subcats-' + child.id">
-                      @for(grandchild of child.children; track grandchild.id){
+                      @for(grandchild of child.subcategories; track grandchild.id){
                       <div class="category-item subcategory">
                         <div class="form-check">
                           <input class="form-check-input" type="checkbox" [id]="'cat-' + grandchild.id"
