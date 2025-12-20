@@ -1,47 +1,34 @@
-import { CurrencyPipe, NgClass } from '@angular/common';
-import { Component, inject, Input, input, OnInit, signal, Signal } from '@angular/core';
+import { DecimalPipe, NgClass } from '@angular/common';
+import { Component, inject, input } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CartService, CategoryService } from '../../../core/services';
 import { ToastrService } from 'ngx-toastr';
 
-
 @Component({
   selector: 'app-product-card',
-  imports: [CurrencyPipe, NgClass, RouterLink],
+  imports: [DecimalPipe, NgClass, RouterLink],
   templateUrl: './product-card.html',
   styleUrl: './product-card.css',
 })
-export class ProductCard implements OnInit {
+export class ProductCard {
   productData = input.required<any>();
   viewType = input.required<string>();
-  
+
   categoryService = inject(CategoryService);
   cartService = inject(CartService);
   router = inject(Router);
   toastr = inject(ToastrService);
 
-  categoryName = signal<string>('');
-
-  constructor() {
-  }
-
-  ngOnInit(): void {
-    this.categoryName.set(this.productData().categoryName);
-  }
-  addToCart(){
-    
-    productId: this.productData().id,
+  addToCart() {
     this.cartService.AddCartItem(this.productData().id).subscribe({
-      next:(res)=>{
+      next: (res) => {
         console.log(res);
         this.toastr.success('Product added to cart');
-        // this.router.navigate(['/cart']);
       },
-      error:(err)=>{
+      error: (err) => {
         console.log(err);
         this.toastr.error(err.error);
       }
-    })
-
+    });
   }
 }

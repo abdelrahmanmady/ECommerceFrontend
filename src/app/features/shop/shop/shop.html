@@ -105,28 +105,9 @@
                 <div class="slider-progress" [style.left.%]="minPercent" [style.width.%]="maxPercent - minPercent">
                 </div>
                 <input type="range" class="min-range" min="0" max="5000" value="0" step="50" [(ngModel)]="minValue"
-                  (input)="updateSlider()" />
+                  (input)="updateMinSlider()" />
                 <input type="range" class="max-range" min="0" max="5000" value="5000" step="50" [(ngModel)]="maxValue"
-                  (input)="updateSlider()" />
-              </div>
-
-              <div class="price-inputs mt-3">
-                <div class="row g-2">
-                  <div class="col-6">
-                    <div class="input-group input-group-sm">
-                      <span class="input-group-text">EGP</span>
-                      <input type="number" class="form-control min-price-input" placeholder="Min" min="0" max="5000"
-                        value="{{ minValue }}" step="50" />
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <div class="input-group input-group-sm">
-                      <span class="input-group-text">EGP</span>
-                      <input type="number" class="form-control max-price-input" placeholder="Max" min="0" max="5000"
-                        value="{{ maxValue }}" step="50" />
-                    </div>
-                  </div>
-                </div>
+                  (input)="updateMaxSlider()" />
               </div>
 
               <div class="filter-actions mt-3">

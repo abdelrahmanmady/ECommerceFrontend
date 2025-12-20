@@ -8,116 +8,125 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { debounceTime } from 'rxjs/internal/operators/debounceTime';
 import { distinctUntilChanged } from 'rxjs';
 import { CategoryService } from '../../../core/services/category.service';
-import { RouterLink } from "@angular/router";
+import { RouterLink, ActivatedRoute } from "@angular/router";
 
 export interface IProduct {
-  new?: boolean;
-  sale?: number;
-  image: string;
-  category: string;
-  title: string;
-  rating: number;
+  id: number;
+  thumbnailUrl: string;
+  categoryBreadcrumb: string;
+  brandedName: string;
   price: number;
-  delPrice?: number;
+  breadcrumbLinks?: { name: string; id: number }[];
 }
 
-// ============================================
-// DESIGN MODE: Placeholder Dummy Data
-// ============================================
 const DUMMY_PRODUCTS = [
   {
-    id: '1',
-    name: 'Premium Wireless Headphones',
+    id: 1,
+    brandedName: 'Sony - Premium Wireless Headphones',
     price: 149.99,
-    imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
-    categoryName: 'Electronics',
-    rating: 4.5,
-    new: true,
-    sale: 0,
+    thumbnailUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
+    categoryBreadcrumb: 'Electronics \\ Audio \\ Headphones',
+    breadcrumbLinks: [
+      { name: 'Electronics', id: 1 },
+      { name: 'Audio', id: 11 },
+      { name: 'Headphones', id: 111 }
+    ]
   },
   {
-    id: '2',
-    name: 'Leather Crossbody Bag',
+    id: 2,
+    brandedName: 'Coach - Leather Crossbody Bag',
     price: 89.99,
-    imageUrl: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400',
-    categoryName: 'Fashion',
-    rating: 4.8,
-    new: false,
-    sale: 15,
-    delPrice: 105.99,
+    thumbnailUrl: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400',
+    categoryBreadcrumb: 'Fashion \\ Accessories \\ Bags',
+    breadcrumbLinks: [
+      { name: 'Fashion', id: 2 },
+      { name: 'Accessories', id: 21 },
+      { name: 'Bags', id: 211 }
+    ]
   },
   {
-    id: '3',
-    name: 'Smart Fitness Watch',
+    id: 3,
+    brandedName: 'Fitbit - Smart Fitness Watch',
     price: 199.99,
-    imageUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400',
-    categoryName: 'Electronics',
-    rating: 4.2,
-    new: true,
-    sale: 0,
+    thumbnailUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400',
+    categoryBreadcrumb: 'Electronics \\ Wearables \\ Watches',
+    breadcrumbLinks: [
+      { name: 'Electronics', id: 1 },
+      { name: 'Wearables', id: 12 },
+      { name: 'Watches', id: 121 }
+    ]
   },
   {
-    id: '4',
-    name: 'Minimalist Desk Lamp',
+    id: 4,
+    brandedName: 'Ikea - Minimalist Desk Lamp',
     price: 59.99,
-    imageUrl: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400',
-    categoryName: 'Home & Living',
-    rating: 4.6,
-    new: false,
-    sale: 20,
-    delPrice: 74.99,
+    thumbnailUrl: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400',
+    categoryBreadcrumb: 'Home & Living \\ Lighting \\ Lamps',
+    breadcrumbLinks: [
+      { name: 'Home & Living', id: 3 },
+      { name: 'Lighting', id: 31 },
+      { name: 'Lamps', id: 311 }
+    ]
   },
   {
-    id: '5',
-    name: 'Organic Cotton T-Shirt',
+    id: 5,
+    brandedName: 'H&M - Organic Cotton T-Shirt',
     price: 34.99,
-    imageUrl: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400',
-    categoryName: 'Fashion',
-    rating: 4.4,
-    new: false,
-    sale: 0,
+    thumbnailUrl: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400',
+    categoryBreadcrumb: 'Fashion \\ Clothing \\ Tops',
+    breadcrumbLinks: [
+      { name: 'Fashion', id: 2 },
+      { name: 'Clothing', id: 22 },
+      { name: 'Tops', id: 221 }
+    ]
   },
   {
-    id: '6',
-    name: 'Stainless Steel Water Bottle',
+    id: 6,
+    brandedName: 'Hydro Flask - Stainless Steel Water Bottle',
     price: 24.99,
-    imageUrl: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400',
-    categoryName: 'Sports',
-    rating: 4.7,
-    new: true,
-    sale: 10,
-    delPrice: 27.99,
+    thumbnailUrl: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400',
+    categoryBreadcrumb: 'Sports \\ Accessories \\ Hydration',
+    breadcrumbLinks: [
+      { name: 'Sports', id: 4 },
+      { name: 'Accessories', id: 41 },
+      { name: 'Hydration', id: 411 }
+    ]
   },
   {
-    id: '7',
-    name: 'Bluetooth Portable Speaker',
+    id: 7,
+    brandedName: 'JBL - Bluetooth Portable Speaker',
     price: 79.99,
-    imageUrl: 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400',
-    categoryName: 'Electronics',
-    rating: 4.3,
-    new: false,
-    sale: 0,
+    thumbnailUrl: 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400',
+    categoryBreadcrumb: 'Electronics \\ Audio \\ Speakers',
+    breadcrumbLinks: [
+      { name: 'Electronics', id: 1 },
+      { name: 'Audio', id: 11 },
+      { name: 'Speakers', id: 112 }
+    ]
   },
   {
-    id: '8',
-    name: 'Ceramic Plant Pot Set',
+    id: 8,
+    brandedName: 'West Elm - Ceramic Plant Pot Set',
     price: 45.99,
-    imageUrl: 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400',
-    categoryName: 'Home & Living',
-    rating: 4.9,
-    new: true,
-    sale: 0,
+    thumbnailUrl: 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400',
+    categoryBreadcrumb: 'Home & Living \\ Decor \\ Pots',
+    breadcrumbLinks: [
+      { name: 'Home & Living', id: 3 },
+      { name: 'Decor', id: 32 },
+      { name: 'Pots', id: 321 }
+    ]
   },
   {
-    id: '9',
-    name: 'Running Sneakers',
+    id: 9,
+    brandedName: 'Nike - Running Sneakers',
     price: 129.99,
-    imageUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400',
-    categoryName: 'Sports',
-    rating: 4.6,
-    new: false,
-    sale: 25,
-    delPrice: 159.99,
+    thumbnailUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400',
+    categoryBreadcrumb: 'Sports \\ Footwear \\ Running',
+    breadcrumbLinks: [
+      { name: 'Sports', id: 4 },
+      { name: 'Footwear', id: 42 },
+      { name: 'Running', id: 421 }
+    ]
   },
 ];
 
@@ -233,7 +242,6 @@ const DUMMY_BRANDS = [
   { id: '7', name: 'Converse', count: 5 },
   { id: '8', name: 'Vans', count: 4 },
 ];
-// ============================================
 
 @Component({
   selector: 'app-shop',
@@ -244,6 +252,7 @@ const DUMMY_BRANDS = [
 export class Shop {
   productService = inject(ProductService);
   categoryService = inject(CategoryService);
+  activatedRoute = inject(ActivatedRoute);
   allProducts = signal<any[]>([]);
   allCategories = signal<any[]>([]);
   allBrands = signal<any[]>([]);
@@ -262,13 +271,12 @@ export class Shop {
   search = signal('');
   categorySort = signal('');
 
-  // Active Filters System
+
   selectedSort = signal('Sort By');
-  selectedSortKey = signal<string | null>(null);  // Sort key for API (asc, dsc, rating, new)
-  selectedBrands = signal<string[]>([]); // Multi-select brands (IDs) - COMMITTED
-  pendingSelectedBrands = signal<string[]>([]); // Multi-select brands (IDs) - PENDING
-  brandSearch = signal(''); // Local search for brand list
-  // Signal to track applied price range for reactivity
+  selectedSortKey = signal<string | null>(null);
+  selectedBrands = signal<string[]>([]);
+  pendingSelectedBrands = signal<string[]>([]);
+  brandSearch = signal('');
   appliedPriceRange = signal({ min: 0, max: 5000 });
 
   filteredBrands = computed(() => {
@@ -277,16 +285,14 @@ export class Shop {
     return this.allBrands().filter(b => b.name.toLowerCase().includes(search));
   });
 
-  // Computed active filters for display
+
   activeFilters = computed(() => {
     const filters: { type: string; label: string; value: string; id?: string }[] = [];
 
-    // Search filter
     if (this.search() && this.search().trim() !== '') {
       filters.push({ type: 'search', label: 'Search', value: this.search() });
     }
 
-    // Category filter
     if (this.selectedCategory()) {
       const cat = this.findCategoryById(this.selectedCategory()!);
       if (cat) {
@@ -294,18 +300,15 @@ export class Shop {
       }
     }
 
-    // Price range filter (only if not full range)
     const price = this.appliedPriceRange();
     if (price.min > 0 || price.max < 5000) {
       const maxDisplay = price.max >= 5000 ? '5000+' : price.max.toString();
       filters.push({ type: 'price', label: 'Price', value: `${price.min}-${maxDisplay} EGP` });
     }
 
-    // Brand filter (multi-select)
     this.selectedBrands().forEach(brandId => {
       const brand = this.allBrands().find(b => b.id === brandId);
       if (brand) {
-        // Use brandId as value to uniquely identify for removal
         filters.push({ type: 'brand', label: 'Brand', value: brand.name, id: brandId });
       }
     });
@@ -315,10 +318,10 @@ export class Shop {
 
   search$ = toObservable(this.search).pipe(debounceTime(3000), distinctUntilChanged());
 
-  // API already returns nested structure, just use it directly
+
   categoryTree = computed(() => this.allCategories());
 
-  // Recursively check if any descendant is selected
+
   hasChildSelected(category: any): boolean {
     const selected = this.selectedCategory();
     if (!selected || !category.children?.length) return false;
@@ -335,7 +338,15 @@ export class Shop {
   }
 
   constructor() {
-    // When search changes, reload products
+    this.activatedRoute.queryParams.subscribe(params => {
+      const catId = params['categoryId'];
+      if (catId) {
+        this.selectedCategory.set(catId);
+        this.pageIndex.set(1);
+        this.loadProducts();
+      }
+    });
+
     this.search$.subscribe(() => {
       this.loadProducts();
     });
@@ -345,46 +356,15 @@ export class Shop {
   }
 
   loadProducts() {
-    // DESIGN MODE: Using placeholder data instead of API
-    // In production, API handles filtering/sorting based on query params
     this.allProducts.set(DUMMY_PRODUCTS);
     this.totalPages.set(DUMMY_PRODUCTS.length);
-
-    /* ORIGINAL API CALL - Uncomment when ready for integration
-    this.productService
-      .getAllProducts({
-        pageIndex: this.pageIndex(),
-        pageSize: this.pageSize,
-        minPrice: this.appliedPriceRange().min > 0 ? this.appliedPriceRange().min : null,
-        maxPrice: this.appliedPriceRange().max < 5000 ? this.appliedPriceRange().max : null,
-        search: this.search() || null,
-        categoryId: this.selectedCategory() || null,
-        brandIds: this.selectedBrands().length ? this.selectedBrands().join(',') : null,
-        sortBy: this.selectedSortKey() || null,
-      })
-      .subscribe((data) => {
-        console.log("products data", data);
-        this.allProducts.set(data.items);
-        this.totalPages.set(data.totalCount);
-      });
-    */
   }
 
   loadCategories() {
-    // DESIGN MODE: Using placeholder data instead of API
     this.allCategories.set(DUMMY_CATEGORIES);
-
-    /* ORIGINAL API CALL - Uncomment when ready for integration
-    this.categoryService.getAllCategories().subscribe((data) => {
-      this.allCategories.set(data);
-
-      console.log("sssssss", this.allCategories());
-    });
-    */
   }
 
   loadBrands() {
-    // DESIGN MODE: Using placeholder data instead of API
     this.allBrands.set(DUMMY_BRANDS);
   }
 
@@ -393,7 +373,6 @@ export class Shop {
   }
 
   selectCategory(cat: any) {
-    // Toggle: if already selected, deselect; otherwise select
     if (this.selectedCategory() === cat.id) {
       this.selectedCategory.set(null);
     } else {
@@ -406,18 +385,25 @@ export class Shop {
   sortByCategory(cat: any) {
     this.selectCategory(cat);
   }
-  updateSlider() {
+  updateMinSlider() {
     if (this.minValue > this.maxValue) {
+      this.maxValue = this.minValue;
+    }
+    this.updateSliderPercents();
+  }
+
+  updateMaxSlider() {
+    if (this.maxValue < this.minValue) {
       this.minValue = this.maxValue;
     }
-    // Convert values to % (max is 5000)
+    this.updateSliderPercents();
+  }
+
+  updateSliderPercents() {
     this.minPercent = (this.minValue / 5000) * 100;
     this.maxPercent = (this.maxValue / 5000) * 100;
   }
 
-  // NOTE: sortProducts and filterProductsPrice removed - API handles sorting/filtering
-  // These methods are no longer needed as loadProducts() sends all filter state to API
-  //filter products by price slider - just updates state and calls loadProducts
   priceFilter() {
     this.pageIndex.set(1);
     this.appliedPriceRange.set({ min: this.minValue, max: this.maxValue });
@@ -432,7 +418,6 @@ export class Shop {
     this.selectedBrands.set([]);
     this.pendingSelectedBrands.set([]);
 
-    // Reset slider to default values
     this.minValue = 0;
     this.maxValue = 5000;
     this.minPercent = 0;
@@ -442,7 +427,6 @@ export class Shop {
     this.loadProducts();
   }
 
-  // Remove individual filter by type
   removeFilter(type: string, id?: string) {
     switch (type) {
       case 'search':
@@ -464,13 +448,12 @@ export class Shop {
           newBrands = this.selectedBrands().filter(b => b !== id);
         }
         this.selectedBrands.set(newBrands);
-        this.pendingSelectedBrands.set(newBrands); // Sync pending
+        this.pendingSelectedBrands.set(newBrands);
         break;
     }
     this.loadProducts();
   }
 
-  // Toggle brand selection (pending state)
   toggleBrand(brandId: string) {
     const current = this.pendingSelectedBrands();
     if (current.includes(brandId)) {
@@ -480,14 +463,12 @@ export class Shop {
     }
   }
 
-  // Apply pending brand filters
   applyBrandFilter() {
     this.selectedBrands.set(this.pendingSelectedBrands());
     this.pageIndex.set(1);
     this.loadProducts();
   }
 
-  // Helper to find category by ID
   findCategoryById(id: string): any {
     const searchInChildren = (categories: any[]): any => {
       for (const cat of categories) {
@@ -502,7 +483,6 @@ export class Shop {
     return searchInChildren(this.allCategories());
   }
 
-  // Set sort option - just updates state and calls loadProducts
   setSort(sortKey: string, label: string) {
     this.selectedSort.set(label);
     this.selectedSortKey.set(sortKey === 'default' ? null : sortKey);

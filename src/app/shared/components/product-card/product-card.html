@@ -1,43 +1,43 @@
 <div class="product-card" [ngClass]="viewType()" data-aos="zoom-in">
   <div class="product-image" [ngClass]="viewType()">
-    <img src={{productData().imageUrl}} class="main-image img-fluid" alt="Product" />
-    <img
-      src={{productData().imageUrl}}
-      class="hover-image img-fluid"
-      alt="Product Variant"
-    />
+    <a [routerLink]="['/products', productData().id]" class="image-link">
+      <img [src]="productData().thumbnailUrl" class="main-image" alt="Product" />
+    </a>
     <div class="product-overlay">
       <div class="product-actions">
-        <button [routerLink]="['/products', productData().id]" type="button" class="action-btn" data-bs-toggle="tooltip" title="Quick View">
-          <i class="bi bi-eye"></i>
+        <button type="button" class="action-btn" data-bs-toggle="tooltip" title="Add to Wishlist">
+          <i class="bi bi-heart"></i>
         </button>
         <button type="button" class="action-btn" data-bs-toggle="tooltip" title="Add to Cart" (click)="addToCart()">
           <i class="bi bi-cart-plus"></i>
         </button>
       </div>
     </div>
-    @if(productData().new){
-    <div class="product-badge new">New</div>
-    } @if(productData().sale){
-    <div class="product-badge sale">-25%</div>
-    }
   </div>
   <div class="product-details" [ngClass]="viewType()">
-    <div class="product-category" [ngClass]="viewType()">{{ categoryName() }}</div>
+    <div class="product-category" [ngClass]="viewType()">
+      @for(link of productData().breadcrumbLinks; track $index; let last = $last){
+      <a [routerLink]="['/products']" [queryParams]="{ categoryId: link.id }" class="category-link">{{ link.name }}</a>
+      @if(!last){ <span class="breadcrumb-separator"> \ </span> }
+      }
+    </div>
     <h4 class="product-title" [ngClass]="viewType()">
-      <a [routerLink]="['/products', productData().id]">{{ productData().name }}</a>
+      <a [routerLink]="['/products', productData().id]">{{ productData().brandedName }}</a>
     </h4>
     <div class="product-meta">
       <div class="product-price" [ngClass]="viewType()">
-        {{ productData().price | currency : 'USD' }}
-        @if(productData().delPrice){
-        <span class="original-price">{{ productData().delPrice | currency : 'USD' }}</span>
-        }
-      </div>
-      <div class="product-rating" [ngClass]="viewType">
-        <i class="bi bi-star-fill"></i>
-        4.6 <span>({{ productData().rating??0 }})</span>
+        <span class="currency-prefix">EGP</span>{{ productData().price | number : '1.2-2' }}
       </div>
     </div>
+    @if(viewType() === 'list'){
+    <div class="list-actions">
+      <button type="button" class="list-action-btn wishlist-btn">
+        <i class="bi bi-heart"></i> Add to Wishlist
+      </button>
+      <button type="button" class="list-action-btn cart-btn" (click)="addToCart()">
+        <i class="bi bi-cart-plus"></i> Add to Cart
+      </button>
+    </div>
+    }
   </div>
 </div>
