@@ -26,7 +26,7 @@
     </h4>
     <div class="product-meta">
       <div class="product-price" [ngClass]="viewType()">
-        <span class="currency-prefix">EGP</span>{{ productData().price | number : '1.2-2' }}
+        {{productData().price | number : '1.2-2'}}<span class="currency-suffix">EGP</span>
       </div>
     </div>
     @if(viewType() === 'list'){

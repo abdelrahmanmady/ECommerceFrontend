@@ -169,13 +169,18 @@
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
 }
 
-.currency-prefix {
+.product-price {
+  display: flex !important;
+  align-items: baseline !important;
+}
+
+.currency-suffix {
   font-size: 0.7em;
   font-weight: 500;
   color: #888;
-  margin-right: 4px;
+  margin-left: 4px;
 }
 
-.grid .currency-prefix {
+.grid .currency-suffix {
   font-size: 0.85em;
 }

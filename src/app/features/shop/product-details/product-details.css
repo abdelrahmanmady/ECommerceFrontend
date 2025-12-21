@@ -1,0 +1,385 @@
+/* ============================================
+   PRODUCT DETAILS - BRAND BADGE
+   Premium Fashion-Forward Design
+   ============================================ */
+
+.brand-badge {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.brand-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+}
+
+.brand-badge .brand-label {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.brand-badge .brand-name {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #ffffff;
+    font-family: 'Inter', 'Helvetica Neue', sans-serif;
+}
+
+/* Interactive hover effect */
+.brand-badge:hover {
+    background: linear-gradient(135deg, #2d2d2d 0%, #404040 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.brand-badge:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Product badge container layout */
+.product-badge-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+/* Price Display Styling */
+.price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    display: block;
+}
+
+.currency-suffix {
+    font-size: 0.6em;
+    font-weight: 500;
+    color: #888;
+    margin-left: 6px;
+}
+
+/* ============================================
+   IMAGE GALLERY - Cursor & Hover Styling
+   ============================================ */
+
+/* Main product image - default cursor */
+.main-product-image {
+    cursor: default !important;
+}
+
+/* Image zoom container */
+.image-zoom-container {
+    cursor: default !important;
+}
+
+/* Thumbnail images - pointer cursor for clickability */
+.thumbnail-wrapper {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.thumbnail-wrapper:hover {
+    border-color: #1a1a1a;
+    transform: scale(1.02);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.thumbnail-wrapper.active {
+    border-color: #1a1a1a;
+    box-shadow: 0 0 0 2px rgba(26, 26, 26, 0.2);
+}
+
+.thumbnail-wrapper img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Navigation arrows - pointer cursor */
+.image-nav-btn {
+    cursor: pointer;
+}
+
+.image-nav-btn:hover {
+    transform: scale(1.1);
+}
+
+/* ============================================
+   SIZE SELECTION STYLING
+   ============================================ */
+
+.size-selection {
+    margin-top: 24px;
+}
+
+.variant-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #444;
+}
+
+.size-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.size-btn {
+    width: 48px;
+    height: 48px;
+    border: 1px solid #ddd;
+    background: transparent;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.size-btn:hover:not(.disabled) {
+    border-color: #333;
+    background-color: #f8f9fa;
+}
+
+.size-btn.active {
+    border: 2px solid #000;
+    font-weight: 700;
+}
+
+.size-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #f5f5f5;
+    color: #999;
+    border-color: #eee;
+    text-decoration: line-through;
+}
+
+.selected-variant {
+    margin-top: 12px;
+    font-size: 14px;
+    color: #666;
+}
+
+/* ============================================
+   QUANTITY INPUT STYLING
+   ============================================ */
+
+.shake {
+    animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+@keyframes shake {
+
+    10%,
+    90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+
+    20%,
+    80% {
+        transform: translate3d(2px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translate3d(-4px, 0, 0);
+    }
+
+    40%,
+    60% {
+        transform: translate3d(4px, 0, 0);
+    }
+}
+
+.quantity-input {
+    text-align: center;
+    -moz-appearance: textfield;
+}
+
+.quantity-input::-webkit-outer-spin-button,
+.quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* ============================================
+   OVERVIEW TAB - FASHION CONTENT STYLING
+   ============================================ */
+
+/* Content Typography */
+.content-section h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #1a1a1a;
+}
+
+.content-section p {
+    color: #555;
+    line-height: 1.7;
+    font-size: 1rem;
+    margin-bottom: 24px;
+}
+
+/* Material & Care Grid */
+.material-care-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.care-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.care-item:hover {
+    background-color: #fff;
+    border-color: #eee;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+}
+
+.care-item i {
+    font-size: 1.25rem;
+    color: #1a1a1a;
+}
+
+.care-item span {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #444;
+}
+
+/* Key Features List */
+.features-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.features-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.95rem;
+    color: #444;
+    line-height: 1.5;
+}
+
+.features-list li i {
+    color: #1a1a1a;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+/* Size & Fit & Composition Section */
+.size-fit-container {
+    background-color: #f8f9fa;
+    padding: 24px;
+    border-radius: 12px;
+    height: 100%;
+    border: 1px solid #eee;
+}
+
+.fit-details {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.fit-details li {
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+    color: #555;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 8px;
+}
+
+.fit-details li:last-child {
+    border-bottom: none;
+}
+
+.fit-details li strong {
+    color: #1a1a1a;
+    font-weight: 600;
+}
+
+.composition-section {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #e9ecef;
+}
+
+.composition-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 12px;
+}
+
+/* Sustainable Badge */
+.fabric-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.fabric-badge i {
+    font-size: 1.1rem;
+}

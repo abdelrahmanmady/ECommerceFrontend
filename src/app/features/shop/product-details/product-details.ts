@@ -1,12 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/services/product.service';
 import { CartService } from '../../../core/services';
 import { ToastrService } from 'ngx-toastr';
 
+import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-product-details',
-  imports: [],
+  imports: [RouterLink, CommonModule],
   templateUrl: './product-details.html',
   styleUrl: './product-details.css',
 })
@@ -21,8 +23,19 @@ export class ProductDetails {
   mainImage = signal<any>({});
   activeImage = signal(0);
 
+  sizes = signal([
+    { name: 'XS', available: false },
+    { name: 'S', available: true },
+    { name: 'M', available: true },
+    { name: 'L', available: true },
+    { name: 'XL', available: false },
+  ]);
+  selectedSize = signal<string | null>(null);
+
   productId: number;
   quantity: number = 1;
+  maxStock: number = 13; // Dummy stock count
+  isShaking = signal(false);
 
   constructor() {
     const idParam = this.activeRoute.snapshot.paramMap.get('id');
@@ -52,14 +65,29 @@ export class ProductDetails {
     this.selectImage(index);
   }
 
+  selectSize(size: string) {
+    this.selectedSize.set(size);
+  }
+
   increaseQty(): void {
-    this.quantity++;
+    if (this.quantity < this.maxStock) {
+      this.quantity++;
+    } else {
+      this.triggerShake();
+    }
   }
 
   decreaseQty(): void {
     if (this.quantity > 1) {
       this.quantity--;
+    } else {
+      this.triggerShake();
     }
+  }
+
+  triggerShake() {
+    this.isShaking.set(true);
+    setTimeout(() => this.isShaking.set(false), 400);
   }
   addToCart() {
     this.cartService.AddCartItem(this.productData().id).subscribe({
