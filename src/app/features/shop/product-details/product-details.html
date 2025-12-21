@@ -20,15 +20,14 @@
 
       <div class="row g-4">
         <!-- Product Gallery -->
+        <!-- Product Gallery -->
         <div class="col-lg-7" data-aos="zoom-in" data-aos-delay="150">
           <div class="product-gallery">
             <div class="main-showcase">
               <div class="image-zoom-container">
-                @if(mainImage()){
-
-
-                <img src={{mainImage().imageUrl}} alt="Product Main" class="img-fluid main-product-image drift-zoom"
-                  id="main-product-image" data-zoom="assets/img/product/product-details-6.webp">
+                @if(mainImage() && mainImage().imageUrl){
+                <img [src]="mainImage().imageUrl" alt="Product Main" class="img-fluid main-product-image drift-zoom"
+                  id="main-product-image">
                 }
                 <div class="image-navigation">
                   <button class="nav-arrow prev-image image-nav-btn prev-image" type="button" (click)="prevImage()">
@@ -42,14 +41,13 @@
             </div>
 
             <div class="thumbnail-grid">
-              @for(img of productData().images; track $index){
-
-
+              @if(productData()){
+              @for(img of productData()!.images; track $index){
               <div class="thumbnail-wrapper thumbnail-item {{$index === activeImage()?'active':''}}"
                 (click)="selectImage($index)">
-                <img src="{{img.imageUrl}}" alt="View {{$index +1}}" class="img-fluid">
+                <img [src]="img.imageUrl" [alt]="'View ' + ($index + 1)" class="img-fluid">
               </div>
-
+              }
               }
             </div>
           </div>
@@ -59,10 +57,13 @@
         <div class="col-lg-5" data-aos="fade-left" data-aos-delay="200">
           <div class="product-details">
             <div class="product-badge-container">
-              <a class="brand-badge" routerLink="/products" [queryParams]="{brandId: 1}" title="View all Nike products">
+              @if(productData()){
+              <a class="brand-badge" routerLink="/products" [queryParams]="{brandId: productData()!.brandId}"
+                [title]="'View all ' + productData()!.brandName + ' products'">
                 <span class="brand-label">Brand</span>
-                <span class="brand-name">Nike</span>
+                <span class="brand-name">{{productData()!.brandName}}</span>
               </a>
+              }
               <div class="rating-group">
                 <div class="stars">
                   <i class="bi bi-star-fill"></i>
@@ -75,26 +76,37 @@
               </div>
             </div>
 
-            <h1 class="product-name">{{productData().name}}</h1>
+            <h1 class="product-name">{{productData()?.name}}</h1>
 
             <div class="pricing-section">
               <div class="price-display">
                 <span class="price">
-                  {{productData().price | number : '1.2-2'}}<span class="currency-suffix">EGP</span>
+                  {{productData()?.price | number : '1.2-2'}}<span class="currency-suffix">EGP</span>
                 </span>
               </div>
             </div>
 
             <div class="product-description">
-              <p>{{productData().description}}.</p>
+              @if(productData()?.description) {
+              <p>{{productData()?.description}}</p>
+              } @else {
+              <p class="text-muted fst-italic"><small>No description available for this product.</small></p>
+              }
             </div>
 
             <div class="availability-status">
+              @if(productData() && productData()!.stockQuantity > 0){
               <div class="stock-indicator">
                 <i class="bi bi-check-circle-fill"></i>
                 <span class="stock-text">In Stock</span>
               </div>
-              <div class="quantity-left">Only 13 items remaining</div>
+              <div class="quantity-left">Only {{productData()!.stockQuantity}} items remaining</div>
+              } @else {
+              <div class="stock-indicator out-of-stock" style="color: #dc3545;">
+                <i class="bi bi-x-circle-fill"></i>
+                <span class="stock-text">Out of Stock</span>
+              </div>
+              }
             </div>
 
             <!-- Product Variants -->

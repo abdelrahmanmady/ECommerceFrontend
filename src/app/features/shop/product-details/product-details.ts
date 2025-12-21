@@ -3,8 +3,8 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/services/product.service';
 import { CartService } from '../../../core/services';
 import { ToastrService } from 'ngx-toastr';
-
 import { CommonModule } from '@angular/common';
+import { ProductDetails as ProductDetailsModel } from '../../../core/models/product.model';
 
 @Component({
   selector: 'app-product-details',
@@ -19,7 +19,7 @@ export class ProductDetails {
   toastr = inject(ToastrService);
   router = inject(Router);
 
-  productData = signal<any>({});
+  productData = signal<ProductDetailsModel | null>(null);
   mainImage = signal<any>({});
   activeImage = signal(0);
 
@@ -34,35 +34,49 @@ export class ProductDetails {
 
   productId: number;
   quantity: number = 1;
-  maxStock: number = 13; // Dummy stock count
+  maxStock: number = 0;
   isShaking = signal(false);
 
   constructor() {
     const idParam = this.activeRoute.snapshot.paramMap.get('id');
     this.productId = idParam ? parseInt(idParam, 10) : 0;
 
-    // TODO: This will be updated when product details API is integrated
-    this.productService.getProductById(this.productId).subscribe((res: any) => {
-      res.images?.sort((a: any, b: any) => a.position - b.position);
+    this.productService.getProductById(this.productId).subscribe((res: ProductDetailsModel) => {
       this.productData.set(res);
-      this.mainImage.set(res.images?.[0] || {});
-      this.activeImage.set(0);
+      this.maxStock = res.stockQuantity;
+
+      if (res.images && res.images.length > 0) {
+        // Find main image or default to first
+        const mainImg = res.images.find(img => img.isMain) || res.images[0];
+        this.mainImage.set(mainImg);
+        // Set active image index based on main image
+        this.activeImage.set(res.images.indexOf(mainImg));
+      }
     });
   }
   selectImage(index: number) {
-    this.mainImage.set(this.productData().images[index]);
-    this.activeImage.set(index);
+    const product = this.productData();
+    if (product && product.images) {
+      this.mainImage.set(product.images[index]);
+      this.activeImage.set(index);
+    }
   }
   prevImage() {
-    const index =
-      this.activeImage() > 0 ? this.activeImage() - 1 : this.productData().images.length - 1;
-    this.selectImage(index);
+    const product = this.productData();
+    if (product && product.images) {
+      const index =
+        this.activeImage() > 0 ? this.activeImage() - 1 : product.images.length - 1;
+      this.selectImage(index);
+    }
   }
 
   nextImage() {
-    const index =
-      this.activeImage() < this.productData().images.length - 1 ? this.activeImage() + 1 : 0;
-    this.selectImage(index);
+    const product = this.productData();
+    if (product && product.images) {
+      const index =
+        this.activeImage() < product.images.length - 1 ? this.activeImage() + 1 : 0;
+      this.selectImage(index);
+    }
   }
 
   selectSize(size: string) {
@@ -90,17 +104,17 @@ export class ProductDetails {
     setTimeout(() => this.isShaking.set(false), 400);
   }
   addToCart() {
-    this.cartService.AddCartItem(this.productData().id).subscribe({
-      next: (res) => {
-        console.log(res);
-        this.cartService.setCartCount(res.cartItems.length);
-        this.toastr.success('Product added to cart');
-        // this.router.navigate(['/cart']);
-      },
-      error: (err) => {
-        console.log(err);
-        this.toastr.error(err.error);
-      }
-    })
+    const product = this.productData();
+    if (product) {
+      this.cartService.AddCartItem(product.id).subscribe({
+        next: (res) => {
+          this.cartService.setCartCount(res.cartItems.length);
+          this.toastr.success('Product added to cart');
+        },
+        error: (err) => {
+          this.toastr.error(err.error);
+        }
+      })
+    }
   }
 }
