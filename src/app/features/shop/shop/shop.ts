@@ -8,7 +8,9 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { debounceTime } from 'rxjs/internal/operators/debounceTime';
 import { distinctUntilChanged } from 'rxjs';
 import { CategoryService } from '../../../core/services/category.service';
+import { BrandService } from '../../../core/services/brand.service';
 import { Category } from '../../../core/models/category.model';
+import { Brand } from '../../../core/models/brand.model';
 import { RouterLink, ActivatedRoute } from "@angular/router";
 
 export interface IProduct {
@@ -131,17 +133,6 @@ const DUMMY_PRODUCTS = [
   },
 ];
 
-const DUMMY_BRANDS = [
-  { id: '1', name: 'Nike', count: 24 },
-  { id: '2', name: 'Adidas', count: 18 },
-  { id: '3', name: 'Puma', count: 12 },
-  { id: '4', name: 'Reebok', count: 9 },
-  { id: '5', name: 'Under Armour', count: 7 },
-  { id: '6', name: 'New Balance', count: 6 },
-  { id: '7', name: 'Converse', count: 5 },
-  { id: '8', name: 'Vans', count: 4 },
-];
-
 @Component({
   selector: 'app-shop',
   imports: [FormsModule, CommonModule, ProductCard, NgxPaginationModule, RouterLink],
@@ -151,11 +142,11 @@ const DUMMY_BRANDS = [
 export class Shop {
   productService = inject(ProductService);
   categoryService = inject(CategoryService);
+  brandService = inject(BrandService);
   activatedRoute = inject(ActivatedRoute);
   allProducts = signal<any[]>([]);
   allCategories = signal<Category[]>([]);
-  allBrands = signal<any[]>([]);
-  parentCategoryId = signal<any[]>([]);
+  allBrands = signal<Brand[]>([]);
   selectedCategory = signal<number | null>(null);
   minValue: number = 0;
   maxValue: number = 5000;
@@ -168,13 +159,11 @@ export class Shop {
   minPrice?: number | undefined;
   maxPrice?: number | undefined;
   search = signal('');
-  categorySort = signal('');
-
 
   selectedSort = signal('Sort By');
   selectedSortKey = signal<string | null>(null);
-  selectedBrands = signal<string[]>([]);
-  pendingSelectedBrands = signal<string[]>([]);
+  selectedBrands = signal<number[]>([]);
+  pendingSelectedBrands = signal<number[]>([]);
   brandSearch = signal('');
   appliedPriceRange = signal({ min: 0, max: 5000 });
 
@@ -186,7 +175,7 @@ export class Shop {
 
 
   activeFilters = computed(() => {
-    const filters: { type: string; label: string; value: string; id?: string }[] = [];
+    const filters: { type: string; label: string; value: string; id?: number }[] = [];
 
     if (this.search() && this.search().trim() !== '') {
       filters.push({ type: 'search', label: 'Search', value: this.search() });
@@ -271,7 +260,14 @@ export class Shop {
   }
 
   loadBrands() {
-    this.allBrands.set(DUMMY_BRANDS);
+    this.brandService.getAllBrands().subscribe({
+      next: (brands) => {
+        this.allBrands.set(brands);
+      },
+      error: () => {
+        this.allBrands.set([]);
+      }
+    });
   }
 
   setView(type: 'grid' | 'list') {
@@ -333,7 +329,7 @@ export class Shop {
     this.loadProducts();
   }
 
-  removeFilter(type: string, id?: string) {
+  removeFilter(type: string, id?: number) {
     switch (type) {
       case 'search':
         this.search.set('');
@@ -349,7 +345,7 @@ export class Shop {
         this.appliedPriceRange.set({ min: 0, max: 5000 });
         break;
       case 'brand':
-        let newBrands: string[] = [];
+        let newBrands: number[] = [];
         if (id) {
           newBrands = this.selectedBrands().filter(b => b !== id);
         }
@@ -360,7 +356,7 @@ export class Shop {
     this.loadProducts();
   }
 
-  toggleBrand(brandId: string) {
+  toggleBrand(brandId: number) {
     const current = this.pendingSelectedBrands();
     if (current.includes(brandId)) {
       this.pendingSelectedBrands.set(current.filter(id => id !== brandId));

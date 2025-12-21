@@ -135,7 +135,7 @@
                       [checked]="pendingSelectedBrands().includes(brand.id)" (click)="toggleBrand(brand.id)">
                     <label class="form-check-label" [for]="'brand-'+brand.id">
                       {{brand.name}}
-                      <span class="brand-count">({{brand.count}})</span>
+                      <span class="brand-count">({{brand.productsCount}})</span>
                     </label>
                   </div>
                 </div>
