@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/services/product.service';
-import { CartService } from '../../../core/services';
+import { AuthService, CartService } from '../../../core/services';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
 import { ProductDetails as ProductDetailsModel } from '../../../core/models/product.model';
@@ -103,12 +103,18 @@ export class ProductDetails {
     this.isShaking.set(true);
     setTimeout(() => this.isShaking.set(false), 400);
   }
+  authService = inject(AuthService);
+
   addToCart() {
+    if (!this.authService.user()) {
+      this.toastr.info('Please login first');
+      return;
+    }
+
     const product = this.productData();
     if (product) {
-      this.cartService.AddCartItem(product.id).subscribe({
-        next: (res) => {
-          this.cartService.setCartCount(res.cartItems.length);
+      this.cartService.addToCart(product.id, this.quantity).subscribe({
+        next: () => {
           this.toastr.success('Product added to cart');
         },
         error: (err) => {

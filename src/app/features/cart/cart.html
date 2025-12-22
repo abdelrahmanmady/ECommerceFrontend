@@ -42,21 +42,15 @@
                 <div class="col-lg-6 col-12 mt-3 mt-lg-0 mb-lg-0 mb-3">
                   <div class="product-info d-flex align-items-center">
                     <div class="product-image">
-                      <img
-                        src="{{ item.productImageUrl }}"
-                        alt="Product"
-                        class="img-fluid"
-                        loading="lazy"
-                      />
+                      <img src="{{ item.productImageUrl }}" alt="Product" class="img-fluid" loading="lazy" />
                     </div>
                     <div class="product-details">
                       <h6 class="product-title">{{ item.productName }}</h6>
-                      <!-- <div class="product-meta">
-                        <span class="product-color">Color: Black</span>
-                        <span class="product-size">Size: M</span>
-                      </div> -->
-                      <button class="remove-item" type="button" (click) = "removeCartItem(item.id)">
-                        <!-- <i class="bi bi-trash"></i> Remove -->
+                      <div class="product-meta">
+                        <span class="product-size">Size: {{ item.size }}</span>
+                      </div>
+                      <button class="remove-item" type="button" (click)="removeCartItem(item.productId)">
+                        <i class="bi bi-trash"></i> Remove
                       </button>
                     </div>
                   </div>
@@ -71,14 +65,8 @@
                     <button class="quantity-btn decrease" (click)="removeCartItem(item.productId)">
                       <i class="bi bi-dash"></i>
                     </button>
-                    <input
-                      type="number"
-                      class="quantity-input"
-                      value="{{ item.quantity }}"
-                      min="1"
-                      max="{{ item.product?.stock }}"
-                      
-                    />
+                    <input type="number" class="quantity-input" value="{{ item.quantity }}" min="1"
+                      max="{{ item.product?.stock }}" />
                     <button class="quantity-btn increase" (click)="addCartItem(item.productId)">
                       <i class="bi bi-plus"></i>
                     </button>
@@ -95,7 +83,7 @@
 
             } }
 
-        
+
 
             <div class="cart-actions">
               <div class="row justify-content-end">
@@ -109,7 +97,7 @@
           </div>
         </div>
 
-        <div class="col-lg-4 mt-4 mt-lg-0" data-aos="fade-up" data-aos-delay="300">
+        <div class="col-lg-4 mt-4 mt-lg-0 align-self-start" data-aos="fade-up" data-aos-delay="300">
           <div class="cart-summary">
             <h4 class="summary-title">Order Summary</h4>
 
@@ -118,47 +106,29 @@
               <span class="summary-value">${{ cartTotal() }}</span>
             </div>
 
+            <div class="summary-item">
+              <span class="summary-label">Taxes</span>
+              <span class="summary-value">Calculated at checkout</span>
+            </div>
+
             <div class="summary-item shipping-item">
               <span class="summary-label">Shipping</span>
               <div class="shipping-options">
                 <div class="form-check text-end">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="shipping"
-                    id="standard"
-                    checked=""
-                  />
-                  <label class="form-check-label" for="standard"> Standard Delivery - $100 </label>
+                  <input class="form-check-input" type="radio" name="shipping" id="standard" checked="" />
+                  <label class="form-check-label" for="standard"> Standard Delivery (5-7 days) </label>
                 </div>
 
-                <!-- <div class="form-check text-end">
-                  <input class="form-check-input" type="radio" name="shipping" id="express" />
-                  <label class="form-check-label" for="express"> Express Delivery - $12.99 </label>
-                </div>
                 <div class="form-check text-end">
-                  <input class="form-check-input" type="radio" name="shipping" id="free" />
-                  <label class="form-check-label" for="free">
-                    Free Shipping (Orders over $300)
-                  </label>
-                </div> -->
-
+                  <input class="form-check-input" type="radio" name="shipping" id="express" />
+                  <label class="form-check-label" for="express"> Express Delivery (2-3 days)</label>
+                </div>
               </div>
             </div>
 
-            <!-- <div class="summary-item">
-              <span class="summary-label">Tax</span>
-              <span class="summary-value">$27.00</span>
-            </div>
-
-            <div class="summary-item discount">
-              <span class="summary-label">Discount</span>
-              <span class="summary-value">-$0.00</span>
-            </div> -->
-
             <div class="summary-total">
-              <span class="summary-label">Total</span>
-              <span class="summary-value">${{ cartTotal() + 100 }}</span>
+              <span class="summary-label">Estimated Total</span>
+              <span class="summary-value">${{ cartTotal() }}</span>
             </div>
 
             <div class="checkout-button">

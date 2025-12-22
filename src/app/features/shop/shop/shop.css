@@ -438,14 +438,6 @@
   justify-content: center;
   align-items: center;
   z-index: 10;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.2s ease, visibility 0.2s ease;
-}
-
-.products-loading-overlay.active {
-  opacity: 1;
-  visibility: visible;
 }
 
 .loading-spinner {

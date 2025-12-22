@@ -238,15 +238,16 @@
         <!-- Category Product List Section -->
         <section [ngClass]="viewType()" id="category-product-list" class="category-product-list section">
           <div class="container products-container" data-aos="fade-up" data-aos-delay="100">
-            <!-- Loading Overlay -->
-            <div class="products-loading-overlay" [class.active]="loadingService.isLoading()">
+            <!-- Loading Overlay - scoped to products container -->
+            @if (loadingService.isLoading()) {
+            <div class="products-loading-overlay">
               <div class="loading-spinner">
                 <div class="spinner-border text-primary" role="status">
                   <span class="visually-hidden">Loading...</span>
                 </div>
               </div>
             </div>
-
+            }
             <!-- Products Grid -->
             <div class="row g-4 products-grid" [class.loading]="loadingService.isLoading()">
               @if(allProducts()){

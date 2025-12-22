@@ -236,12 +236,12 @@ export class Shop {
       next: (response) => {
         this.allProducts.set(response.items);
         this.totalPages.set(response.totalCount);
-        this.loadingService.hide();
+        setTimeout(() => this.loadingService.hide(), 500); // Slight delay to see loading
       },
       error: () => {
         this.allProducts.set([]);
         this.totalPages.set(0);
-        this.loadingService.hide();
+        setTimeout(() => this.loadingService.hide(), 500);
       }
     });
   }

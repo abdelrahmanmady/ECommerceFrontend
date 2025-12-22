@@ -13,7 +13,5 @@ export const authGuard: CanActivateFn = (route, state) => {
   }
 
   toastr.info('Please login first');
-  return router.createUrlTree(['/login'], {
-    queryParams: { returnUrl: state.url }
-  });
+  return false; // Block access but don't redirect
 };

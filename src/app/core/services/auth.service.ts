@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { AuthResponse, User } from '../models/user.model';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { CartService } from './cart.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,7 @@ export class AuthService {
   private readonly baseUrl: string = `${environment.url}/api/auth/`;
   private readonly router = inject(Router);
   private readonly toastr = inject(ToastrService);
+  private readonly cartService = inject(CartService);
 
   user = signal<User | null>(null);
 
@@ -64,6 +66,7 @@ export class AuthService {
   clearAuthState(): void {
     localStorage.removeItem('accessToken');
     this.user.set(null);
+    this.cartService.clearLocalCart();
   }
 }
 

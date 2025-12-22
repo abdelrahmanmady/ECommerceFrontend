@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms'
 import { Router, RouterLink } from "@angular/router";
 import { ToastrService } from 'ngx-toastr';
-import { AuthService } from '../../../core/services';
+import { AuthService, CartService } from '../../../core/services';
 import { RoleType } from '../../../core/Types/roleType';
 
 @Component({
@@ -26,6 +26,7 @@ export class Login {
 
   constructor(
     private readonly authService: AuthService,
+    private readonly cartService: CartService,
     private readonly router: Router,
     private readonly toastr: ToastrService,
     private readonly cdr: ChangeDetectorRef
@@ -77,6 +78,7 @@ export class Login {
     this.authService.login(this.email, this.password, this.rememberMe).subscribe({
       next: (res) => {
         this.authService.setAuthState(res);
+        this.cartService.getUserCart().subscribe(); // Fetch cart for badge
         this.toastr.success('Login successful!');
 
         const isAdminOrSeller = res.user.roles.includes(RoleType.Admin) || res.user.roles.includes(RoleType.Seller);

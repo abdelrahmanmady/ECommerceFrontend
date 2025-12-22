@@ -1,7 +1,7 @@
 import { DecimalPipe, NgClass } from '@angular/common';
 import { Component, inject, input } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { CartService, CategoryService } from '../../../core/services';
+import { AuthService, CartService, CategoryService } from '../../../core/services';
 import { Product } from '../../../core/models/product.model';
 import { ToastrService } from 'ngx-toastr';
 
@@ -17,17 +17,21 @@ export class ProductCard {
 
   categoryService = inject(CategoryService);
   cartService = inject(CartService);
+  authService = inject(AuthService);
   router = inject(Router);
   toastr = inject(ToastrService);
 
   addToCart() {
-    this.cartService.AddCartItem(this.productData().id).subscribe({
-      next: (res) => {
-        console.log(res);
+    if (!this.authService.user()) {
+      this.toastr.info('Please login first');
+      return;
+    }
+
+    this.cartService.addToCart(this.productData().id, 1).subscribe({
+      next: () => {
         this.toastr.success('Product added to cart');
       },
       error: (err) => {
-        console.log(err);
         this.toastr.error(err.error);
       }
     });
