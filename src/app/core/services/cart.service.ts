@@ -1,7 +1,8 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap, switchMap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
+import { Cart, CartItem } from '../models';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +11,7 @@ export class CartService {
   private readonly baseUrl: string = `${environment.url}/api/Cart`;
   private http = inject(HttpClient);
 
-  cartItems = signal<any[]>([]);
+  cartItems = signal<CartItem[]>([]);
   private cartCount = signal(0);
   private broadcastChannel = new BroadcastChannel('cart_sync');
 
@@ -20,16 +21,12 @@ export class CartService {
         this.updateLocalState(event.data.items);
       }
     };
-
-    // Initial fetch only if user is authenticated
-    if (localStorage.getItem('accessToken')) {
-      this.getUserCart().subscribe();
-    }
   }
 
-  setCartCount(count: number) {
+  setCartCount(count: number): void {
     this.cartCount.set(count);
   }
+
   getCartCount(): number {
     return this.cartCount();
   }
@@ -40,15 +37,15 @@ export class CartService {
     this.setCartCount(0);
   }
 
-  private updateLocalState(items: any[]) {
+  private updateLocalState(items: CartItem[]): void {
     this.cartItems.set(items);
     const totalCount = items.reduce((sum, item) => sum + (item.quantity || 0), 0);
     this.setCartCount(totalCount);
   }
 
-  // for cart
-  getUserCart(): Observable<any> {
-    return this.http.get<any>(this.baseUrl).pipe(
+  /** Get user's cart from API */
+  getUserCart(): Observable<Cart> {
+    return this.http.get<Cart>(this.baseUrl).pipe(
       tap((cart) => {
         if (cart && cart.items) {
           this.updateLocalState(cart.items);
@@ -57,8 +54,9 @@ export class CartService {
     );
   }
 
-  updateCart(items: any[]): Observable<any> {
-    return this.http.post<any>(this.baseUrl, { items }).pipe(
+  /** Update cart with new items */
+  updateCart(items: Pick<CartItem, 'productId' | 'quantity'>[]): Observable<Cart> {
+    return this.http.post<Cart>(this.baseUrl, { items }).pipe(
       tap((res) => {
         if (res && res.items) {
           this.updateLocalState(res.items);
@@ -68,37 +66,51 @@ export class CartService {
     );
   }
 
-  clearCart(): Observable<any> {
-    return this.http.delete(this.baseUrl).pipe(
+  /** Clear all items from cart */
+  clearCart(): Observable<Cart> {
+    return this.http.delete<Cart>(this.baseUrl).pipe(
       tap(() => {
-        const empty: any[] = [];
-        this.updateLocalState(empty);
-        this.broadcastChannel.postMessage({ type: 'UPDATE', items: empty });
+        this.updateLocalState([]);
+        this.broadcastChannel.postMessage({ type: 'UPDATE', items: [] });
       })
     );
   }
 
-  // Helper to add item
-  addToCart(productId: number, quantity: number = 1): Observable<any> {
-    // Optimistic / Local-First Approach
-    const currentItems = [...this.cartItems()]; // access signal directly
-    const existingItem = currentItems.find((i: any) => i.productId === productId);
+  /** Add item to cart or increase quantity */
+  addToCart(productId: number, quantity: number = 1): Observable<Cart> {
+    const currentItems = [...this.cartItems()];
+    const existingItem = currentItems.find((i) => i.productId === productId);
 
     if (existingItem) {
-      // Create a shallow copy of the item to avoid mutating the original array directly before reassignment logic (though we copied array)
-      // Actually simpler: rebuild object or edit clone.
-      // Since currentItems IS a fresh array from spread, we can mutate object if we are careful, 
-      // but better to map it to be immutable-ish style.
       existingItem.quantity += quantity;
     } else {
-      currentItems.push({ productId, quantity });
+      // Create minimal item for API request
+      currentItems.push({ productId, quantity } as CartItem);
     }
 
-    return this.updateCart(currentItems);
+    return this.updateCart(currentItems.map(i => ({ productId: i.productId, quantity: i.quantity })));
   }
 
-  removeFromCart(productId: number): Observable<any> {
-    const currentItems = this.cartItems().filter((i: any) => i.productId !== productId);
-    return this.updateCart(currentItems);
+  /** Decrease item quantity by 1 */
+  decreaseFromCart(productId: number): Observable<Cart> {
+    const currentItems = [...this.cartItems()];
+    const existingItem = currentItems.find((i) => i.productId === productId);
+
+    if (existingItem) {
+      if (existingItem.quantity > 1) {
+        existingItem.quantity -= 1;
+        return this.updateCart(currentItems.map(i => ({ productId: i.productId, quantity: i.quantity })));
+      } else {
+        return this.removeFromCart(productId);
+      }
+    }
+
+    return this.updateCart(currentItems.map(i => ({ productId: i.productId, quantity: i.quantity })));
+  }
+
+  /** Remove item from cart entirely */
+  removeFromCart(productId: number): Observable<Cart> {
+    const currentItems = this.cartItems().filter((i) => i.productId !== productId);
+    return this.updateCart(currentItems.map(i => ({ productId: i.productId, quantity: i.quantity })));
   }
 }

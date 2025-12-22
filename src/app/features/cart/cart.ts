@@ -1,106 +1,110 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { DecimalPipe } from '@angular/common';
 import { CartService } from '../../core/services/cart.service';
+import { CartItem } from '../../core/models';
 
 @Component({
   selector: 'app-cart',
-  imports: [RouterLink],
+  imports: [RouterLink, DecimalPipe],
   templateUrl: './cart.html',
   styleUrl: './cart.css',
 })
 export class Cart {
   cartService = inject(CartService);
 
-  // Dummy data for design mode - replace with API call when ready
-  cartItems = signal<any[]>([
-    {
-      id: 1,
-      productId: 101,
-      productName: 'Classic Cotton T-Shirt',
-      productImageUrl: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200&h=200&fit=crop',
-      price: 450,
-      quantity: 2,
-      total: 900,
-      size: 'M'
-    },
-    {
-      id: 2,
-      productId: 102,
-      productName: 'Slim Fit Denim Jeans',
-      productImageUrl: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=200&h=200&fit=crop',
-      price: 890,
-      quantity: 1,
-      total: 890,
-      size: '32'
-    },
-    {
-      id: 3,
-      productId: 103,
-      productName: 'Leather Crossbody Bag',
-      productImageUrl: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=200&h=200&fit=crop',
-      price: 1250,
-      quantity: 1,
-      total: 1250,
-      size: 'One Size'
-    }
-  ]);
-  cartTotal = signal(3040);
+  // Cart state - initialized from local service state
+  cartItems = signal<CartItem[]>([]);
+  cartTotal = signal(0);
+  isLoading = signal(false);
 
-  ngOnInit() {
-    // Uncomment to use real API data:
-    // this.loadCartItems();
+  ngOnInit(): void {
+    // 1. Show local cart immediately for instant UX
+    this.loadFromLocalState();
+
+    // 2. Refresh from API in background to ensure data freshness
+    this.refreshFromApi();
   }
 
-  loadCartItems() {
+  /**
+   * Load cart from local CartService state (instant, no API call)
+   */
+  private loadFromLocalState(): void {
+    const localItems = this.cartService.cartItems();
+    this.cartItems.set(localItems);
+    this.cartTotal.set(this.calculateTotal(localItems));
+  }
+
+  /**
+   * Refresh cart from API in background
+   */
+  private refreshFromApi(): void {
     this.cartService.getUserCart().subscribe({
-      next: (res) => {
-        console.log(res);
-        this.cartItems.set(res.items);
-        this.cartTotal.set(res.cartTotal);
-        this.cartService.setCartCount(res.items.length);
+      next: (cart) => {
+        if (cart && cart.items) {
+          this.cartItems.set(cart.items);
+          this.cartTotal.set(cart.cartTotal ?? this.calculateTotal(cart.items));
+        }
       },
       error: (err) => {
-        console.log(err.message);
+        // Silently fail - local data is already displayed
+        console.error('Failed to refresh cart from API:', err.message);
       }
-    })
-
+    });
   }
 
-  addCartItem(productId: number) {
+  /**
+   * Calculate cart total from items
+   */
+  private calculateTotal(items: CartItem[]): number {
+    return items.reduce((sum, item) => sum + (item.total ?? item.productPrice * item.quantity), 0);
+  }
+
+  addCartItem(productId: number): void {
     this.cartService.addToCart(productId, 1).subscribe({
-      next: (res) => {
-        this.cartItems.set(res.items);
-        this.cartTotal.set(res.cartTotal);
+      next: (cart) => {
+        this.cartItems.set(cart.items);
+        this.cartTotal.set(cart.cartTotal ?? this.calculateTotal(cart.items));
       },
       error: (err) => {
-        console.log(err.message);
+        console.error('Failed to add item:', err.message);
       }
-    })
+    });
   }
 
-  removeCartItem(productId: number) {
+  removeCartItem(productId: number): void {
     this.cartService.removeFromCart(productId).subscribe({
-      next: (res) => {
-        this.cartItems.set(res.items);
-        this.cartTotal.set(res.cartTotal);
+      next: (cart) => {
+        this.cartItems.set(cart.items);
+        this.cartTotal.set(cart.cartTotal ?? this.calculateTotal(cart.items));
       },
       error: (err) => {
-        console.log(err.message);
+        console.error('Failed to remove item:', err.message);
       }
-    })
-  }
-  clearCart() {
-    this.cartService.clearCart().subscribe({
-      next: (res) => {
-        console.log(res);
-        this.cartItems.set(res.items);
-        this.cartTotal.set(res.cartTotal);
-        this.cartService.setCartCount(res.items.length);
-      },
-      error: (err) => {
-        console.log(err.message);
-      }
-    })
+    });
   }
 
+  decreaseQuantity(productId: number): void {
+    this.cartService.decreaseFromCart(productId).subscribe({
+      next: (cart) => {
+        this.cartItems.set(cart.items);
+        this.cartTotal.set(cart.cartTotal ?? this.calculateTotal(cart.items));
+      },
+      error: (err) => {
+        console.error('Failed to decrease quantity:', err.message);
+      }
+    });
+  }
+
+  clearCart(): void {
+    this.cartService.clearCart().subscribe({
+      next: (cart) => {
+        this.cartItems.set(cart?.items ?? []);
+        this.cartTotal.set(cart?.cartTotal ?? 0);
+      },
+      error: (err) => {
+        console.error('Failed to clear cart:', err.message);
+      }
+    });
+  }
 }

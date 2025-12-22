@@ -1,3 +1,5 @@
+import { Role } from '../Types/roleType';
+
 /**
  * Represents a user in the system
  */
@@ -6,7 +8,7 @@ export interface User {
     name: string;
     email: string;
     phoneNumber: string;
-    roles: string[];
+    roles: Role[];
 }
 
 /**

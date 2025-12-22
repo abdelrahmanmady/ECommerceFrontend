@@ -60,4 +60,3 @@ export class ProductService {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }
-

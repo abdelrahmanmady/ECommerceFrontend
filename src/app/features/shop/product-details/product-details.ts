@@ -16,6 +16,7 @@ export class ProductDetails {
   activeRoute = inject(ActivatedRoute);
   productService = inject(ProductService);
   cartService = inject(CartService);
+  authService = inject(AuthService);
   toastr = inject(ToastrService);
   router = inject(Router);
 
@@ -99,13 +100,12 @@ export class ProductDetails {
     }
   }
 
-  triggerShake() {
+  triggerShake(): void {
     this.isShaking.set(true);
     setTimeout(() => this.isShaking.set(false), 400);
   }
-  authService = inject(AuthService);
 
-  addToCart() {
+  addToCart(): void {
     if (!this.authService.user()) {
       this.toastr.info('Please login first');
       return;
@@ -120,7 +120,7 @@ export class ProductDetails {
         error: (err) => {
           this.toastr.error(err.error);
         }
-      })
+      });
     }
   }
 }

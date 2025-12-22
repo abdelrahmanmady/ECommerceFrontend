@@ -69,7 +69,3 @@ export class AuthService {
     this.cartService.clearLocalCart();
   }
 }
-
-
-
-

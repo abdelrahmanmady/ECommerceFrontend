@@ -1,14 +1,23 @@
+/**
+ * Link in the category breadcrumb navigation
+ */
 export interface BreadcrumbLink {
   id: number;
   name: string;
 }
 
+/**
+ * Represents a product image
+ */
 export interface ProductImage {
   id: number;
   imageUrl: string;
   isMain: boolean;
 }
 
+/**
+ * Detailed product information for the product details page
+ */
 export interface ProductDetails {
   id: number;
   images: ProductImage[];
@@ -22,6 +31,9 @@ export interface ProductDetails {
   description: string;
 }
 
+/**
+ * Product summary for listings and cards
+ */
 export interface Product {
   id: number;
   thumbnailUrl: string;
@@ -31,6 +43,9 @@ export interface Product {
   categoryBreadcrumbLinks: BreadcrumbLink[];
 }
 
+/**
+ * Paginated products response from the API
+ */
 export interface ProductsResponse {
   pageIndex: number;
   pageSize: number;
@@ -39,6 +54,9 @@ export interface ProductsResponse {
   items: Product[];
 }
 
+/**
+ * Query parameters for filtering and paginating products
+ */
 export interface ProductQueryParams {
   pageIndex?: number;
   pageSize?: number;

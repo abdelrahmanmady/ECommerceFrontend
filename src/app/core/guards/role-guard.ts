@@ -2,7 +2,7 @@ import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { ToastrService } from 'ngx-toastr';
-import { RoleType } from '../Types/roleType';
+import { Role, RoleType } from '../Types/roleType';
 
 export const roleGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
@@ -10,12 +10,12 @@ export const roleGuard: CanActivateFn = (route, state) => {
   const toastr = inject(ToastrService);
 
   const user = authService.user();
-  const allowedRoles = route.data['roles'];
+  const allowedRoles: Role[] = route.data['roles'];
   if (!user) {
     return router.createUrlTree(['/login']);
   }
 
-  const hasRole = user.roles?.some((role: string) =>
+  const hasRole = user.roles?.some((role) =>
     allowedRoles.includes(role)
   );
 
@@ -24,7 +24,7 @@ export const roleGuard: CanActivateFn = (route, state) => {
   }
 
   toastr.error('You are not authorized to access this page');
-  if(user.roles.includes(RoleType.Admin) || user.roles.includes(RoleType.Seller)) {
+  if (user.roles.includes(RoleType.Admin) || user.roles.includes(RoleType.Seller)) {
     return router.createUrlTree(['/admin']);
   }
   return router.createUrlTree(['/']);

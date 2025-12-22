@@ -16,6 +16,53 @@
   <!-- Cart Section -->
   <section id="cart" class="cart section">
     <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+      <!-- Empty Cart State -->
+      @if(cartItems().length === 0) {
+      <div class="empty-cart-container" data-aos="fade-up" data-aos-delay="200">
+        <div class="empty-cart-content">
+          <div class="empty-cart-icon">
+            <div class="shopping-bag">
+              <i class="bi bi-bag-x"></i>
+            </div>
+            <div class="floating-items">
+              <span class="floating-item item-1"><i class="bi bi-heart"></i></span>
+              <span class="floating-item item-2"><i class="bi bi-tag"></i></span>
+              <span class="floating-item item-3"><i class="bi bi-star"></i></span>
+            </div>
+          </div>
+          <h2 class="empty-cart-title">Your Cart is Empty</h2>
+          <p class="empty-cart-text">
+            Looks like you haven't added anything to your cart yet.<br>
+            Explore our collection and find something you'll love!
+          </p>
+          <div class="empty-cart-actions">
+            <a routerLink="/products" class="btn btn-accent btn-lg">
+              <i class="bi bi-bag-plus me-2"></i>Start Shopping
+            </a>
+            <a routerLink="/home" class="btn btn-outline-secondary">
+              <i class="bi bi-house me-2"></i>Back to Home
+            </a>
+          </div>
+          <div class="empty-cart-features">
+            <div class="feature">
+              <i class="bi bi-truck"></i>
+              <span>Free Shipping on 1000+ EGP</span>
+            </div>
+            <div class="feature">
+              <i class="bi bi-shield-check"></i>
+              <span>Secure Checkout</span>
+            </div>
+            <div class="feature">
+              <i class="bi bi-arrow-clockwise"></i>
+              <span>Easy Returns</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      } @else {
+
+      <!-- Cart with Items -->
       <div class="row">
         <div class="col-lg-8" data-aos="fade-up" data-aos-delay="200">
           <div class="cart-items">
@@ -35,20 +82,17 @@
                 </div>
               </div>
             </div>
-            @if(cartItems().length > 0){ @for(item of cartItems(); track item.id){
-            <!-- Cart Item 1 -->
+            @for(item of cartItems(); track item.productId){
+            <!-- Cart Item -->
             <div class="cart-item">
               <div class="row align-items-center">
                 <div class="col-lg-6 col-12 mt-3 mt-lg-0 mb-lg-0 mb-3">
                   <div class="product-info d-flex align-items-center">
                     <div class="product-image">
-                      <img src="{{ item.productImageUrl }}" alt="Product" class="img-fluid" loading="lazy" />
+                      <img src="{{ item.productThumbnailUrl }}" alt="Product" class="img-fluid" loading="lazy" />
                     </div>
                     <div class="product-details">
                       <h6 class="product-title">{{ item.productName }}</h6>
-                      <div class="product-meta">
-                        <span class="product-size">Size: {{ item.size }}</span>
-                      </div>
                       <button class="remove-item" type="button" (click)="removeCartItem(item.productId)">
                         <i class="bi bi-trash"></i> Remove
                       </button>
@@ -57,16 +101,16 @@
                 </div>
                 <div class="col-lg-2 col-12 mt-3 mt-lg-0 text-center">
                   <div class="price-tag">
-                    <span class="current-price">${{ item.price }}</span>
+                    <span class="price">{{ item.productPrice | number : '1.2-2' }}<span
+                        class="currency-suffix">EGP</span></span>
                   </div>
                 </div>
                 <div class="col-lg-2 col-12 mt-3 mt-lg-0 text-center">
                   <div class="quantity-selector">
-                    <button class="quantity-btn decrease" (click)="removeCartItem(item.productId)">
+                    <button class="quantity-btn decrease" (click)="decreaseQuantity(item.productId)">
                       <i class="bi bi-dash"></i>
                     </button>
-                    <input type="number" class="quantity-input" value="{{ item.quantity }}" min="1"
-                      max="{{ item.product?.stock }}" />
+                    <input type="number" class="quantity-input" [value]="item.quantity" min="1" readonly />
                     <button class="quantity-btn increase" (click)="addCartItem(item.productId)">
                       <i class="bi bi-plus"></i>
                     </button>
@@ -74,16 +118,14 @@
                 </div>
                 <div class="col-lg-2 col-12 mt-3 mt-lg-0 text-center">
                   <div class="item-total">
-                    <span>${{ item.total }}</span>
+                    <span class="price">{{ item.total | number : '1.2-2' }}<span
+                        class="currency-suffix">EGP</span></span>
                   </div>
                 </div>
               </div>
             </div>
             <!-- End Cart Item -->
-
-            } }
-
-
+            }
 
             <div class="cart-actions">
               <div class="row justify-content-end">
@@ -103,7 +145,8 @@
 
             <div class="summary-item">
               <span class="summary-label">Subtotal</span>
-              <span class="summary-value">${{ cartTotal() }}</span>
+              <span class="summary-value"><span class="price">{{ cartTotal() | number : '1.2-2' }}<span
+                    class="currency-suffix">EGP</span></span></span>
             </div>
 
             <div class="summary-item">
@@ -128,7 +171,8 @@
 
             <div class="summary-total">
               <span class="summary-label">Estimated Total</span>
-              <span class="summary-value">${{ cartTotal() }}</span>
+              <span class="summary-value"><span class="price">{{ cartTotal() | number : '1.2-2' }}<span
+                    class="currency-suffix">EGP</span></span></span>
             </div>
 
             <div class="checkout-button">
@@ -155,6 +199,7 @@
           </div>
         </div>
       </div>
+      }
     </div>
   </section>
   <!-- /Cart Section -->
