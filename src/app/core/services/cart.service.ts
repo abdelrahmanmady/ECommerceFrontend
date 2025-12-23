@@ -39,8 +39,8 @@ export class CartService {
 
   private updateLocalState(items: CartItem[]): void {
     this.cartItems.set(items);
-    const totalCount = items.reduce((sum, item) => sum + (item.quantity || 0), 0);
-    this.setCartCount(totalCount);
+    // Count unique items instead of total quantity
+    this.setCartCount(items.length);
   }
 
   /** Get user's cart from API */
