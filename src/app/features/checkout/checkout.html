@@ -30,14 +30,32 @@
                   <h3>Shipping Address</h3>
                 </div>
                 <div class="section-content">
+                  <!-- No Address State -->
+                  @if (addresses.length === 0) {
+                  <div class="empty-address-state text-center">
+                    <div class="empty-icon-container">
+                      <i class="bi bi-geo-alt"></i>
+                    </div>
+                    <h5>No Shipping Address Found</h5>
+                    <p class="text-muted mb-4">Please add a delivery address to proceed with your order.</p>
+                    <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#addressModal">
+                      <i class="bi bi-plus-lg me-2"></i> Add New Address
+                    </button>
+                  </div>
+                  }
+
+
                   <!-- Default Address Display -->
+                  @if (currentAddress) {
                   <div class="default-address-display" id="defaultAddressDisplay">
                     <div class="selected-address-card">
                       <div class="address-card-header">
                         <div class="header-left">
                           <i class="bi bi-geo-alt-fill"></i>
                           <span class="address-label">{{currentAddress.label}}</span>
-                          <span class="default-badge" *ngIf="currentAddress.isDefault">Default</span>
+                          @if (currentAddress.isDefault) {
+                          <span class="default-badge">Default</span>
+                          }
                         </div>
                         <div class="header-actions">
                           <button type="button" class="btn-change-address me-2" data-bs-toggle="modal"
@@ -52,12 +70,50 @@
                         </div>
                       </div>
                       <div class="address-card-body">
-                        <p class="address-name">{{currentAddress.name}}</p>
-                        <p class="address-text">{{currentAddress.text}}</p>
-                        <p class="address-phone"><i class="bi bi-telephone"></i> {{currentAddress.phone}}</p>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <p class="address-name"><i class="bi bi-person-fill"></i> {{currentAddress.fullName}}</p>
+                            <p class="address-phone"><i class="bi bi-telephone-fill"></i><span>+20
+                                {{currentAddress.mobileNumber}}</span></p>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="address-details">
+                              <p class="address-line">
+                                <i class="bi bi-shop text-secondary me-2"></i>
+                                <span>{{currentAddress.street}}, {{currentAddress.building}}</span>
+                              </p>
+                              <p class="address-line">
+                                <i class="bi bi-geo text-secondary me-2"></i>
+                                <span>{{currentAddress.district}}</span>
+                              </p>
+                              <p class="address-line">
+                                <i class="bi bi-geo-alt text-secondary me-2"></i>
+                                <span>{{currentAddress.city}}, {{currentAddress.governorate}}</span>
+                              </p>
+                              @if (currentAddress.zipCode) {
+                              <p class="address-line">
+                                <i class="bi bi-mailbox text-secondary me-2"></i>
+                                <span><span
+                                    class="text-xs text-uppercase fw-bold text-muted me-1">Zip:</span>{{currentAddress.zipCode}}</span>
+                              </p>
+                              }
+                              <p class="address-line">
+                                <i class="bi bi-globe-americas text-secondary me-2"></i>
+                                <span>{{currentAddress.country}}</span>
+                              </p>
+                              @if (currentAddress.hints) {
+                              <p class="address-hints mt-2">
+                                <i class="bi bi-info-circle-fill text-accent me-2"></i>
+                                <span>{{currentAddress.hints}}</span>
+                              </p>
+                              }
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
+                  }
 
                   <!-- Other Saved Addresses (collapsible) -->
                   <div class="collapse" id="otherAddressesContainer">
@@ -67,22 +123,57 @@
                       </h6>
                       <div class="saved-addresses-grid">
                         <!-- Saved Address Item -->
-                        <div class="saved-address-card" *ngFor="let address of addresses"
-                          [class.selected]="tempSelectedAddress.id === address.id" (click)="selectAddress(address)">
+                        @for (address of addresses; track address.id) {
+                        <div class="saved-address-card" [class.selected]="tempSelectedAddress?.id === address.id"
+                          (click)="selectAddress(address)">
                           <input type="radio" name="savedAddress" [id]="'address' + address.id"
-                            [checked]="tempSelectedAddress.id === address.id" class="address-radio">
+                            [checked]="tempSelectedAddress?.id === address.id" class="address-radio">
                           <label [for]="'address' + address.id" class="address-card-content">
                             <div class="address-card-header">
                               <span class="address-label">{{address.label}}</span>
-                              <span class="default-badge" *ngIf="address.isDefault">Default</span>
+                              @if (address.isDefault) {
+                              <span class="default-badge">Default</span>
+                              }
                             </div>
                             <div class="address-card-body">
-                              <p class="address-name"><i class="bi bi-person"></i> {{address.name}}</p>
-                              <p class="address-text">{{address.text}}</p>
-                              <p class="address-phone"><i class="bi bi-telephone"></i> {{address.phone}}</p>
+                              <p class="address-name"><i class="bi bi-person-fill"></i> {{address.fullName}}</p>
+                              <div class="address-details">
+                                <p class="address-line">
+                                  <i class="bi bi-shop text-secondary me-2"></i>
+                                  <span>{{address.street}}, {{address.building}}</span>
+                                </p>
+                                <p class="address-line">
+                                  <i class="bi bi-geo text-secondary me-2"></i>
+                                  <span>{{address.district}}</span>
+                                </p>
+                                <p class="address-line">
+                                  <i class="bi bi-geo-alt text-secondary me-2"></i>
+                                  <span>{{address.city}}, {{address.governorate}}</span>
+                                </p>
+                                @if (address.zipCode) {
+                                <p class="address-line">
+                                  <i class="bi bi-mailbox text-secondary me-2"></i>
+                                  <span><span
+                                      class="text-xs text-uppercase fw-bold text-muted me-1">Zip:</span>{{address.zipCode}}</span>
+                                </p>
+                                }
+                                <p class="address-line">
+                                  <i class="bi bi-globe-americas text-secondary me-2"></i>
+                                  <span>{{address.country}}</span>
+                                </p>
+                                @if (address.hints) {
+                                <p class="address-hints mt-2">
+                                  <i class="bi bi-info-circle-fill text-accent me-2"></i>
+                                  <span>{{address.hints}}</span>
+                                </p>
+                                }
+                              </div>
+                              <p class="address-phone"><i class="bi bi-telephone-fill"></i> <span>+20
+                                  {{address.mobileNumber}}</span></p>
                             </div>
                           </label>
                         </div>
+                        }
                       </div>
 
                       <!-- Save Button -->
@@ -106,18 +197,19 @@
                 </div>
                 <div class="section-content">
                   <div class="payment-options">
-                    <div class="payment-option" [class.active]="selectedPaymentMethod === 'stripe'"
-                      (click)="setPaymentMethod('stripe')">
+                    <div class="payment-option" [class.active]="selectedPaymentMethod === 'Stripe'"
+                      (click)="setPaymentMethod('Stripe')">
                       <input type="radio" name="payment-method" id="credit-card"
-                        [checked]="selectedPaymentMethod === 'stripe'">
+                        [checked]="selectedPaymentMethod === 'Stripe'">
                       <label for="credit-card">
                         <span class="payment-icon"><i class="bi bi-credit-card-2-front"></i></span>
                         <span class="payment-label">Credit / Debit Card (Stripe)</span>
                       </label>
                     </div>
-                    <div class="payment-option" [class.active]="selectedPaymentMethod === 'cod'"
-                      (click)="setPaymentMethod('cod')">
-                      <input type="radio" name="payment-method" id="cod" [checked]="selectedPaymentMethod === 'cod'">
+                    <div class="payment-option" [class.active]="selectedPaymentMethod === 'CashOnDelivery'"
+                      (click)="setPaymentMethod('CashOnDelivery')">
+                      <input type="radio" name="payment-method" id="cod"
+                        [checked]="selectedPaymentMethod === 'CashOnDelivery'">
                       <label for="cod">
                         <span class="payment-icon"><i class="bi bi-cash-stack"></i></span>
                         <span class="payment-label">Cash on Delivery</span>
@@ -125,7 +217,7 @@
                     </div>
                   </div>
 
-                  <div class="payment-details" id="credit-card-details" *ngIf="selectedPaymentMethod === 'stripe'">
+                  <div class="payment-details" id="credit-card-details" *ngIf="selectedPaymentMethod === 'Stripe'">
                     <div class="form-group">
                       <label for="card-number">Card Number</label>
                       <div class="card-number-wrapper">
@@ -161,7 +253,7 @@
                     </div>
                   </div>
 
-                  <div class="payment-details" id="cod-details" *ngIf="selectedPaymentMethod === 'cod'">
+                  <div class="payment-details" id="cod-details" *ngIf="selectedPaymentMethod === 'CashOnDelivery'">
                     <div class="alert alert-info d-flex align-items-center mb-0" role="alert">
                       <i class="bi bi-info-circle-fill me-2 fs-5"></i>
                       <div>
@@ -181,7 +273,7 @@
                 </div>
                 <div class="section-content">
                   <div class="form-check terms-check">
-                    <input class="form-check-input" type="checkbox" id="terms" name="terms" required="">
+                    <input class="form-check-input" type="checkbox" id="terms" name="terms" [(ngModel)]="termsAgreed">
                     <label class="form-check-label" for="terms">
                       I agree to the <a routerLink="/tos" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and
                         Conditions</a> and <a routerLink="/privacy" data-bs-toggle="modal"
@@ -191,9 +283,11 @@
                   <div class="success-message d-none">Your order has been placed successfully! Thank you for your
                     purchase.</div>
                   <div class="place-order-container">
-                    <button type="submit" class="btn btn-primary place-order-btn">
+                    <button type="button" class="btn btn-primary place-order-btn"
+                      [disabled]="!currentAddress || !selectedPaymentMethod || !termsAgreed" (click)="placeOrder()">
                       <span class="btn-text">Place Order</span>
-                      <span class="btn-price">240.96 <span class="currency-suffix">EGP</span></span>
+                      <span class="btn-price">{{orderTotal | number:'1.2-2'}} <span
+                          class="currency-suffix">EGP</span></span>
                     </button>
                   </div>
                 </div>
@@ -207,49 +301,32 @@
           <div class="order-summary" data-aos="fade-left" data-aos-delay="200">
             <div class="order-summary-header">
               <h3>Order Summary</h3>
-              <span class="item-count">2 Items</span>
+              <span class="item-count">{{checkoutItems.length}} Item{{checkoutItems.length !== 1 ? 's' : ''}}</span>
             </div>
 
             <div class="order-summary-content">
               <div class="order-items">
+                @for (item of checkoutItems; track item.productId) {
                 <div class="order-item d-flex justify-content-between align-items-center">
                   <div class="d-flex align-items-center">
                     <div class="order-item-image me-3">
-                      <img src="assets/img/product/product-1.webp" alt="Product" class="img-fluid">
+                      <img [src]="item.productThumbnailUrl" [alt]="item.productName" class="img-fluid">
                     </div>
                     <div class="order-item-details">
-                      <h4 class="mb-2">Lorem Ipsum Dolor</h4>
+                      <h4 class="mb-2">{{item.productName}}</h4>
                       <div class="order-item-price">
-                        <span class="quantity">1 ×</span>
-                        <span class="price">89.99 <span class="currency-suffix">EGP</span></span>
+                        <span class="quantity">{{item.quantity}} ×</span>
+                        <span class="price">{{item.productPrice | number:'1.2-2'}} <span
+                            class="currency-suffix">EGP</span></span>
                       </div>
                     </div>
                   </div>
                   <div class="order-item-total fw-bold text-end">
-                    <span>89.99 <span class="currency-suffix">EGP</span></span>
+                    <span>{{item.total | number:'1.2-2'}} <span class="currency-suffix">EGP</span></span>
                   </div>
                 </div>
-
-                <div class="order-item d-flex justify-content-between align-items-center">
-                  <div class="d-flex align-items-center">
-                    <div class="order-item-image me-3">
-                      <img src="assets/img/product/product-2.webp" alt="Product" class="img-fluid">
-                    </div>
-                    <div class="order-item-details">
-                      <h4 class="mb-2">Sit Amet Consectetur</h4>
-                      <div class="order-item-price">
-                        <span class="quantity">2 ×</span>
-                        <span class="price">59.99 <span class="currency-suffix">EGP</span></span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="order-item-total fw-bold text-end">
-                    <span>119.98 <span class="currency-suffix">EGP</span></span>
-                  </div>
-                </div>
+                }
               </div>
-
-
 
               <div class="estimated-arrival">
                 <div class="arrival-icon">
@@ -257,26 +334,26 @@
                 </div>
                 <div class="arrival-content">
                   <span class="arrival-label">Estimated Delivery</span>
-                  <span class="arrival-date">Thu, Feb 22 - Sat, Feb 24</span>
+                  <span class="arrival-date">{{estimatedDeliveryStart}} - {{estimatedDeliveryEnd}}</span>
                 </div>
               </div>
 
               <div class="order-totals">
                 <div class="order-subtotal d-flex justify-content-between">
                   <span>Subtotal</span>
-                  <span>209.97 <span class="currency-suffix">EGP</span></span>
+                  <span>{{subtotal | number:'1.2-2'}} <span class="currency-suffix">EGP</span></span>
                 </div>
                 <div class="order-shipping d-flex justify-content-between">
                   <span>Shipping</span>
-                  <span>9.99 <span class="currency-suffix">EGP</span></span>
+                  <span>{{shippingFees | number:'1.2-2'}} <span class="currency-suffix">EGP</span></span>
                 </div>
                 <div class="order-tax d-flex justify-content-between">
                   <span>Tax</span>
-                  <span>21.00 <span class="currency-suffix">EGP</span></span>
+                  <span>{{taxes | number:'1.2-2'}} <span class="currency-suffix">EGP</span></span>
                 </div>
                 <div class="order-total d-flex justify-content-between">
                   <span>Total</span>
-                  <span>240.96 <span class="currency-suffix">EGP</span></span>
+                  <span>{{orderTotal | number:'1.2-2'}} <span class="currency-suffix">EGP</span></span>
                 </div>
               </div>
 
@@ -353,7 +430,7 @@
 
   <!-- Address Modal -->
   <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="addressModalLabel">
@@ -363,71 +440,156 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form id="addressForm" class="address-form">
+          <form #addressForm="ngForm" class="address-form needs-validation" novalidate>
             <div class="form-group mb-3">
-              <label for="addressLabel" class="form-label">Address Label *</label>
-              <input type="text" class="form-control" id="modalAddressLabel" placeholder="e.g., Home, Office, etc."
-                required>
+              <label for="modalAddressLabel" class="form-label">Address Label (optional)</label>
+              <input type="text" class="form-control" id="modalAddressLabel" name="label" [(ngModel)]="newAddress.label"
+                placeholder="e.g., Home, Office, etc." maxlength="50">
             </div>
 
             <div class="row">
               <div class="col-md-6 form-group mb-3">
-                <label for="fullName" class="form-label">Full Name *</label>
-                <input type="text" class="form-control" id="modalFullName" placeholder="Your full name" required>
+                <label for="modalFullName" class="form-label">Full Name *</label>
+                <input type="text" class="form-control" id="modalFullName" name="fullName"
+                  [(ngModel)]="newAddress.fullName" placeholder="Your full name" required maxlength="50"
+                  pattern="[a-zA-Z\s]*" #fullName="ngModel"
+                  [class.is-invalid]="fullName.invalid && (fullName.dirty || fullName.touched)">
+                <div class="invalid-feedback">
+                  @if (fullName.errors?.['required']) {
+                  Full name is required.
+                  } @else if (fullName.errors?.['pattern']) {
+                  Only alphabets and spaces are allowed.
+                  }
+                </div>
               </div>
               <div class="col-md-6 form-group mb-3">
-                <label for="phoneNumber" class="form-label">Phone Number *</label>
-                <input type="tel" class="form-control" id="modalPhoneNumber" placeholder="+20 1012 345 678" required>
+                <label for="modalPhoneNumber" class="form-label">Phone Number *</label>
+                <div class="phone-input-group"
+                  [class.border-danger]="mobileNumber.invalid && (mobileNumber.dirty || mobileNumber.touched)">
+                  <div class="country-code-display">
+                    <img src="https://flagcdn.com/w20/eg.png" alt="EG" class="country-flag" />
+                    <span>+20</span>
+                  </div>
+                  <input type="tel" class="phone-number-input form-control" id="modalPhoneNumber" name="mobileNumber"
+                    [(ngModel)]="newAddress.mobileNumber" placeholder="1012 345 678" required maxlength="10"
+                    pattern="^(10|11|12|15)[0-9]{8}" #mobileNumber="ngModel">
+                </div>
+                <!-- Hidden validation trigger/feedback logic for the group -->
+                <div class="invalid-feedback"
+                  [style.display]="mobileNumber.invalid && (mobileNumber.dirty || mobileNumber.touched) ? 'block' : 'none'">
+                  @if (mobileNumber.errors?.['required']) {
+                  Phone number is required.
+                  } @else {
+                  Please enter a valid phone number
+                  }
+                </div>
               </div>
             </div>
 
-            <div class="form-group mb-3">
-              <label for="streetAddress" class="form-label">Street Address *</label>
-              <input type="text" class="form-control" id="modalStreetAddress" placeholder="Street name and number"
-                required>
-            </div>
-
-            <div class="form-group mb-3">
-              <label for="apartment" class="form-label">Apartment, Suite, etc. (optional)</label>
-              <input type="text" class="form-control" id="modalApartment"
-                placeholder="Apartment, Suite, Unit, Building, Floor">
+            <div class="row">
+              <div class="col-md-8 form-group mb-3">
+                <label for="modalStreetAddress" class="form-label">Street Address *</label>
+                <input type="text" class="form-control" id="modalStreetAddress" name="street"
+                  [(ngModel)]="newAddress.street" placeholder="Street name and number" required maxlength="60"
+                  #street="ngModel" [class.is-invalid]="street.invalid && (street.dirty || street.touched)">
+                <div class="invalid-feedback">
+                  Street address is required.
+                </div>
+              </div>
+              <div class="col-md-4 form-group mb-3">
+                <label for="modalBuilding" class="form-label">Building/Apt *</label>
+                <input type="text" class="form-control" id="modalBuilding" name="building"
+                  [(ngModel)]="newAddress.building" placeholder="Bldg, Apt, etc." required maxlength="50"
+                  #building="ngModel" [class.is-invalid]="building.invalid && (building.dirty || building.touched)">
+                <div class="invalid-feedback">
+                  Building/Apt is required.
+                </div>
+              </div>
             </div>
 
             <div class="row">
               <div class="col-md-4 form-group mb-3">
-                <label for="city" class="form-label">City *</label>
-                <input type="text" class="form-control" id="modalCity" placeholder="City" required>
+                <label for="modalDistrict" class="form-label">District (optional)</label>
+                <input type="text" class="form-control" id="modalDistrict" name="district"
+                  [(ngModel)]="newAddress.district" placeholder="District" maxlength="50">
               </div>
               <div class="col-md-4 form-group mb-3">
-                <label for="state" class="form-label">State/Governorate *</label>
-                <input type="text" class="form-control" id="modalState" placeholder="State" required>
+                <label for="modalCity" class="form-label">City *</label>
+                <div class="position-relative">
+                  <input type="text" class="form-control" id="modalCity" name="city" [(ngModel)]="newAddress.city"
+                    placeholder="City" required #city="ngModel" autocomplete="nope" (input)="onCityInput()"
+                    (focus)="onCityInput()" (blur)="hideCitySuggestions()" (keydown)="onKeyDown($event)"
+                    [class.is-invalid]="city.invalid && (city.dirty || city.touched)">
+
+                  <ul class="city-suggestions-dropdown" *ngIf="showCitySuggestions">
+                    <li *ngFor="let suggestion of filteredCities; let i = index" (mousedown)="selectCity(suggestion)"
+                      class="city-suggestion-item" [class.active]="i === highlightedIndex">
+                      {{ suggestion }}
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="invalid-feedback"
+                  [style.display]="(city.invalid || cityInvalid) && (city.dirty || city.touched) ? 'block' : 'none'">
+                  @if (cityInvalid) {
+                  Please select a valid city from the list.
+                  } @else {
+                  City is required.
+                  }
+                </div>
               </div>
               <div class="col-md-4 form-group mb-3">
-                <label for="postalCode" class="form-label">Postal Code</label>
-                <input type="text" class="form-control" id="modalPostalCode" placeholder="12345">
+                <label for="modalGovernorate" class="form-label">Governorate (optional)</label>
+                <input type="text" class="form-control" id="modalGovernorate" name="governorate"
+                  [(ngModel)]="newAddress.governorate" placeholder="Governorate" maxlength="50">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 form-group mb-3">
+                <label for="modalZipCode" class="form-label">Zip Code (optional)</label>
+                <input type="text" class="form-control" id="modalZipCode" name="zipCode"
+                  [(ngModel)]="newAddress.zipCode" placeholder="12345" maxlength="50">
+              </div>
+              <div class="col-md-6 form-group mb-3">
+                <label for="modalCountry" class="form-label">Country *</label>
+                <div class="position-relative">
+                  <input type="text" class="form-control" id="modalCountry" name="country"
+                    [(ngModel)]="newAddress.country" placeholder="Country" required #country="ngModel"
+                    autocomplete="nope" (input)="onCountryInput()" (focus)="onCountryInput()"
+                    (blur)="hideCountrySuggestions()" (keydown)="onCountryKeyDown($event)"
+                    [class.is-invalid]="country.invalid && (country.dirty || country.touched)">
+
+                  <ul class="country-suggestions-dropdown city-suggestions-dropdown" *ngIf="showCountrySuggestions">
+                    <li *ngFor="let suggestion of filteredCountries; let i = index"
+                      (mousedown)="selectCountry(suggestion)" class="city-suggestion-item"
+                      [class.active]="i === countryHighlightedIndex">
+                      {{ suggestion }}
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="invalid-feedback"
+                  [style.display]="(country.invalid || countryInvalid) && (country.dirty || country.touched) ? 'block' : 'none'">
+                  @if (countryInvalid) {
+                  Please select a supported country from the list.
+                  } @else {
+                  Country is required.
+                  }
+                </div>
               </div>
             </div>
 
             <div class="form-group mb-3">
-              <label for="country" class="form-label">Country *</label>
-              <select class="form-select" id="modalCountry" required>
-                <option value="" disabled selected>Select Country</option>
-                <option value="EG">Egypt</option>
-                <option value="SA">Saudi Arabia</option>
-                <option value="AE">United Arab Emirates</option>
-                <option value="US">United States</option>
-                <option value="UK">United Kingdom</option>
-                <option value="DE">Germany</option>
-                <option value="FR">France</option>
-              </select>
+              <label for="modalHints" class="form-label">Nearest Landmark / Hints (optional)</label>
+              <textarea class="form-control" id="modalHints" name="hints" rows="1" [(ngModel)]="newAddress.hints"
+                placeholder="Near to..." maxlength="100"></textarea>
             </div>
-
 
           </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary">
+          <button type="button" class="btn btn-primary" (click)="saveNewAddress(addressForm)">
             <i class="bi bi-check-lg me-1"></i>
             Use This Address
           </button>

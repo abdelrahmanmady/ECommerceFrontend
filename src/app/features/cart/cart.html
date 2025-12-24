@@ -158,12 +158,14 @@
               <span class="summary-label">Shipping</span>
               <div class="shipping-options">
                 <div class="form-check text-end">
-                  <input class="form-check-input" type="radio" name="shipping" id="standard" checked="" />
+                  <input class="form-check-input" type="radio" name="shipping" id="standard"
+                    [(ngModel)]="shippingMethod" value="standard" />
                   <label class="form-check-label" for="standard"> Standard Shipping (5-7 days) </label>
                 </div>
 
                 <div class="form-check text-end">
-                  <input class="form-check-input" type="radio" name="shipping" id="express" />
+                  <input class="form-check-input" type="radio" name="shipping" id="express" [(ngModel)]="shippingMethod"
+                    value="express" />
                   <label class="form-check-label" for="express"> Express Shipping (2-3 days)</label>
                 </div>
               </div>
@@ -176,9 +178,9 @@
             </div>
 
             <div class="checkout-button">
-              <a routerLink="/checkout" class="btn btn-accent w-100">
+              <button (click)="proceedToCheckout()" class="btn btn-accent w-100">
                 Proceed to Checkout <i class="bi bi-arrow-right"></i>
-              </a>
+              </button>
             </div>
 
             <div class="continue-shopping">

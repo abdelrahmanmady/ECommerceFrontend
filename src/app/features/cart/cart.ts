@@ -1,43 +1,36 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { CartService } from '../../core/services/cart.service';
 import { CartItem } from '../../core/models';
 
 @Component({
   selector: 'app-cart',
-  imports: [RouterLink, DecimalPipe],
+  imports: [RouterLink, DecimalPipe, FormsModule],
   templateUrl: './cart.html',
   styleUrl: './cart.css',
 })
 export class Cart {
   cartService = inject(CartService);
+  router = inject(Router);
 
-  // Cart state - initialized from local service state
   cartItems = signal<CartItem[]>([]);
   cartTotal = signal(0);
   isLoading = signal(false);
+  shippingMethod = 'standard';
 
   ngOnInit(): void {
-    // 1. Show local cart immediately for instant UX
     this.loadFromLocalState();
-
-    // 2. Refresh from API in background to ensure data freshness
     this.refreshFromApi();
   }
 
-  /**
-   * Load cart from local CartService state (instant, no API call)
-   */
   private loadFromLocalState(): void {
     const localItems = this.cartService.cartItems();
     this.cartItems.set(localItems);
     this.cartTotal.set(this.calculateTotal(localItems));
   }
 
-  /**
-   * Refresh cart from API in background
-   */
   private refreshFromApi(): void {
     this.cartService.getUserCart().subscribe({
       next: (cart) => {
@@ -46,16 +39,10 @@ export class Cart {
           this.cartTotal.set(cart.cartTotal ?? this.calculateTotal(cart.items));
         }
       },
-      error: (err) => {
-        // Silently fail - local data is already displayed
-        console.error('Failed to refresh cart from API:', err.message);
-      }
+      error: (err) => console.error('Failed to refresh cart:', err.message)
     });
   }
 
-  /**
-   * Calculate cart total from items
-   */
   private calculateTotal(items: CartItem[]): number {
     return items.reduce((sum, item) => sum + (item.total ?? item.productPrice * item.quantity), 0);
   }
@@ -105,6 +92,12 @@ export class Cart {
       error: (err) => {
         console.error('Failed to clear cart:', err.message);
       }
+    });
+  }
+
+  proceedToCheckout(): void {
+    this.router.navigate(['/checkout'], {
+      queryParams: { shippingMethod: this.shippingMethod }
     });
   }
 }
