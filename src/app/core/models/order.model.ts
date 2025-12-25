@@ -1,14 +1,17 @@
 
-export interface OrderItem {
+export interface OrderSummary {
+
+}
+export interface OrderItem { // Input :OrderItemDto
     productId: number;
     productName: string;
     productThumbnailUrl: string;
     productPrice: number;
     quantity: number;
-    total:number;
+    total: number;
 }
 
-export interface OrderAddress {
+export interface OrderAddress { //Input : OrderAddress
     id: number;
     fullName: string;
     mobileNumber: string;

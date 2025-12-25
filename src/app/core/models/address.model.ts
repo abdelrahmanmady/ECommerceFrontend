@@ -1,4 +1,4 @@
-export interface Address {
+export interface Address { //Input : AddressDto
     id: number;
     isDefault: boolean;
     label: string;
@@ -13,8 +13,8 @@ export interface Address {
     zipCode: string;
     hints: string;
 }
-// Request payload for creating a new address
-export interface AddressRequest {
+
+export interface AddressRequest { //Output : CreateAddressDto
     label?: string; // Optional
     fullName: string;
     mobileNumber: string;

@@ -15,13 +15,9 @@ import { RoleType } from '../../../core/Types/roleType';
 export class Login {
   showPassword = false;
   rememberMe = false;
-  email = '';
+  identifier = '';
   password = '';
-
-  errors: { email: string; password: string } = {
-    email: '',
-    password: ''
-  };
+  errors = { identifier: '', password: '' };
   hasApiError = false;
 
   constructor(
@@ -37,16 +33,16 @@ export class Login {
   }
 
   clearErrors(): void {
-    this.errors = { email: '', password: '' };
+    this.errors = { identifier: '', password: '' };
     this.hasApiError = false;
   }
 
-  validateEmail(): void {
+  validateIdentifier(): void {
     if (this.hasApiError) {
       this.hasApiError = false;
       this.errors.password = '';
     }
-    this.errors.email = !this.email?.trim() ? 'Email or Username is required' : '';
+    this.errors.identifier = !this.identifier?.trim() ? 'Email or Username is required' : '';
   }
 
   validatePassword(): void {
@@ -58,11 +54,10 @@ export class Login {
 
   login(): void {
     this.clearErrors();
-
     let hasError = false;
 
-    if (!this.email) {
-      this.errors.email = 'Email or Username is required';
+    if (!this.identifier) {
+      this.errors.identifier = 'Email or Username is required';
       hasError = true;
     }
 
@@ -71,17 +66,14 @@ export class Login {
       hasError = true;
     }
 
-    if (hasError) {
-      return;
-    }
+    if (hasError) return;
 
-    this.authService.login(this.email, this.password, this.rememberMe).subscribe({
+    this.authService.login({ identifier: this.identifier, password: this.password, rememberMe: this.rememberMe }).subscribe({
       next: (res) => {
         this.authService.setAuthState(res);
-        this.cartService.getUserCart().subscribe(); // Fetch cart for badge
+        this.cartService.getUserCart().subscribe();
         this.toastr.success('Login successful!');
-
-        const isAdminOrSeller = res.user.roles.includes(RoleType.Admin) || res.user.roles.includes(RoleType.Seller);
+        const isAdminOrSeller = res.roles.includes(RoleType.Admin) || res.roles.includes(RoleType.Seller);
         this.router.navigate([isAdminOrSeller ? '/admin' : '/home']);
       },
       error: (err) => {

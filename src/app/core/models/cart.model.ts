@@ -1,7 +1,9 @@
-/**
- * Represents a single item in the shopping cart
- */
-export interface CartItem {
+export interface Cart { //Input : ShoppingCartDto
+    items: CartItem[];
+    cartTotal: number;
+}
+
+export interface CartItem {  //Input : OrderItemDto
     productId: number;
     productThumbnailUrl: string;
     productName: string;
@@ -10,17 +12,9 @@ export interface CartItem {
     total: number;
 }
 
-/**
- * Represents the complete cart response from the API
- */
-export interface Cart {
-    items: CartItem[];
-    cartTotal: number;
+
+export interface CartUpdateRequest { //Output : UpdateShoppingCartDto
+    items: Pick<CartItem, 'productId' | 'quantity'>[]; //Output: UpdateCartItemDto
 }
 
-/**
- * Request payload for updating cart
- */
-export interface CartUpdateRequest {
-    items: Pick<CartItem, 'productId' | 'quantity'>[];
-}
+

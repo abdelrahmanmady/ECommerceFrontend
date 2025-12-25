@@ -59,8 +59,17 @@ export const routes: Routes = [
             },
             {
                 path: 'account',
-                loadComponent: () => import('./features/account/account').then(m => m.Account),
-                canActivate: [authGuard]
+                loadComponent: () => import('./features/account/account-layout/account-layout').then(m => m.AccountLayout),
+                canActivate: [authGuard],
+                children: [
+                    { path: '', redirectTo: 'orders', pathMatch: 'full' },
+                    { path: 'orders', loadComponent: () => import('./features/account/orders/orders').then(m => m.AccountOrders) },
+                    { path: 'wishlist', loadComponent: () => import('./features/account/wishlist/wishlist').then(m => m.AccountWishlist) },
+                    { path: 'payment-methods', loadComponent: () => import('./features/account/payment-methods/payment-methods').then(m => m.AccountPaymentMethods) },
+                    { path: 'reviews', loadComponent: () => import('./features/account/reviews/reviews').then(m => m.AccountReviews) },
+                    { path: 'addresses', loadComponent: () => import('./features/account/addresses/addresses').then(m => m.AccountAddresses) },
+                    { path: 'settings', loadComponent: () => import('./features/account/settings/settings').then(m => m.AccountSettings) }
+                ]
             },
             {
                 path: 'shipinginfo',

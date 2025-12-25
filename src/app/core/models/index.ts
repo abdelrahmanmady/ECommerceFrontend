@@ -1,4 +1,4 @@
-export * from './user.model';
+export * from './authentication.model';
 export * from './category.model';
 export * from './api-error.model';
 export * from './brand.model';
@@ -7,3 +7,4 @@ export * from './cart.model';
 export * from './checkout.model';
 export * from './address.model';
 export * from './order.model';
+export * from './pagedResponse.model';

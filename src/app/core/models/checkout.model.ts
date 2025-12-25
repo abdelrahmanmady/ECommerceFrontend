@@ -1,7 +1,7 @@
 import { CartItem } from './cart.model';
 import { OrderItem, OrderAddress } from './order.model';
 
-export interface CheckoutPreviewResponse {
+export interface CheckoutPreviewResponse { //Input CheckoutPreviewDto
     subtotal: number;
     shippingFees: number;
     taxes: number;
@@ -11,13 +11,13 @@ export interface CheckoutPreviewResponse {
     items: CartItem[];
 }
 
-export interface PlaceOrderRequest {
+export interface PlaceOrderRequest { //Output : CheckoutDto
     shippingAddressId: number;
     shippingMethod: 'standard' | 'express';
     paymentMethod: 'cashOnDelivery' | 'stripe' | 'paymob';
 }
 
-export interface OrderConfirmationResponse {
+export interface OrderConfirmationResponse { //Input : OrderConfirmationDto
     id: number;
     created: string;
     subtotal: number;

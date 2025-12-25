@@ -1,7 +1,5 @@
-/**
- * Backend unified error response structure
- */
-export interface ApiError {
+
+export interface ApiError { //Input : ApiErrorResponseDto
     statusCode: number;
     message: string;
     detail: string;

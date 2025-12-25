@@ -32,8 +32,6 @@ interface PasswordRequirements {
 export class Register {
   showPassword = false;
   isSubmitting = false;
-
-
   firstName = '';
   lastName = '';
   userName = '';
@@ -42,7 +40,6 @@ export class Register {
   password = '';
   confirmPassword = '';
   agreeTerms = false;
-
 
   errors: FieldErrors = {
     firstName: null,
@@ -54,7 +51,6 @@ export class Register {
     confirmPassword: null,
     agreeTerms: null
   };
-
 
   passwordRequirements: PasswordRequirements = {
     minLength: false,
@@ -73,16 +69,13 @@ export class Register {
     this.showPassword = !this.showPassword;
   }
 
-
   validateFirstName(): void {
     this.errors.firstName = this.validateNameField(this.firstName, 'First name');
   }
 
-
   validateLastName(): void {
     this.errors.lastName = this.validateNameField(this.lastName, 'Last name');
   }
-
 
   validateUserName(): void {
     if (!this.userName) {
@@ -92,20 +85,14 @@ export class Register {
     this.errors.userName = !this.userName.trim() ? 'Username is required' : null;
   }
 
-
   validateEmailField(): void {
     if (!this.email) {
       this.errors.email = null;
       return;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(this.email)) {
-      this.errors.email = 'Please enter a valid email address';
-    } else {
-      this.errors.email = null;
-    }
+    this.errors.email = !emailRegex.test(this.email) ? 'Please enter a valid email address' : null;
   }
-
 
   validatePhoneField(): void {
     if (!this.phoneNumber) {
@@ -115,14 +102,9 @@ export class Register {
     const digitsOnly = this.phoneNumber.replace(/\s/g, '');
     const validPrefixes = ['10', '11', '12', '15'];
     const hasValidPrefix = validPrefixes.some(prefix => digitsOnly.startsWith(prefix));
-
-    if (!/^\d+$/.test(digitsOnly) || digitsOnly.length !== 10 || !hasValidPrefix) {
-      this.errors.phoneNumber = 'Please enter a valid phone number';
-    } else {
-      this.errors.phoneNumber = null;
-    }
+    this.errors.phoneNumber = (!/^\d+$/.test(digitsOnly) || digitsOnly.length !== 10 || !hasValidPrefix)
+      ? 'Please enter a valid phone number' : null;
   }
-
 
   checkPasswordRequirements(): void {
     this.passwordRequirements = {
@@ -131,58 +113,41 @@ export class Register {
       hasDigit: /[0-9]/.test(this.password)
     };
 
-    // Validate password field
     if (!this.password) {
       this.errors.password = null;
-    } else if (!this.passwordRequirements.minLength ||
-      !this.passwordRequirements.hasUppercase ||
-      !this.passwordRequirements.hasDigit) {
+    } else if (!this.passwordRequirements.minLength || !this.passwordRequirements.hasUppercase || !this.passwordRequirements.hasDigit) {
       this.errors.password = 'Password does not meet all requirements';
     } else {
       this.errors.password = null;
     }
 
-    // Also check confirm password if it has value
     if (this.confirmPassword) {
       this.validateConfirmPasswordField();
     }
   }
-
 
   validateConfirmPasswordField(): void {
     if (!this.confirmPassword) {
       this.errors.confirmPassword = null;
       return;
     }
-    this.errors.confirmPassword = this.password !== this.confirmPassword
-      ? 'Passwords do not match'
-      : null;
+    this.errors.confirmPassword = this.password !== this.confirmPassword ? 'Passwords do not match' : null;
   }
-
 
   private validateNameField(value: string, fieldName: string): string | null {
-    if (!value) return null; // Don't show error while empty
-    if (!value.trim()) {
-      return `${fieldName} is required`;
-    }
-    if (/[\d\s]/.test(value)) {
-      return `${fieldName} cannot contain numbers or spaces`;
-    }
+    if (!value) return null;
+    if (!value.trim()) return `${fieldName} is required`;
+    if (/[\d\s]/.test(value)) return `${fieldName} cannot contain numbers or spaces`;
     return null;
   }
-
 
   private validatePhoneForSubmit(): string | null {
     const digitsOnly = this.phoneNumber.replace(/\s/g, '');
     const validPrefixes = ['10', '11', '12', '15'];
     const hasValidPrefix = validPrefixes.some(prefix => digitsOnly.startsWith(prefix));
-
-    if (!/^\d+$/.test(digitsOnly) || digitsOnly.length !== 10 || !hasValidPrefix) {
-      return 'Please enter a valid phone number';
-    }
-    return null;
+    return (!/^\d+$/.test(digitsOnly) || digitsOnly.length !== 10 || !hasValidPrefix)
+      ? 'Please enter a valid phone number' : null;
   }
-
 
   private validateForm(): boolean {
     this.errors = {
@@ -195,24 +160,19 @@ export class Register {
       confirmPassword: this.password !== this.confirmPassword ? 'Passwords do not match' : null,
       agreeTerms: !this.agreeTerms ? 'You must agree to the terms' : null
     };
-
     return !Object.values(this.errors).some(error => error !== null);
   }
 
-
   private mapErrorToField(key: string): keyof FieldErrors | null {
     const lowerKey = key.toLowerCase();
-
     if (lowerKey.includes('firstname')) return 'firstName';
     if (lowerKey.includes('lastname')) return 'lastName';
     if (lowerKey.includes('username')) return 'userName';
     if (lowerKey.includes('email')) return 'email';
     if (lowerKey.includes('phone')) return 'phoneNumber';
     if (lowerKey.includes('password')) return 'password';
-
     return null;
   }
-
 
   private handleApiErrors(error: HttpErrorResponse): void {
     const detail = error.error?.detail;
@@ -227,17 +187,14 @@ export class Register {
     for (const part of errorParts) {
       const colonIndex = part.indexOf(':');
       if (colonIndex === -1) continue;
-
       const key = part.substring(0, colonIndex).trim();
       const message = part.substring(colonIndex + 1).trim();
-
       const fieldName = this.mapErrorToField(key);
       if (fieldName) {
         this.errors[fieldName] = message;
         mappedAnyError = true;
       }
     }
-
 
     if (!mappedAnyError) {
       this.toastr.error(error.error?.message || 'Registration failed. Please try again.');
@@ -246,46 +203,36 @@ export class Register {
 
   register(form: NgForm): void {
     this.errors = {
-      firstName: null,
-      lastName: null,
-      userName: null,
-      email: null,
-      phoneNumber: null,
-      password: null,
-      confirmPassword: null,
-      agreeTerms: null
+      firstName: null, lastName: null, userName: null, email: null,
+      phoneNumber: null, password: null, confirmPassword: null, agreeTerms: null
     };
 
-    if (!this.validateForm()) {
-      return;
-    }
+    if (!this.validateForm()) return;
 
     this.isSubmitting = true;
-
     const phoneDigits = this.phoneNumber?.replace(/\s/g, '') || '';
     const fullPhoneNumber = phoneDigits.length > 0 ? '20' + phoneDigits : null;
 
-    this.authService.register(
-      this.firstName,
-      this.lastName,
-      this.userName,
-      this.email,
-      fullPhoneNumber,
-      this.password
-    ).subscribe({
-      next: () => {
-        setTimeout(() => {
-          this.isSubmitting = false;
-          this.toastr.success('Registration successful! Please login.');
-          this.router.navigate(['/login']);
-        }, 0);
+    this.authService.register({
+      firstName: this.firstName,
+      lastName: this.lastName,
+      userName: this.userName,
+      email: this.email,
+      phoneNumber: fullPhoneNumber ?? undefined,
+      password: this.password
+    }).subscribe({
+      next: (res) => {
+        this.authService.setAuthState(res);
+        this.isSubmitting = false;
+        this.toastr.success('Registration successful! Welcome!');
+        this.router.navigate(['/home']);
       },
       error: (error: HttpErrorResponse) => {
         setTimeout(() => {
           this.isSubmitting = false;
           try {
             this.handleApiErrors(error);
-          } catch (e) {
+          } catch {
             this.toastr.error('Registration failed. Please try again.');
           }
           this.cdr.detectChanges();

@@ -2,7 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Product, ProductsResponse, ProductQueryParams, ProductDetails } from '../models/product.model';
+import { Product, ProductQueryParams, ProductDetails } from '../models/product.model';
+import { PagedResponse } from '../models/pagedResponse.model';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,7 @@ export class ProductService {
   private readonly baseUrl: string = `${environment.url}/api/Products`;
   private readonly http = inject(HttpClient);
 
-  getAllProducts(filters?: ProductQueryParams): Observable<ProductsResponse> {
+  getAllProducts(filters?: ProductQueryParams): Observable<PagedResponse<Product>> {
     let params = new HttpParams();
 
     if (filters) {
@@ -41,7 +42,7 @@ export class ProductService {
       }
     }
 
-    return this.http.get<ProductsResponse>(this.baseUrl, { params });
+    return this.http.get<PagedResponse<Product>>(this.baseUrl, { params });
   }
 
   getProductById(id: number): Observable<ProductDetails> {

@@ -33,7 +33,7 @@
           <!-- Account -->
           <div class="dropdown account-dropdown">
             @if(authService.user() != null){
-            Welcome {{ authService.user()?.name }}
+            Welcome {{ authService.user()?.fullName }}
             }@else{
             Welcome
             }
@@ -46,23 +46,20 @@
                 <p class="mb-0">Access account &amp; manage orders</p>
               </div>
               <div class="dropdown-body">
-                <a class="dropdown-item d-flex align-items-center" routerLink="/account">
-                  <i class="bi bi-person-circle me-2"></i>
-                  <span>My Profile</span>
-                </a>
-                <a class="dropdown-item d-flex align-items-center" routerLink="/account">
+                <a class="dropdown-item d-flex align-items-center" routerLink="/account/orders">
                   <i class="bi bi-bag-check me-2"></i>
                   <span>My Orders</span>
                 </a>
-                <a class="dropdown-item d-flex align-items-center" routerLink="/account">
+                <a class="dropdown-item d-flex align-items-center" routerLink="/account/wishlist">
                   <i class="bi bi-heart me-2"></i>
-                  <span>My Wishlist</span>
+                  <span>Wishlist</span>
                 </a>
-                <a class="dropdown-item d-flex align-items-center" routerLink="/account">
+                <a class="dropdown-item d-flex align-items-center" routerLink="/account/settings">
                   <i class="bi bi-gear me-2"></i>
-                  <span>Settings</span>
+                  <span>Account Settings</span>
                 </a>
               </div>
+
               @if(authService.user() == null){
               <div class="dropdown-footer">
                 <a routerLink="/login" class="btn btn-primary w-100 mb-2">Sign In</a>

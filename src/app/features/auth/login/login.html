@@ -8,12 +8,12 @@
         </div>
 
         <form (ngSubmit)="login()" #loginForm="ngForm">
-          <div class="form-group" [class.has-error]="errors.email || hasApiError">
+          <div class="form-group" [class.has-error]="errors.identifier || hasApiError">
             <label>Email or Username *</label>
-            <input type="text" [(ngModel)]="email" name="email" (ngModelChange)="validateEmail()" required
-              placeholder="your@email.com or username" />
-            @if (errors.email && !hasApiError) {
-            <span class="field-error">{{ errors.email }}</span>
+            <input type="text" [(ngModel)]="identifier" name="identifier" (ngModelChange)="validateIdentifier()"
+              required placeholder="your@email.com or username" />
+            @if (errors.identifier && !hasApiError) {
+            <span class="field-error">{{ errors.identifier }}</span>
             }
           </div>
 

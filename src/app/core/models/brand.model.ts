@@ -1,7 +1,5 @@
-/**
- * Represents a product brand
- */
-export interface Brand {
+
+export interface Brand { //Input : BrandDto
     id: number;
     name: string;
     productsCount: number;

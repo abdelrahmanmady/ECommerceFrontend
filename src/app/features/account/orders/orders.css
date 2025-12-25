@@ -1,0 +1,7 @@
+/* Orders Component Styles */
+.currency-suffix {
+    font-size: 0.75em;
+    font-weight: 500;
+    color: #888;
+    margin-left: 2px;
+}

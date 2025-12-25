@@ -1,7 +1,5 @@
-/**
- * Represents a product category with optional subcategories
- */
-export interface Category {
+
+export interface Category { //Input : CategoryDto 
     id: number;
     name: string;
     description: string;
