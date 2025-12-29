@@ -1,6 +1,7 @@
 export interface CartResponse {
     items: CartItemDto[];
     total: number;
+    warnings: string[];
 }
 
 export interface UpdateCartItemDto {

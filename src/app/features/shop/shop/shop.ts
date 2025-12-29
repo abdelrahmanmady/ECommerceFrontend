@@ -119,7 +119,7 @@ export class Shop {
       if (this.search() !== search) this.search.set(search || '');
       this.appliedSearch.set(search || '');
 
-      const brands = params['brands'];
+      const brands = params['brandIds'];
       if (brands) {
         const brandIds = brands.split(',').map(Number);
         this.selectedBrands.set(brandIds);
@@ -158,7 +158,7 @@ export class Shop {
     });
 
     this.search$.subscribe((term) => {
-      this.updateQueryParams({ search: term || null, page: 1 });
+      this.updateQueryParams({ search: term || null, page: null });
     });
 
     this.loadCategories();
@@ -264,7 +264,7 @@ export class Shop {
     if (this.selectedCategory() !== cat.id) {
       newCatId = cat.id;
     }
-    this.updateQueryParams({ categoryId: newCatId, page: 1 });
+    this.updateQueryParams({ categoryId: newCatId, page: null });
   }
 
   sortByCategory(cat: any) {
@@ -298,7 +298,7 @@ export class Shop {
 
   applyBrandFilter() {
     const brands = this.pendingSelectedBrands();
-    this.updateQueryParams({ brands: brands.length > 0 ? brands.join(',') : null, page: 1 });
+    this.updateQueryParams({ brandIds: brands.length > 0 ? brands.join(',') : null, page: null });
   }
 
   // ==================== Price Filter Methods ====================
@@ -326,14 +326,14 @@ export class Shop {
     this.updateQueryParams({
       minPrice: this.minValue > 0 ? this.minValue : null,
       maxPrice: this.maxValue < 5000 ? this.maxValue : null,
-      page: 1
+      page: null
     });
   }
 
   // ==================== Sort Methods ====================
 
   setSort(sortKey: string, label: string) {
-    this.updateQueryParams({ sort: sortKey, page: 1 });
+    this.updateQueryParams({ sort: sortKey, page: null });
   }
 
   // ==================== View & Pagination ====================
@@ -358,20 +358,20 @@ export class Shop {
   removeFilter(type: string, id?: number) {
     switch (type) {
       case 'search':
-        this.updateQueryParams({ search: null, page: 1 });
+        this.updateQueryParams({ search: null, page: null });
         break;
       case 'category':
-        this.updateQueryParams({ categoryId: null, page: 1 });
+        this.updateQueryParams({ categoryId: null, page: null });
         break;
       case 'price':
-        this.updateQueryParams({ minPrice: null, maxPrice: null, page: 1 });
+        this.updateQueryParams({ minPrice: null, maxPrice: null, page: null });
         break;
       case 'brand':
         let newBrands: number[] = [];
         if (id) {
           newBrands = this.selectedBrands().filter(b => b !== id);
         }
-        this.updateQueryParams({ brands: newBrands.length > 0 ? newBrands.join(',') : null, page: 1 });
+        this.updateQueryParams({ brandIds: newBrands.length > 0 ? newBrands.join(',') : null, page: null });
         break;
     }
   }

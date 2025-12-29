@@ -3,6 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 //Libraries
 import { Observable, tap } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 //Environment
 import { environment } from '../../../environments/environment';
 //Models
@@ -15,6 +16,7 @@ export class CartService {
   private readonly baseUrl: string = `${environment.url}/api/Cart`;
   //Angular
   private http = inject(HttpClient);
+  private toastr = inject(ToastrService);
 
   //State
   cartItems = signal<CartItemDto[]>([]);
@@ -47,12 +49,22 @@ export class CartService {
     this.setCartCount(items.length);
   }
 
+  // Display warnings from cart response as toasts
+  private showWarnings(response: CartResponse): void {
+    if (response.warnings && response.warnings.length > 0) {
+      response.warnings.forEach(warning => {
+        this.toastr.warning(warning, 'Cart Notice');
+      });
+    }
+  }
+
   getUserCart(): Observable<CartResponse> {
     return this.http.get<CartResponse>(this.baseUrl).pipe(
       tap((cart) => {
         if (cart && cart.items) {
           this.updateLocalState(cart.items);
         }
+        this.showWarnings(cart);
       })
     );
   }
@@ -64,6 +76,7 @@ export class CartService {
           this.updateLocalState(res.items);
           this.broadcastChannel.postMessage({ type: 'UPDATE', items: res.items });
         }
+        this.showWarnings(res);
       })
     );
   }
@@ -78,29 +91,30 @@ export class CartService {
   }
 
   addToCart(productId: number, quantity: number = 1): Observable<CartResponse> {
-    const currentItems = [...this.cartItems()];
+    const currentItems = this.cartItems();
     const existingItem = currentItems.find((i) => i.productId === productId);
+    const newQuantity = existingItem ? existingItem.quantity + quantity : quantity;
 
-    if (existingItem) {
-      existingItem.quantity += quantity;
-    } else {
-      currentItems.push({ productId, quantity } as CartItemDto);
-    }
+    const updatedItems = existingItem
+      ? currentItems.map(i => i.productId === productId
+        ? { productId: i.productId, quantity: newQuantity }
+        : { productId: i.productId, quantity: i.quantity })
+      : [...currentItems.map(i => ({ productId: i.productId, quantity: i.quantity })), { productId, quantity }];
 
-    return this.updateCart(currentItems.map(i => ({ productId: i.productId, quantity: i.quantity })));
+    return this.updateCart(updatedItems);
   }
 
   decreaseFromCart(productId: number): Observable<CartResponse> {
-    const currentItems = [...this.cartItems()];
+    const currentItems = this.cartItems();
     const existingItem = currentItems.find((i) => i.productId === productId);
 
-    if (existingItem) {
-      if (existingItem.quantity > 1) {
-        existingItem.quantity -= 1;
-        return this.updateCart(currentItems.map(i => ({ productId: i.productId, quantity: i.quantity })));
-      } else {
-        return this.removeFromCart(productId);
-      }
+    if (existingItem && existingItem.quantity > 1) {
+      const updatedItems = currentItems.map(i => i.productId === productId
+        ? { productId: i.productId, quantity: i.quantity - 1 }
+        : { productId: i.productId, quantity: i.quantity });
+      return this.updateCart(updatedItems);
+    } else if (existingItem) {
+      return this.removeFromCart(productId);
     }
 
     return this.updateCart(currentItems.map(i => ({ productId: i.productId, quantity: i.quantity })));

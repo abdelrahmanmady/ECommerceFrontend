@@ -5,3 +5,203 @@
     color: #888;
     margin-left: 2px;
 }
+
+/* Skeleton Loading */
+.skeleton-card {
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 1.5rem;
+    border-radius: 12px;
+}
+
+.skeleton-header {
+    height: 30px;
+    background: #f0f0f0;
+    margin-bottom: 1rem;
+    border-radius: 6px;
+    animation: pulse 1.5s infinite;
+}
+
+.skeleton-content {
+    height: 100px;
+    background: #f0f0f0;
+    border-radius: 6px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.6;
+    }
+}
+
+/* Animation for order cards entering the DOM */
+.order-card:not(.skeleton-card) {
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Status Badges */
+.status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    display: inline-block;
+}
+
+.status.pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status.processing {
+    background-color: #e2e3e5;
+    color: #383d41;
+}
+
+.status.shipped {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.status.delivered {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status.cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.more-items-placeholder {
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+/* Order Info Alignment */
+.order-info {
+    text-align: right;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Address Card Header - matches checkout preview */
+.address-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.address-card-header .header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.address-card-header .header-left i {
+    color: var(--accent-color, #2b2b2b);
+    font-size: 1.125rem;
+}
+
+.address-card-header .address-label {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #2b2b2b;
+}
+
+/* Address Details */
+.address-info .address-name,
+.address-info .address-phone {
+    margin-bottom: 0.35rem;
+    font-size: 0.9rem;
+}
+
+.address-info .address-name i,
+.address-info .address-phone i {
+    margin-right: 0.5rem;
+    color: #2b2b2b;
+}
+
+.address-info .address-line {
+    margin: 0.15rem 0;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: #495057;
+    display: flex;
+    align-items: center;
+}
+
+.address-info .address-hints {
+    margin: 0.5rem 0 0 0;
+    padding: 0.5rem;
+    background: #f8f9fa;
+    border-left: 3px solid var(--accent-color, #2b2b2b);
+    border-radius: 6px;
+    font-size: 0.75rem;
+    color: #495057;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+}
+
+/* Re-order Button */
+.btn-reorder {
+    background: #fff;
+    color: #dc3545;
+    border: 2px solid #dc3545;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-reorder:hover {
+    background: #dc3545;
+    color: #fff;
+}
+
+.btn-reorder i {
+    font-size: 1rem;
+}

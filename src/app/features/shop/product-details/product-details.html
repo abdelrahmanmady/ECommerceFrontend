@@ -58,7 +58,7 @@
           <div class="product-details">
             <div class="product-badge-container">
               @if(productData()){
-              <a class="brand-badge" routerLink="/products" [queryParams]="{brandId: productData()!.brandId}"
+              <a class="brand-badge" routerLink="/products" [queryParams]="{brandIds: productData()!.brandId}"
                 [title]="'View all ' + productData()!.brandName + ' products'">
                 <span class="brand-label">Brand</span>
                 <span class="brand-name">{{productData()!.brandName}}</span>

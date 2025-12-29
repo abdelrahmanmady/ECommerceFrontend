@@ -145,7 +145,12 @@ export class Checkout implements OnInit, AfterViewInit {
   loadAddresses() {
     this.addressService.getUserAddresses().subscribe({
       next: (data) => {
-        this.addresses = data;
+        // Sort to show default address first
+        this.addresses = data.sort((a, b) => {
+          if (a.isDefault) return -1;
+          if (b.isDefault) return 1;
+          return 0;
+        });
         const defaultAddr = this.addresses.find(a => a.isDefault);
         if (defaultAddr) {
           this.currentAddress = defaultAddr;
@@ -200,7 +205,6 @@ export class Checkout implements OnInit, AfterViewInit {
 
     if (form.valid && !this.cityInvalid && !this.countryInvalid) {
       const payload: CreateAddressRequest = {
-        label: this.newAddress.label?.trim() || 'Home',
         fullName: this.newAddress.fullName,
         mobileNumber: this.newAddress.mobileNumber,
         street: this.newAddress.street,
@@ -209,6 +213,7 @@ export class Checkout implements OnInit, AfterViewInit {
         country: this.newAddress.country
       };
 
+      if (this.newAddress.label?.trim()) payload.label = this.newAddress.label.trim();
       if (this.newAddress.district?.trim()) payload.district = this.newAddress.district;
       if (this.newAddress.governorate?.trim()) payload.governorate = this.newAddress.governorate;
       if (this.newAddress.zipCode?.trim()) payload.zipCode = this.newAddress.zipCode;

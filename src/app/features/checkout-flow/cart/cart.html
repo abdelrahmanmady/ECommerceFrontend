@@ -106,7 +106,7 @@
                   </div>
                 </div>
                 <div class="col-lg-2 col-12 mt-3 mt-lg-0 text-center">
-                  <div class="quantity-selector">
+                  <div class="quantity-selector" [class.shake]="shakingProductId() === item.productId">
                     <button class="quantity-btn decrease" (click)="decreaseQuantity(item.productId)">
                       <i class="bi bi-dash"></i>
                     </button>

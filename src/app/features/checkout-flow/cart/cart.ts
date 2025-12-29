@@ -25,6 +25,7 @@ export class Cart {
   cartTotal = signal(0);
   isLoading = signal(false);
   shippingMethod = 'standard';
+  shakingProductId = signal<number | null>(null);
 
   ngOnInit(): void {
     this.loadFromLocalState();
@@ -54,8 +55,15 @@ export class Cart {
   }
 
   addCartItem(productId: number): void {
+    const currentItem = this.cartItems().find(item => item.productId === productId);
+    const expectedQuantity = currentItem ? currentItem.quantity + 1 : 1;
+
     this.cartService.addToCart(productId, 1).subscribe({
       next: (cart) => {
+        const updatedItem = cart.items.find(item => item.productId === productId);
+        if (updatedItem && updatedItem.quantity < expectedQuantity) {
+          this.triggerShake(productId);
+        }
         this.cartItems.set(cart.items);
         this.cartTotal.set(cart.total ?? this.calculateTotal(cart.items));
       },
@@ -63,6 +71,11 @@ export class Cart {
         console.error('Failed to add item:', err.message);
       }
     });
+  }
+
+  private triggerShake(productId: number): void {
+    this.shakingProductId.set(productId);
+    setTimeout(() => this.shakingProductId.set(null), 400);
   }
 
   removeCartItem(productId: number): void {

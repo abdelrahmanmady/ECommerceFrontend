@@ -1,5 +1,7 @@
+//Angular Imports
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+//Services
 import { AuthService } from '../../../core/services';
 
 @Component({
@@ -9,7 +11,10 @@ import { AuthService } from '../../../core/services';
     styleUrl: './account-layout.css',
 })
 export class AccountLayout {
+    //Services
     authService = inject(AuthService);
+
+    // ==================== User Display Helpers ====================
 
     getInitials(): string {
         const fullName = this.authService.user()?.fullName || 'Guest';
@@ -30,7 +35,9 @@ export class AccountLayout {
         }
     }
 
-    logout() {
+    // ==================== Auth Actions ====================
+
+    logout(): void {
         this.authService.logout();
     }
 }

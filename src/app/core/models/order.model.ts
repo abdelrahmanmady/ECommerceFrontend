@@ -40,7 +40,7 @@ export interface OrderSummaryDto {
     shippingMethod: string;
     paymentMethod: string;
     shippingAddress: OrderAddress;
-    orderTrackingMilestone: OrderTrackingMilestoneDto[];
+    orderTrackingMilestones: OrderTrackingMilestoneDto[];
 }
 
 export interface OrderItemDto {

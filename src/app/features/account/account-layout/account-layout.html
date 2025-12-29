@@ -16,7 +16,7 @@
   <!-- Account Section -->
   <section id="account" class="account section">
 
-    <div class="container" data-aos="fade-up" data-aos-delay="100">
+    <div class="container">
 
       <!-- Mobile Menu Toggle -->
       <div class="mobile-menu d-lg-none mb-4">
@@ -31,7 +31,7 @@
         <div class="col-lg-3">
           <div class="profile-menu collapse d-lg-block" id="profileMenu">
             <!-- User Info -->
-            <div class="user-info" data-aos="fade-right">
+            <div class="user-info">
               <div class="user-avatar">
                 @if (authService.user()?.image) {
                 <img [src]="authService.user()?.image" alt="Profile" loading="lazy">
@@ -62,12 +62,6 @@
                   <a class="nav-link" routerLink="/account/wishlist" routerLinkActive="active">
                     <i class="bi bi-heart"></i>
                     <span>Wishlist</span>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" routerLink="/account/payment-methods" routerLinkActive="active">
-                    <i class="bi bi-wallet2"></i>
-                    <span>Payment Methods</span>
                   </a>
                 </li>
                 <li class="nav-item">

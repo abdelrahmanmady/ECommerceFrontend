@@ -15,7 +15,7 @@ export interface AddressSummaryDto {
 }
 
 export interface CreateAddressRequest {
-    label: string;
+    label?: string;
     fullName: string;
     mobileNumber: string;
     street: string;
@@ -29,7 +29,7 @@ export interface CreateAddressRequest {
 }
 
 export interface UpdateAddressRequest {
-    label: string;
+    label?: string;
     fullName: string;
     mobileNumber: string;
     street: string;

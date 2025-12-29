@@ -136,40 +136,16 @@
                               }
                             </div>
                             <div class="address-card-body">
-                              <p class="address-name"><i class="bi bi-person-fill"></i> {{address.fullName}}</p>
-                              <div class="address-details">
-                                <p class="address-line">
-                                  <i class="bi bi-shop text-secondary me-2"></i>
-                                  <span>{{address.street}}, {{address.building}}</span>
-                                </p>
-                                <p class="address-line">
-                                  <i class="bi bi-geo text-secondary me-2"></i>
-                                  <span>{{address.district}}</span>
-                                </p>
-                                <p class="address-line">
-                                  <i class="bi bi-geo-alt text-secondary me-2"></i>
-                                  <span>{{address.city}}, {{address.governorate}}</span>
-                                </p>
-                                @if (address.zipCode) {
-                                <p class="address-line">
-                                  <i class="bi bi-mailbox text-secondary me-2"></i>
-                                  <span><span
-                                      class="text-xs text-uppercase fw-bold text-muted me-1">Zip:</span>{{address.zipCode}}</span>
-                                </p>
-                                }
-                                <p class="address-line">
-                                  <i class="bi bi-globe-americas text-secondary me-2"></i>
-                                  <span>{{address.country}}</span>
-                                </p>
-                                @if (address.hints) {
-                                <p class="address-hints mt-2">
-                                  <i class="bi bi-info-circle-fill text-accent me-2"></i>
-                                  <span>{{address.hints}}</span>
-                                </p>
-                                }
+                              <p class="address-text">
+                                {{address.street}}, {{address.building}}<br>
+                                @if (address.district) { {{address.district}}<br> }
+                                {{address.city}}, {{address.governorate}}<br>
+                                {{address.country}}
+                              </p>
+                              <div class="contact-info">
+                                <div><i class="bi bi-person"></i> {{address.fullName}}</div>
+                                <div><i class="bi bi-telephone"></i> +20 {{address.mobileNumber}}</div>
                               </div>
-                              <p class="address-phone"><i class="bi bi-telephone-fill"></i> <span>+20
-                                  {{address.mobileNumber}}</span></p>
                             </div>
                           </label>
                         </div>
