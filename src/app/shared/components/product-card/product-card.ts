@@ -1,7 +1,7 @@
 import { DecimalPipe, NgClass } from '@angular/common';
-import { Component, inject, input } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { AuthService, CartService, CategoryService } from '../../../core/services';
+import { Component, computed, inject, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { AuthService, CartService, WishlistService } from '../../../core/services';
 import { ProductSummaryDto } from '../../../core/models/product.model';
 import { ToastrService } from 'ngx-toastr';
 
@@ -15,11 +15,14 @@ export class ProductCard {
   productData = input.required<ProductSummaryDto>();
   viewType = input.required<string>();
 
-  categoryService = inject(CategoryService);
   cartService = inject(CartService);
   authService = inject(AuthService);
-  router = inject(Router);
+  wishlistService = inject(WishlistService);
   toastr = inject(ToastrService);
+
+  isWishlisted = computed(() =>
+    this.wishlistService.wishlistIds().includes(this.productData().id)
+  );
 
   addToCart() {
     if (!this.authService.user()) {
@@ -33,6 +36,34 @@ export class ProductCard {
       },
       error: (err) => {
         this.toastr.error(err.error);
+      }
+    });
+  }
+
+  toggleWishlist() {
+    if (!this.authService.user()) {
+      this.toastr.info('Please login first');
+      return;
+    }
+
+    if (this.isWishlisted()) {
+      this.wishlistService.removeFromWishlist(this.productData().id).subscribe({
+        next: () => {
+          this.toastr.success('Removed from wishlist');
+        },
+        error: (err) => {
+          this.toastr.error(err.error || 'Failed to remove from wishlist');
+        }
+      });
+      return;
+    }
+
+    this.wishlistService.addToWishlist(this.productData().id).subscribe({
+      next: () => {
+        this.toastr.success('Added to wishlist');
+      },
+      error: (err) => {
+        this.toastr.error(err.error || 'Failed to add to wishlist');
       }
     });
   }

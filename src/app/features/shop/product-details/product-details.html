@@ -87,14 +87,15 @@
             </div>
 
             <div class="product-description">
-              @if(productData()?.description) {
-              <p>{{productData()?.description}}</p>
+              @if(productData()?.overviewDescription) {
+              <p>{{productData()?.overviewDescription}}</p>
               } @else {
               <p class="text-muted fst-italic"><small>No description available for this product.</small></p>
               }
             </div>
 
-            <div class="availability-status">
+            <div class="availability-status"
+              [class.is-out-of-stock]="!productData() || productData()!.stockQuantity <= 0">
               @if(productData() && productData()!.stockQuantity > 0){
               <div class="stock-indicator">
                 <i class="bi bi-check-circle-fill"></i>
@@ -102,14 +103,14 @@
               </div>
               <div class="quantity-left">Only {{productData()!.stockQuantity}} items remaining</div>
               } @else {
-              <div class="stock-indicator out-of-stock" style="color: #dc3545;">
+              <div class="stock-indicator out-of-stock" style="color: #6c757d !important;">
                 <i class="bi bi-x-circle-fill"></i>
                 <span class="stock-text">Out of Stock</span>
               </div>
               }
             </div>
 
-            <!-- Product Variants -->
+            <!-- Product Variants - HIDDEN UNTIL IMPLEMENTED
             <div class="variant-section">
               <div class="size-selection">
                 <label class="variant-label">Select Size:</label>
@@ -121,12 +122,12 @@
                   </button>
                   }
                 </div>
-                <!-- Optional: Show selected size text -->
                 @if(selectedSize()) {
                 <div class="selected-variant">Selected: <span>{{selectedSize()}}</span></div>
                 }
               </div>
             </div>
+            -->
 
             <!-- Purchase Options -->
             <div class="purchase-section">
@@ -137,7 +138,7 @@
                     <button class="quantity-btn decrease" (click)="decreaseQty()" type="button">
                       <i class="bi bi-dash"></i>
                     </button>
-                    <input type="number" class="quantity-input" id="quantity" value={{quantity}} min="1"
+                    <input type="number" class="quantity-input" id="quantity" value={{quantity}} min="0"
                       [max]="maxStock" readonly>
                     <button class="quantity-btn increase" (click)="increaseQty()" type="button">
                       <i class="bi bi-plus"></i>
@@ -147,16 +148,17 @@
               </div>
 
               <div class="action-buttons">
-                <button class="btn primary-action" (click)="addToCart()">
+                <button class="btn primary-action" (click)="addToCart()" [disabled]="maxStock <= 0">
                   <i class="bi bi-bag-plus"></i>
                   Add to Cart
                 </button>
-                <button class="btn secondary-action">
+                <button class="btn secondary-action" [disabled]="maxStock <= 0">
                   <i class="bi bi-lightning"></i>
                   Buy Now
                 </button>
-                <button class="btn icon-action" title="Add to Wishlist">
-                  <i class="bi bi-heart"></i>
+                <button class="btn icon-action" [class.wishlisted]="isWishlisted()"
+                  [title]="isWishlisted() ? 'Remove from Wishlist' : 'Add to Wishlist'" (click)="toggleWishlist()">
+                  <i class="bi" [class.bi-heart]="!isWishlisted()" [class.bi-heart-fill]="isWishlisted()"></i>
                 </button>
               </div>
             </div>
@@ -202,62 +204,57 @@
                   <div class="row g-4">
                     <div class="col-lg-8">
                       <div class="content-section">
-                        <h3>Designed for Performance</h3>
-                        <p>
-                          Elevate your everyday style with the Nike Performance Polo. Crafted for the modern urban
-                          explorer, this polo combines athletic heritage with contemporary street style.
-                          Whether you're hitting the golf course or the city streets, the breathable fabric keeps you
-                          cool and comfortable all day long.
-                        </p>
+                        @if(productData()?.overviewHeadline) {
+                        <h3 class="overview-headline">{{productData()!.overviewHeadline}}</h3>
+                        }
+                        <p class="overview-description">{{productData()?.overviewDescription}}</p>
 
+
+                        @if(productData()?.careInstructions && productData()!.careInstructions.length > 0) {
                         <h4 class="mt-4 mb-3">Material & Care</h4>
                         <div class="material-care-grid">
-                          <div class="care-item">
-                            <i class="bi bi-droplet"></i>
-                            <span>Moisture Wicking</span>
+                          @for(instruction of productData()!.careInstructions; track $index) {
+                          <div class="care-item care-instruction-item">
+                            <i class="bi {{getCareInfo(instruction).icon}}"></i>
+                            <span class="care-label">{{getCareInfo(instruction).label}}</span>
                           </div>
-                          <div class="care-item">
-                            <i class="bi bi-bootstrap-reboot"></i>
-                            <span>Machine Wash Cold</span>
-                          </div>
-                          <div class="care-item">
-                            <i class="bi bi-sun"></i>
-                            <span>Do Not Bleach</span>
-                          </div>
-                          <div class="care-item">
-                            <i class="bi bi-wind"></i>
-                            <span>Tumble Dry Low</span>
-                          </div>
+                          }
                         </div>
+                        }
 
+                        @if(productData()?.features && productData()!.features.length > 0) {
                         <h4 class="mt-4 mb-3">Key Features</h4>
-                        <ul class="features-list">
-                          <li><i class="bi bi-check2-circle"></i> Dri-FIT technology moves sweat away from your skin.
-                          </li>
-                          <li><i class="bi bi-check2-circle"></i> Standard fit for a relaxed, easy feel.</li>
-                          <li><i class="bi bi-check2-circle"></i> 2-button placket lets you adjust your fit.</li>
-                          <li><i class="bi bi-check2-circle"></i> Side vents allow for ease of motion.</li>
+                        <ul class="features-list product-features-list">
+                          @for(feature of productData()!.features; track $index) {
+                          <li class="feature-item"><i class="bi bi-check2-circle"></i> {{feature}}</li>
+                          }
                         </ul>
+                        }
                       </div>
                     </div>
 
                     <div class="col-lg-4">
                       <div class="size-fit-container">
-                        <div class="size-fit-section mb-4">
+                        @if(productData()?.attributes && productData()!.attributes.length > 0) {
+                        <div class="size-fit-section product-attributes-section mb-4">
                           <h4>Size & Fit</h4>
-                          <ul class="fit-details">
-                            <li><strong>Fit:</strong> Standard Fit</li>
-                            <li><strong>Length:</strong> Regular</li>
-                            <li><strong>Model:</strong> 185cm (6'1") / Wearing Size L</li>
+                          <ul class="fit-details attributes-list">
+                            @for(attr of productData()!.attributes; track $index) {
+                            <li class="attribute-item"><strong class="attribute-key">{{attr.key}}:</strong> <span
+                                class="attribute-value">{{attr.value}}</span></li>
+                            }
                           </ul>
                         </div>
+                        }
 
-                        <div class="composition-section">
+                        <div class="composition-section product-composition-section">
                           <h4>Composition</h4>
-                          <p class="composition-text">100% Recycled Polyester</p>
-                          <div class="fabric-badge">
+                          <p class="composition-text product-composition-text">{{productData()?.compositionText}}</p>
+                          @if(productData()?.isSustainable) {
+                          <div class="fabric-badge sustainability-badge">
                             <i class="bi bi-recycle"></i> Sustainable Material
                           </div>
+                          }
                         </div>
                       </div>
                     </div>

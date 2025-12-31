@@ -24,6 +24,9 @@ declare var bootstrap: any;
   styleUrl: './checkout.css',
 })
 export class Checkout implements OnInit, AfterViewInit {
+  //AOS
+  private readonly AOS = (window as any).AOS;
+
   //Angular
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -102,6 +105,11 @@ export class Checkout implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    // Refresh AOS animations
+    if (this.AOS) {
+      setTimeout(() => this.AOS.refresh(), 100);
+    }
+
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     tooltipTriggerList.forEach((el) => new bootstrap.Tooltip(el));
 

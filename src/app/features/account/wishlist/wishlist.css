@@ -5,3 +5,211 @@
     color: #888;
     margin-left: 2px;
 }
+
+/* Product Link */
+.product-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.product-link h4 {
+    transition: color 0.2s ease;
+}
+
+.product-link:hover h4 {
+    color: #2b2b2b;
+}
+
+/* Card Content - Button at Bottom */
+.wishlist-card {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.wishlist-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.wishlist-content h4,
+.wishlist-content .product-link {
+    margin-bottom: 8px;
+}
+
+.wishlist-content .product-meta {
+    margin-bottom: 12px;
+}
+
+.wishlist-content .btn-add-cart,
+.wishlist-content .btn-notify,
+.wishlist-content .btn-deleted {
+    margin-top: auto;
+}
+
+/* Wishlist Image Container */
+.wishlist-image {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+/* Image Link */
+.image-link {
+    display: block;
+}
+
+.image-link img,
+.wishlist-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.image-link:hover img {
+    transform: scale(1.05);
+}
+
+/* Remove Button */
+.btn-remove {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #fff;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+    /* Ensure on top of overlays */
+    color: #666;
+}
+
+.btn-remove:hover {
+    background: #dc3545;
+    color: #fff;
+    transform: scale(1.1);
+}
+
+/* Deleted Item State */
+.wishlist-card.deleted {
+    opacity: 0.7;
+}
+
+.wishlist-card.deleted .wishlist-image img {
+    filter: grayscale(100%);
+}
+
+.deleted-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.deleted-overlay i {
+    font-size: 3rem;
+    color: #fff;
+    opacity: 0.8;
+}
+
+.deleted-badge {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: #6c757d;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    z-index: 3;
+}
+
+.deleted-title {
+    color: #999;
+    text-decoration: line-through;
+}
+
+.btn-deleted {
+    width: 100%;
+    padding: 10px 16px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background: #f8f9fa;
+    color: #6c757d;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: not-allowed;
+}
+
+/* Out of Stock State */
+.wishlist-card.out-of-stock .wishlist-image img {
+    opacity: 0.6;
+}
+
+/* Loading Skeleton */
+.skeleton-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.skeleton-image {
+    width: 100%;
+    padding-top: 100%;
+    background: #f0f0f0;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-text {
+    height: 12px;
+    background: #f0f0f0;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-text.short {
+    width: 60%;
+}
+
+.skeleton-button {
+    height: 40px;
+    background: #f0f0f0;
+    border-radius: 8px;
+    margin-top: 15px;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0.6;
+    }
+}

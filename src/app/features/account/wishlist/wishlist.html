@@ -1,92 +1,90 @@
 <div class="section-header">
     <h2>My Wishlist</h2>
+    @if (hasItems) {
     <div class="header-actions">
-        <button type="button" class="btn-add-all">Add All to Cart</button>
+        <button class="btn btn-dark" (click)="addAllToCart()">
+            <i class="bi bi-bag-plus me-2"></i>
+            Add All to Cart
+        </button>
     </div>
+    }
 </div>
 
 <div class="wishlist-grid">
-    <!-- Wishlist Item 1 -->
-    <div class="wishlist-card">
-        <div class="wishlist-image">
-            <img src="assets/img/product/product-1.webp" alt="Product" loading="lazy">
-            <button class="btn-remove" type="button" aria-label="Remove from wishlist">
-                <i class="bi bi-trash"></i>
-            </button>
-            <div class="sale-badge">-20%</div>
-        </div>
-        <div class="wishlist-content">
-            <h4>Lorem ipsum dolor sit amet</h4>
-            <div class="product-meta">
-                <div class="rating">
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-half"></i>
-                    <span>(4.5)</span>
-                </div>
-                <div class="price">
-                    <span class="current">79.99 <span class="currency-suffix">EGP</span></span>
-                    <span class="original">99.99 <span class="currency-suffix">EGP</span></span>
-                </div>
-            </div>
-            <button type="button" class="btn-add-cart">Add to Cart</button>
+    @if (isLoading()) {
+    <!-- Loading Skeleton -->
+    @for (item of [1,2,3]; track item) {
+    <div class="wishlist-card skeleton-card">
+        <div class="skeleton-image"></div>
+        <div class="skeleton-content">
+            <div class="skeleton-title"></div>
+            <div class="skeleton-price"></div>
+            <div class="skeleton-button"></div>
         </div>
     </div>
-
-    <!-- Wishlist Item 2 -->
-    <div class="wishlist-card">
-        <div class="wishlist-image">
-            <img src="assets/img/product/product-2.webp" alt="Product" loading="lazy">
-            <button class="btn-remove" type="button" aria-label="Remove from wishlist">
-                <i class="bi bi-trash"></i>
-            </button>
-        </div>
-        <div class="wishlist-content">
-            <h4>Consectetur adipiscing elit</h4>
-            <div class="product-meta">
-                <div class="rating">
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star"></i>
-                    <span>(4.0)</span>
-                </div>
-                <div class="price">
-                    <span class="current">149.99 <span class="currency-suffix">EGP</span></span>
-                </div>
-            </div>
-            <button type="button" class="btn-add-cart">Add to Cart</button>
-        </div>
+    }
+    } @else {
+    @if (!hasItems) {
+    <!-- Empty State -->
+    <div class="no-wishlist" style="grid-column: 1/-1; text-align: center; padding: 2rem;">
+        <i class="bi bi-heart" style="font-size: 3rem; color: #ccc;"></i>
+        <p style="margin-top: 1rem; color: #666;">No items in your wishlist yet.</p>
+        <a routerLink="/products" class="btn btn-dark mt-2">
+            <i class="bi bi-bag me-2"></i>
+            Browse Products
+        </a>
     </div>
+    }
 
-    <!-- Wishlist Item 3 -->
-    <div class="wishlist-card">
+    @for (item of wishlistItems(); track item.productId) {
+    <div class="wishlist-card" [class.deleted]="item.isDeleted" [class.out-of-stock]="!item.inStock && !item.isDeleted">
+        <button class="btn-remove" type="button" aria-label="Remove from wishlist" (click)="removeItem(item.productId)">
+            <i class="bi bi-trash"></i>
+        </button>
         <div class="wishlist-image">
-            <img src="assets/img/product/product-3.webp" alt="Product" loading="lazy">
-            <button class="btn-remove" type="button" aria-label="Remove from wishlist">
-                <i class="bi bi-trash"></i>
-            </button>
+            @if (item.isDeleted) {
+            <div class="deleted-overlay">
+                <i class="bi bi-x-circle"></i>
+            </div>
+            <img [src]="item.productThumbnailUrl" [alt]="item.productName" loading="lazy">
+            } @else {
+            <a [routerLink]="['/products', item.productId]" class="image-link">
+                <img [src]="item.productThumbnailUrl" [alt]="item.productName" loading="lazy">
+            </a>
+            }
+            @if (!item.inStock && !item.isDeleted) {
             <div class="out-of-stock-badge">Out of Stock</div>
+            }
+            @if (item.isDeleted) {
+            <div class="deleted-badge">No Longer Available</div>
+            }
         </div>
         <div class="wishlist-content">
-            <h4>Sed do eiusmod tempor</h4>
+            @if (item.isDeleted) {
+            <h4 class="deleted-title">{{ item.productName }}</h4>
+            } @else {
+            <a [routerLink]="['/products', item.productId]" class="product-link">
+                <h4>{{ item.productName }}</h4>
+            </a>
+            }
             <div class="product-meta">
-                <div class="rating">
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <span>(5.0)</span>
-                </div>
                 <div class="price">
-                    <span class="current">199.99 <span class="currency-suffix">EGP</span></span>
+                    <span class="current">{{ item.productPrice | number:'1.2-2' }} <span
+                            class="currency-suffix">EGP</span></span>
                 </div>
             </div>
+            @if (item.isDeleted) {
+            <button type="button" class="btn-deleted" disabled>
+                <i class="bi bi-x-circle me-1"></i>
+                Product Unavailable
+            </button>
+            } @else if (!item.inStock) {
             <button type="button" class="btn-notify">Notify When Available</button>
+            } @else {
+            <button type="button" class="btn-add-cart" (click)="addToCart(item.productId)">Add to Cart</button>
+            }
         </div>
     </div>
+    }
+    }
 </div>

@@ -1,5 +1,5 @@
 //Angular Imports
-import { Component, computed, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, ActivatedRoute, Router } from "@angular/router";
@@ -20,7 +20,10 @@ import { ProductCard } from '../../../shared/components/product-card/product-car
   templateUrl: './shop.html',
   styleUrl: './shop.css',
 })
-export class Shop {
+export class Shop implements AfterViewInit {
+  //AOS
+  private readonly AOS = (window as any).AOS;
+
   //Angular
   activatedRoute = inject(ActivatedRoute);
   router = inject(Router);
@@ -163,6 +166,14 @@ export class Shop {
 
     this.loadCategories();
     this.loadBrands();
+  }
+
+  // ==================== Lifecycle ====================
+
+  ngAfterViewInit(): void {
+    if (this.AOS) {
+      setTimeout(() => this.AOS.refresh(), 100);
+    }
   }
 
   // ==================== Data Loading ====================

@@ -1,5 +1,5 @@
 //Angular Imports
-import { Component, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -8,13 +8,15 @@ import { CartService } from '../../../core/services';
 //Models
 import { CartItemDto } from '../../../core/models';
 
+declare const AOS: any;
+
 @Component({
   selector: 'app-cart',
   imports: [RouterLink, DecimalPipe, FormsModule],
   templateUrl: './cart.html',
   styleUrl: './cart.css',
 })
-export class Cart {
+export class Cart implements AfterViewInit {
   //Angular
   router = inject(Router);
   //Services
@@ -30,6 +32,12 @@ export class Cart {
   ngOnInit(): void {
     this.loadFromLocalState();
     this.refreshFromApi();
+  }
+
+  ngAfterViewInit(): void {
+    if (typeof AOS !== 'undefined') {
+      setTimeout(() => AOS.refresh(), 100);
+    }
   }
 
   private loadFromLocalState(): void {

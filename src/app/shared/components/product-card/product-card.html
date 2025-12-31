@@ -5,8 +5,9 @@
     </a>
     <div class="product-overlay">
       <div class="product-actions">
-        <button type="button" class="action-btn" data-bs-toggle="tooltip" title="Add to Wishlist">
-          <i class="bi bi-heart"></i>
+        <button type="button" class="action-btn" [class.wishlisted]="isWishlisted()" data-bs-toggle="tooltip"
+          [title]="isWishlisted() ? 'Remove from Wishlist' : 'Add to Wishlist'" (click)="toggleWishlist()">
+          <i class="bi" [class.bi-heart]="!isWishlisted()" [class.bi-heart-fill]="isWishlisted()"></i>
         </button>
         <button type="button" class="action-btn" data-bs-toggle="tooltip" title="Add to Cart" (click)="addToCart()">
           <i class="bi bi-cart-plus"></i>
@@ -31,8 +32,10 @@
     </div>
     @if(viewType() === 'list'){
     <div class="list-actions">
-      <button type="button" class="list-action-btn wishlist-btn">
-        <i class="bi bi-heart"></i> Add to Wishlist
+      <button type="button" class="list-action-btn wishlist-btn" [class.wishlisted]="isWishlisted()"
+        (click)="toggleWishlist()">
+        <i class="bi" [class.bi-heart]="!isWishlisted()" [class.bi-heart-fill]="isWishlisted()"></i>
+        {{ isWishlisted() ? 'In Wishlist' : 'Add to Wishlist' }}
       </button>
       <button type="button" class="list-action-btn cart-btn" (click)="addToCart()">
         <i class="bi bi-cart-plus"></i> Add to Cart

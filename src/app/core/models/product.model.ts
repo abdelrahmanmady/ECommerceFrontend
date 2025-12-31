@@ -59,12 +59,18 @@ export interface ProductDetailsResponse {
   name: string;
   brandId: number;
   brandName: string;
-  categoryId: number;
-  categoryName: string;
   price: number;
   stockQuantity: number;
-  description?: string;
-
+  overviewHeadline?: string;
+  overviewDescription: string;
+  compositionText: string;
+  isSustainable: boolean;
+  careInstructions: ('machineWashCold' | 'machineWashWarm' | 'handWash' | 'doNotWash'
+    | 'doNotBleach' | 'bleachAny' | 'tumbleDryLow' | 'tumbleDryHigh'
+    | 'doNotTumbleDry' | 'dryFlat' | 'ironLow' | 'ironMedium' | 'ironHigh'
+    | 'doNotIron' | 'dryCleanOnly' | 'doNotDryClean')[];
+  features: string[];
+  attributes: { key: string, value: string }[];
 }
 
 export interface BreadcrumbLink {

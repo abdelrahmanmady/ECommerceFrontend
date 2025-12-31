@@ -127,6 +127,23 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+/* Wishlisted State */
+.action-btn.wishlisted {
+  color: #dc3545 !important;
+  background-color: #fff;
+}
+
+.action-btn.wishlisted:hover {
+  background-color: #2b2b2b;
+  color: #fff !important;
+}
+
+.list-action-btn.wishlist-btn.wishlisted {
+  background-color: #fff0f0;
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
 .product-category a.category-link {
   color: inherit;
   text-decoration: none;

@@ -238,6 +238,38 @@
     margin: 0;
 }
 
+/* Wishlisted State */
+.icon-action.wishlisted {
+    color: #dc3545 !important;
+    border-color: #dc3545 !important;
+    background-color: #fff0f0;
+}
+
+.icon-action.wishlisted:hover {
+    background-color: #2b2b2b;
+    border-color: #2b2b2b !important;
+    color: #fff !important;
+}
+
+/* Out of stock badge - Inner Text/Icon */
+.stock-indicator.out-of-stock {
+    color: #6c757d !important;
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+.stock-indicator.out-of-stock i {
+    color: #6c757d !important;
+}
+
+/* Force availability wrapper to show grey background when out of stock */
+.availability-status.is-out-of-stock {
+    background: #e9ecef !important;
+    border-color: #dee2e6 !important;
+    box-shadow: none !important;
+}
+
 /* ============================================
    OVERVIEW TAB - FASHION CONTENT STYLING
    ============================================ */

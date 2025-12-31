@@ -6,7 +6,7 @@ import { Router, RouterLink } from "@angular/router";
 //Libraries
 import { ToastrService } from 'ngx-toastr';
 //Services
-import { AuthService, CartService } from '../../../core/services';
+import { AuthService, CartService, WishlistService } from '../../../core/services';
 //Types
 import { RoleType } from '../../../core/types/role.type';
 
@@ -33,7 +33,8 @@ export class Login {
     private readonly toastr: ToastrService,
     //Services
     private readonly authService: AuthService,
-    private readonly cartService: CartService
+    private readonly cartService: CartService,
+    private readonly wishlistService: WishlistService
   ) { }
 
   togglePassword(): void {
@@ -80,6 +81,7 @@ export class Login {
       next: (res) => {
         this.authService.setAuthState(res);
         this.cartService.getUserCart().subscribe();
+        this.wishlistService.getWishlistIds().subscribe();
         this.toastr.success('Login successful!');
         const isAdminOrSeller = res.roles.includes(RoleType.Admin) || res.roles.includes(RoleType.Seller);
         this.router.navigate([isAdminOrSeller ? '/admin' : '/home']);

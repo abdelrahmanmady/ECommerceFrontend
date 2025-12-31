@@ -1,8 +1,9 @@
 //Angular Imports
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 //Libraries
-import { throwError } from 'rxjs';
+import { throwError, EMPTY } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 //Models
@@ -11,10 +12,16 @@ import { ApiError } from '../models';
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   //Libraries
   const toastr = inject(ToastrService);
+  const router = inject(Router);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       const errorMessage = getErrorMessage(error);
+
+      if (error.status === 404) {
+        router.navigate(['/not-found']);
+        return EMPTY;
+      }
 
       const isRefreshToken = req.url.includes('refresh-token');
       const isRegisterValidation = req.url.includes('auth/register') &&

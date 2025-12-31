@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
+
+declare const AOS: any;
 
 @Component({
   selector: 'app-privacy',
@@ -6,6 +8,10 @@ import { Component } from '@angular/core';
   templateUrl: './privacy.html',
   styleUrl: './privacy.css',
 })
-export class Privacy {
-
+export class Privacy implements AfterViewInit {
+  ngAfterViewInit(): void {
+    if (typeof AOS !== 'undefined') {
+      setTimeout(() => AOS.refresh(), 100);
+    }
+  }
 }
