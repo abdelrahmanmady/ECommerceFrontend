@@ -21,5 +21,5 @@ export interface AuthResponse {
     fullName: string;
     email: string;
     roles: Role[];
-    image?: string; // Optional: user profile image URL from backend
+    avatarUrl?: string;
 }

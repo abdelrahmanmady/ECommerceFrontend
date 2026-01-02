@@ -67,4 +67,11 @@ export class AuthService {
     this.user.set(null);
     this.cartService.clearLocalCart();
   }
+
+  updateAvatarUrl(avatarUrl: string | undefined): void {
+    const currentUser = this.user();
+    if (currentUser) {
+      this.user.set({ ...currentUser, avatarUrl });
+    }
+  }
 }

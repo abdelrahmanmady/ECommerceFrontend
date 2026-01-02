@@ -1,6 +1,8 @@
 //Angular Imports
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+//Config
+import { environment } from '../../../../environments/environment';
 //Services
 import { AuthService } from '../../../core/services';
 
@@ -23,6 +25,12 @@ export class AccountLayout {
             return (names[0][0] + names[names.length - 1][0]).toUpperCase();
         }
         return fullName.substring(0, 2).toUpperCase();
+    }
+
+    getAvatarUrl(): string | null {
+        const avatarPath = this.authService.user()?.avatarUrl;
+        if (!avatarPath) return null;
+        return `${environment.url}${avatarPath}`;
     }
 
     getRoleIcon(): string {

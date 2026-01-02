@@ -3,110 +3,198 @@
 </div>
 
 <div class="settings-content">
+    @if(loading()) {
+    <div class="loading-state text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+    } @else if(user()) {
     <!-- Personal Information -->
     <div class="settings-section">
-        <h3>Personal Information</h3>
-        <form class="php-email-form settings-form">
+        <div class="section-header-row">
+            <h3>Personal Information</h3>
+            <div class="date-badges">
+                <span class="date-badge"><i class="bi bi-calendar-check"></i> Member since {{user()!.created |
+                    date:'mediumDate'}}</span>
+                @if(user()!.updated) {
+                <span class="date-badge updated"><i class="bi bi-pencil-square"></i> Updated {{user()!.updated |
+                    date:'mediumDate'}}</span>
+                }
+            </div>
+        </div>
+
+        <!-- Avatar Upload -->
+        <div class="avatar-upload-section">
+            <div class="avatar-preview">
+                @if(avatarPreview()) {
+                <img [src]="avatarPreview()" alt="Avatar Preview">
+                } @else {
+                <div class="avatar-placeholder-large">
+                    <span>{{ getInitials() }}</span>
+                </div>
+                }
+            </div>
+            <div class="avatar-actions">
+                <input type="file" id="avatarInput" accept="image/*" (change)="onAvatarSelected($event)" hidden>
+                <label for="avatarInput" class="btn-upload">
+                    <i class="bi bi-camera"></i> {{ avatarPreview() ? 'Change Photo' : 'Upload Photo' }}
+                </label>
+                @if(avatarPreview()) {
+                <button type="button" class="btn-remove" (click)="removeAvatar()">
+                    <i class="bi bi-trash"></i> Remove
+                </button>
+                }
+            </div>
+        </div>
+
+        <form class="settings-form">
             <div class="row g-3">
-                <div class="col-md-6">
+                <div class="col-md-6" [class.has-error]="errors.firstName">
                     <label for="firstName" class="form-label">First Name</label>
-                    <input type="text" class="form-control" id="firstName" value="Sarah" required="">
+                    <input type="text" class="form-control" id="firstName" [(ngModel)]="firstName" name="firstName"
+                        (blur)="validateFirstName()" required>
+                    @if(errors.firstName) {
+                    <span class="field-error">{{ errors.firstName }}</span>
+                    }
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6" [class.has-error]="errors.lastName">
                     <label for="lastName" class="form-label">Last Name</label>
-                    <input type="text" class="form-control" id="lastName" value="Anderson" required="">
+                    <input type="text" class="form-control" id="lastName" [(ngModel)]="lastName" name="lastName"
+                        (blur)="validateLastName()" required>
+                    @if(errors.lastName) {
+                    <span class="field-error">{{ errors.lastName }}</span>
+                    }
                 </div>
-                <div class="col-md-6">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" value="sarah@example.com" required="">
+                <div class="col-md-6" [class.has-error]="errors.userName">
+                    <label for="userName" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="userName" [(ngModel)]="userName" name="userName"
+                        (blur)="validateUserName()" required>
+                    @if(errors.userName) {
+                    <span class="field-error">{{ errors.userName }}</span>
+                    }
                 </div>
-                <div class="col-md-6">
-                    <label for="phone" class="form-label">Phone</label>
-                    <input type="tel" class="form-control" id="phone" value="+1 (555) 123-4567">
+                <div class="col-md-6" [class.has-error]="errors.phoneNumber">
+                    <label for="phone" class="form-label">
+                        Phone Number
+                        @if(user()!.phoneNumber) {
+                        @if(user()!.phoneNumberConfirmed) {
+                        <span class="verification-badge verified"><i class="bi bi-check-circle-fill"></i>
+                            Verified</span>
+                        } @else {
+                        <span class="verification-badge unverified"><i class="bi bi-exclamation-circle"></i>
+                            Unverified</span>
+                        }
+                        }
+                    </label>
+                    <div class="phone-input-group">
+                        <div class="country-code-display">
+                            <img src="https://flagcdn.com/w20/eg.png" alt="EG" class="country-flag">
+                            <span>+20</span>
+                        </div>
+                        <input type="tel" class="form-control phone-number-input" id="phone" [(ngModel)]="phoneNumber"
+                            name="phoneNumber" placeholder="1012 345 678" maxlength="12" (blur)="validatePhoneField()">
+                    </div>
+                    @if(errors.phoneNumber) {
+                    <span class="field-error">{{ errors.phoneNumber }}</span>
+                    }
+                </div>
+                <div class="col-md-6" [class.has-error]="errors.email">
+                    <label for="email" class="form-label">
+                        Email
+                        @if(user()!.emailConfirmed) {
+                        <span class="verification-badge verified"><i class="bi bi-check-circle-fill"></i>
+                            Verified</span>
+                        } @else {
+                        <span class="verification-badge unverified"><i class="bi bi-exclamation-circle"></i>
+                            Unverified</span>
+                        }
+                    </label>
+                    <input type="email" class="form-control" id="email" [(ngModel)]="email" name="email"
+                        (blur)="validateEmailField()" required>
+                    @if(errors.email) {
+                    <span class="field-error">{{ errors.email }}</span>
+                    }
                 </div>
             </div>
 
             <div class="form-buttons">
-                <button type="submit" class="btn-save">Save Changes</button>
+                <button type="submit" class="btn-save" [disabled]="saving()" (click)="saveChanges()">
+                    @if(saving()) {
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+                    Saving...
+                    } @else {
+                    Save Changes
+                    }
+                </button>
             </div>
-
-            <div class="loading">Loading</div>
-            <div class="error-message"></div>
-            <div class="sent-message">Your changes have been saved successfully!</div>
         </form>
-    </div>
-
-    <!-- Email Preferences -->
-    <div class="settings-section">
-        <h3>Email Preferences</h3>
-        <div class="preferences-list">
-            <div class="preference-item">
-                <div class="preference-info">
-                    <h4>Order Updates</h4>
-                    <p>Receive notifications about your order status</p>
-                </div>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="orderUpdates" checked="">
-                </div>
-            </div>
-
-            <div class="preference-item">
-                <div class="preference-info">
-                    <h4>Promotions</h4>
-                    <p>Receive emails about new promotions and deals</p>
-                </div>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="promotions">
-                </div>
-            </div>
-
-            <div class="preference-item">
-                <div class="preference-info">
-                    <h4>Newsletter</h4>
-                    <p>Subscribe to our weekly newsletter</p>
-                </div>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="newsletter" checked="">
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Security Settings -->
     <div class="settings-section">
         <h3>Security</h3>
-        <form class="php-email-form settings-form">
+        <form class="settings-form">
             <div class="row g-3">
                 <div class="col-md-12">
                     <label for="currentPassword" class="form-label">Current Password</label>
-                    <input type="password" class="form-control" id="currentPassword" required="">
+                    <input type="password" class="form-control" id="currentPassword" [(ngModel)]="currentPassword"
+                        name="currentPassword" required>
                 </div>
                 <div class="col-md-6">
                     <label for="newPassword" class="form-label">New Password</label>
-                    <input type="password" class="form-control" id="newPassword" required="">
+                    <input type="password" class="form-control" id="newPassword" [(ngModel)]="newPassword"
+                        name="newPassword" required>
+                    @if(passwordAttempted() && newPassword) {
+                    <div class="password-requirements">
+                        <p class="requirements-title">Password must contain:</p>
+                        <ul class="requirements-list">
+                            <li class="requirement" [class.met]="passwordRequirements.minLength"
+                                [class.unmet]="!passwordRequirements.minLength">
+                                <i class="bi" [class.bi-check-circle-fill]="passwordRequirements.minLength"
+                                    [class.bi-x-circle-fill]="!passwordRequirements.minLength"></i>
+                                At least 8 characters
+                            </li>
+                            <li class="requirement" [class.met]="passwordRequirements.hasUppercase"
+                                [class.unmet]="!passwordRequirements.hasUppercase">
+                                <i class="bi" [class.bi-check-circle-fill]="passwordRequirements.hasUppercase"
+                                    [class.bi-x-circle-fill]="!passwordRequirements.hasUppercase"></i>
+                                At least one uppercase letter (A-Z)
+                            </li>
+                            <li class="requirement" [class.met]="passwordRequirements.hasDigit"
+                                [class.unmet]="!passwordRequirements.hasDigit">
+                                <i class="bi" [class.bi-check-circle-fill]="passwordRequirements.hasDigit"
+                                    [class.bi-x-circle-fill]="!passwordRequirements.hasDigit"></i>
+                                At least one digit (0-9)
+                            </li>
+                        </ul>
+                    </div>
+                    }
                 </div>
                 <div class="col-md-6">
                     <label for="confirmPassword" class="form-label">Confirm Password</label>
-                    <input type="password" class="form-control" id="confirmPassword" required="">
+                    <input type="password" class="form-control" id="confirmPassword" [(ngModel)]="confirmPassword"
+                        name="confirmPassword" required>
                 </div>
             </div>
 
-            <div class="form-buttons">
-                <button type="submit" class="btn-save">Update Password</button>
+            @if(passwordError()) {
+            <div class="password-error-message">
+                <i class="bi bi-exclamation-circle"></i> {{ passwordError() }}
             </div>
+            }
 
-            <div class="loading">Loading</div>
-            <div class="error-message"></div>
-            <div class="sent-message">Your password has been updated successfully!</div>
+            <div class="form-buttons">
+                <button type="submit" class="btn-save" [disabled]="updatingPassword()" (click)="updatePassword()">
+                    @if(updatingPassword()) {
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+                    Updating...
+                    } @else {
+                    Update Password
+                    }
+                </button>
+            </div>
         </form>
     </div>
-
-    <!-- Delete Account -->
-    <div class="settings-section danger-zone">
-        <h3>Delete Account</h3>
-        <div class="danger-zone-content">
-            <p>Once you delete your account, there is no going back. Please be certain.</p>
-            <button type="button" class="btn-danger">Delete Account</button>
-        </div>
-    </div>
+    }
 </div>

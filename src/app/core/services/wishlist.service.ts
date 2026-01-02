@@ -35,7 +35,7 @@ export class WishlistService {
 
     addToWishlist(productId: number): Observable<number> {
         return this.http.post<number>(`${this.baseUrl}/${productId}`, {}).pipe(
-            tap((id) => this.wishlistIds.update(ids => [...ids, id]))
+            tap((wishlistedProductId) => this.wishlistIds.update(ids => [...ids, wishlistedProductId]))
         );
     }
 
