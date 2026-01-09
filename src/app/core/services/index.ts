@@ -9,6 +9,7 @@ export * from './order.service';
 export * from './wishlist.service';
 export * from './review.service';
 export * from './user.service';
+export * from './dashboard.service';
 
 // Utils
 export * from './loading.service';

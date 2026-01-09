@@ -55,6 +55,24 @@ export interface ProductSummaryDto {
   categoryBreadcrumbLinks: BreadcrumbLink[];
 }
 
+export type CareInstructionType =
+  | 'machineWashCold'
+  | 'machineWashWarm'
+  | 'handWash'
+  | 'doNotWash'
+  | 'doNotBleach'
+  | 'bleachAny'
+  | 'tumbleDryLow'
+  | 'tumbleDryHigh'
+  | 'doNotTumbleDry'
+  | 'dryFlat'
+  | 'ironLow'
+  | 'ironMedium'
+  | 'ironHigh'
+  | 'doNotIron'
+  | 'dryCleanOnly'
+  | 'doNotDryClean';
+
 export interface ProductDetailsResponse {
   id: number;
   images: ProductImageDto[];
@@ -63,19 +81,21 @@ export interface ProductDetailsResponse {
   brandName: string;
   averageRating: number;
   reviewsCount: number;
-  ratingDistribution: { [key: number]: number };
+  ratingDistribution: Record<number, number>;
   price: number;
   stockQuantity: number;
   overviewHeadline?: string;
   overviewDescription: string;
   compositionText: string;
   isSustainable: boolean;
-  careInstructions: ('machineWashCold' | 'machineWashWarm' | 'handWash' | 'doNotWash'
-    | 'doNotBleach' | 'bleachAny' | 'tumbleDryLow' | 'tumbleDryHigh'
-    | 'doNotTumbleDry' | 'dryFlat' | 'ironLow' | 'ironMedium' | 'ironHigh'
-    | 'doNotIron' | 'dryCleanOnly' | 'doNotDryClean')[];
+  careInstructions: CareInstructionType[];
   features: string[];
-  attributes: { key: string, value: string }[];
+  attributes: ProductAttributeDto[];
+}
+
+export interface ProductAttributeDto {
+  key: string;
+  value: string;
 }
 
 export interface BreadcrumbLink {
