@@ -1,217 +1,512 @@
 <!-- Admin Dashboard/Homepage -->
 <div class="dashboard-container">
-
+  <!-- Loading State -->
+  @if (isLoading()) {
+  <div class="d-flex justify-content-center align-items-center" style="height: 60vh">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  } @else {
   <!-- Welcome Header -->
   <div class="welcome-header">
     <div class="welcome-content">
-      <h1><i class="fas fa-tachometer-alt me-3"></i>Admin Dashboard</h1>
-      <p>Welcome back! Here's what's happening with your store today.</p>
+      <div class="greeting-badge">
+        <i class="bi {{ greetingIcon() }}"></i>
+        <span>{{ greeting() }}</span>
+      </div>
+      <h1>Admin Dashboard</h1>
+      <p>Here's what's happening with your store today.</p>
     </div>
-    <div class="date-time">
-      <i class="fas fa-calendar-alt me-2"></i>
-      <span>{{ currentDate | date: 'EEEE, MMMM d, y' }}</span>
+    <div class="header-right">
+      <div class="today-highlights">
+        <div class="highlight-item">
+          <i class="bi bi-bag-check"></i>
+          <span
+            ><strong>{{ ordersAttention() }}</strong> orders need attention</span
+          >
+        </div>
+        <div class="highlight-item">
+          <i class="bi bi-exclamation-triangle"></i>
+          <span
+            ><strong>{{ lowStockCount() }}</strong> Low Stock Products</span
+          >
+        </div>
+        <div class="highlight-item">
+          <i class="bi bi-x-circle text-danger"></i>
+          <span
+            ><strong>{{ outOfStockCount() }}</strong> Out of Stock Products</span
+          >
+        </div>
+      </div>
+      <div class="date-time">
+        <i class="bi bi-calendar3 me-2"></i>
+        <span>{{ currentDate | date : 'EEEE, MMMM d, y' }}</span>
+      </div>
     </div>
   </div>
 
   <!-- Statistics Cards -->
   <div class="stats-grid">
-
     <!-- Total Orders Card -->
     <div class="stat-card stat-orders">
       <div class="stat-icon">
-        <i class="fas fa-shopping-bag"></i>
+        <i class="bi bi-bag"></i>
       </div>
       <div class="stat-details">
-        <h3>{{ totalOrders }}</h3>
-        <p>Total Orders</p>
-        <div class="stat-change positive">
-          <i class="fas fa-arrow-up"></i>
-          <span>+12% from last month</span>
+        <p class="stat-label">Total Orders</p>
+        <h3 class="stat-value">{{ dashboardStats()?.totalOrders | number }}</h3>
+        <div
+          class="stat-change"
+          [class.positive]="(dashboardStats()?.ordersChangePercentage ?? 0) > 0"
+          [class.negative]="(dashboardStats()?.ordersChangePercentage ?? 0) < 0"
+        >
+          @if ((dashboardStats()?.ordersChangePercentage ?? 0) > 0) {
+          <i class="bi bi-arrow-up-right"></i>
+          <span>+{{ dashboardStats()?.ordersChangePercentage }}% vs last month</span>
+          } @else if ((dashboardStats()?.ordersChangePercentage ?? 0) < 0) {
+          <i class="bi bi-arrow-down-right"></i>
+          <span>{{ dashboardStats()?.ordersChangePercentage }}% vs last month</span>
+          } @else if (dashboardStats()?.ordersChangePercentage === 0) {
+          <i class="bi bi-dash"></i>
+          <span>Same as last month</span>
+          } @else {
+          <i class="bi bi-exclamation-circle"></i>
+          <span>No prior orders data</span>
+          }
         </div>
+      </div>
+      <div class="stat-trend">
+        <div class="mini-chart">
+          @for (barHeight of ordersTrendBars(); track $index; let last = $last) {
+          <div
+            class="chart-bar"
+            [class.active]="last"
+            [style.height.%]="barHeight"
+            [title]="(dashboardStats()?.ordersTrend?.[$index] || 0) + ' Orders'"
+          ></div>
+          }
+        </div>
+        <span class="trend-label">Last 7 Days</span>
       </div>
     </div>
 
     <!-- Total Products Card -->
     <div class="stat-card stat-products">
       <div class="stat-icon">
-        <i class="fas fa-box"></i>
+        <i class="bi bi-box-seam"></i>
       </div>
       <div class="stat-details">
-        <h3>{{ totalProducts }}</h3>
-        <p>Total Products</p>
-        <div class="stat-change positive">
-          <i class="fas fa-arrow-up"></i>
-          <span>+8 new this week</span>
+        <p class="stat-label">Total Products</p>
+        <h3 class="stat-value">{{ dashboardStats()?.totalProducts | number }}</h3>
+        <div
+          class="stat-change"
+          [class.positive]="(dashboardStats()?.recentProductsCount || 0) > 0"
+        >
+          <i class="bi bi-box"></i>
+          @if ((dashboardStats()?.recentProductsCount || 0) > 0) {
+          <span>+{{ dashboardStats()?.recentProductsCount }} new products this week</span>
+          } @else {
+          <span>No new products</span>
+          }
         </div>
+      </div>
+      <div class="stat-trend">
+        <div class="mini-chart">
+          @for (barHeight of productsTrendBars(); track $index; let last = $last) {
+          <div
+            class="chart-bar"
+            [class.active]="last"
+            [style.height.%]="barHeight"
+            [title]="(dashboardStats()?.productsTrend?.[$index] || 0) + ' Products'"
+          ></div>
+          }
+        </div>
+        <span class="trend-label">Last 7 Days</span>
       </div>
     </div>
 
     <!-- Total Users Card -->
     <div class="stat-card stat-users">
       <div class="stat-icon">
-        <i class="fas fa-users"></i>
+        <i class="bi bi-people"></i>
       </div>
       <div class="stat-details">
-        <h3>{{ totalUsers }}</h3>
-        <p>Total Users</p>
-        <div class="stat-change positive">
-          <i class="fas fa-arrow-up"></i>
-          <span>+24 new users</span>
+        <p class="stat-label">Total Users</p>
+        <h3 class="stat-value">{{ dashboardStats()?.totalUsers | number }}</h3>
+        <div class="stat-change" [class.positive]="(dashboardStats()?.recentUsersCount || 0) > 0">
+          <i class="bi bi-person-plus"></i>
+          @if ((dashboardStats()?.recentUsersCount || 0) > 0) {
+          <span>+{{ dashboardStats()?.recentUsersCount }} new users this week</span>
+          } @else {
+          <span>No new users</span>
+          }
         </div>
+      </div>
+      <div class="stat-trend">
+        <div class="mini-chart">
+          @for (barHeight of usersTrendBars(); track $index; let last = $last) {
+          <div
+            class="chart-bar"
+            [class.active]="last"
+            [style.height.%]="barHeight"
+            [title]="(dashboardStats()?.usersTrend?.[$index] || 0) + ' Users'"
+          ></div>
+          }
+        </div>
+        <span class="trend-label">Last 7 Days</span>
       </div>
     </div>
 
-    <!-- Revenue Card -->
+    <!-- Total Revenue Card -->
     <div class="stat-card stat-revenue">
       <div class="stat-icon">
-        <i class="fas fa-dollar-sign"></i>
+        <i class="bi bi-currency-dollar"></i>
       </div>
       <div class="stat-details">
-        <h3>{{ totalRevenue | currency }}</h3>
-        <p>Total Revenue</p>
-        <div class="stat-change positive">
-          <i class="fas fa-arrow-up"></i>
-          <span>+18% from last month</span>
+        <p class="stat-label">Total Revenue</p>
+        <h3 class="stat-value">
+          {{ dashboardStats()?.revenue | number : '1.0-0' }}<span class="currency-suffix">EGP</span>
+        </h3>
+        <div
+          class="stat-change"
+          [class.positive]="(dashboardStats()?.revenueChangePercentage ?? 0) > 0"
+          [class.negative]="(dashboardStats()?.revenueChangePercentage ?? 0) < 0"
+        >
+          @if ((dashboardStats()?.revenueChangePercentage ?? 0) > 0) {
+          <i class="bi bi-arrow-up-right"></i>
+          <span>+{{ dashboardStats()?.revenueChangePercentage }}% vs last month</span>
+          } @else if ((dashboardStats()?.revenueChangePercentage ?? 0) < 0) {
+          <i class="bi bi-arrow-down-right"></i>
+          <span>{{ dashboardStats()?.revenueChangePercentage }}% vs last month</span>
+          } @else if (dashboardStats()?.revenueChangePercentage === 0) {
+          <i class="bi bi-dash"></i>
+          <span>Same as last month</span>
+          } @else {
+          <i class="bi bi-exclamation-circle"></i>
+          <span>No prior revenue data</span>
+          }
+        </div>
+      </div>
+      <div class="stat-trend">
+        <div class="mini-chart">
+          @for (barHeight of revenueTrendBars(); track $index; let last = $last) {
+          <div
+            class="chart-bar"
+            [class.active]="last"
+            [style.height.%]="barHeight"
+            [title]="((dashboardStats()?.revenuesTrend?.[$index] || 0) | number:'1.0-0') + ' EGP'"
+          ></div>
+          }
+        </div>
+        <span class="trend-label">Last 7 Days</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Status Distribution -->
+  <div class="distribution-section">
+    <div class="section-header">
+      <h2><i class="bi bi-pie-chart me-2"></i>Order Status Distribution</h2>
+      <p>Overview of current order statuses</p>
+    </div>
+    <div class="distribution-card">
+      <div class="distribution-bars">
+        <div class="distribution-item">
+          <div class="distribution-label">
+            <i class="bi bi-clock" style="color: #ffc107"></i>
+            <span class="status-name">Pending</span>
+            <span
+              class="status-count"
+              >{{ (dashboardStats()?.ordersDistribution?.['pending'] || 0) | number }}</span
+            >
+          </div>
+          <div class="progress-bar-container">
+            <div
+              class="progress-bar-fill"
+              [style.width.%]="((dashboardStats()?.ordersDistribution?.['pending'] || 0) / (dashboardStats()?.totalOrders || 1)) * 100"
+              style="background: #ffc107"
+            ></div>
+          </div>
+          <span
+            class="percentage-label"
+            >{{ ((dashboardStats()?.ordersDistribution?.['pending'] || 0) / (dashboardStats()?.totalOrders || 1)) | percent:'1.0-0' }}</span
+          >
+        </div>
+        <div class="distribution-item">
+          <div class="distribution-label">
+            <i class="bi bi-gear" style="color: #17a2b8"></i>
+            <span class="status-name">Processing</span>
+            <span
+              class="status-count"
+              >{{ (dashboardStats()?.ordersDistribution?.['processing'] || 0) | number }}</span
+            >
+          </div>
+          <div class="progress-bar-container">
+            <div
+              class="progress-bar-fill"
+              [style.width.%]="((dashboardStats()?.ordersDistribution?.['processing'] || 0) / (dashboardStats()?.totalOrders || 1)) * 100"
+              style="background: #17a2b8"
+            ></div>
+          </div>
+          <span
+            class="percentage-label"
+            >{{ ((dashboardStats()?.ordersDistribution?.['processing'] || 0) / (dashboardStats()?.totalOrders || 1)) | percent:'1.0-0' }}</span
+          >
+        </div>
+        <div class="distribution-item">
+          <div class="distribution-label">
+            <i class="bi bi-truck" style="color: #6f42c1"></i>
+            <span class="status-name">Shipped</span>
+            <span
+              class="status-count"
+              >{{ (dashboardStats()?.ordersDistribution?.['shipped'] || 0) | number }}</span
+            >
+          </div>
+          <div class="progress-bar-container">
+            <div
+              class="progress-bar-fill"
+              [style.width.%]="((dashboardStats()?.ordersDistribution?.['shipped'] || 0) / (dashboardStats()?.totalOrders || 1)) * 100"
+              style="background: #6f42c1"
+            ></div>
+          </div>
+          <span
+            class="percentage-label"
+            >{{ ((dashboardStats()?.ordersDistribution?.['shipped'] || 0) / (dashboardStats()?.totalOrders || 1)) | percent:'1.0-0' }}</span
+          >
+        </div>
+        <div class="distribution-item">
+          <div class="distribution-label">
+            <i class="bi bi-check-circle" style="color: #28a745"></i>
+            <span class="status-name">Delivered</span>
+            <span
+              class="status-count"
+              >{{ (dashboardStats()?.ordersDistribution?.['delivered'] || 0) | number }}</span
+            >
+          </div>
+          <div class="progress-bar-container">
+            <div
+              class="progress-bar-fill"
+              [style.width.%]="((dashboardStats()?.ordersDistribution?.['delivered'] || 0) / (dashboardStats()?.totalOrders || 1)) * 100"
+              style="background: #28a745"
+            ></div>
+          </div>
+          <span
+            class="percentage-label"
+            >{{ ((dashboardStats()?.ordersDistribution?.['delivered'] || 0) / (dashboardStats()?.totalOrders || 1)) | percent:'1.0-0' }}</span
+          >
+        </div>
+        <div class="distribution-item">
+          <div class="distribution-label">
+            <i class="bi bi-x-circle" style="color: #dc3545"></i>
+            <span class="status-name">Cancelled</span>
+            <span
+              class="status-count"
+              >{{ (dashboardStats()?.ordersDistribution?.['cancelled'] || 0) | number }}</span
+            >
+          </div>
+          <div class="progress-bar-container">
+            <div
+              class="progress-bar-fill"
+              [style.width.%]="((dashboardStats()?.ordersDistribution?.['cancelled'] || 0) / (dashboardStats()?.totalOrders || 1)) * 100"
+              style="background: #dc3545"
+            ></div>
+          </div>
+          <span
+            class="percentage-label"
+            >{{ ((dashboardStats()?.ordersDistribution?.['cancelled'] || 0) / (dashboardStats()?.totalOrders || 1)) | percent:'1.0-0' }}</span
+          >
+        </div>
+      </div>
+      <div class="distribution-summary">
+        <div class="summary-item">
+          <span class="summary-value">{{ ordersAttention() | number }}</span>
+          <span class="summary-label">Needs Action</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-item">
+          <span
+            class="summary-value"
+            >{{ (dashboardStats()?.ordersDistribution?.['shipped'] || 0) | number }}</span
+          >
+          <span class="summary-label">In Transit</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-item success">
+          <span
+            class="summary-value"
+            >{{ (dashboardStats()?.ordersDistribution?.['delivered'] || 0) | number }}</span
+          >
+          <span class="summary-label">Completed</span>
         </div>
       </div>
     </div>
-
   </div>
 
   <!-- Quick Actions / Navigation Cards -->
   <div class="section-header">
-    <h2><i class="fas fa-bolt me-2"></i>Quick Actions</h2>
+    <h2><i class="bi bi-lightning-charge me-2"></i>Quick Actions</h2>
     <p>Navigate to different sections of the admin panel</p>
   </div>
 
   <div class="navigation-grid">
-
-    <!-- Orders Management Card -->
-    <div class="nav-card orders-card" routerLink="/admin/orders">
-      <div class="nav-card-icon">
-        <i class="fas fa-shopping-cart"></i>
-      </div>
-      <div class="nav-card-content">
-        <h3>Orders Management</h3>
-        <p>View and manage customer orders, update order status</p>
-        <div class="nav-card-stats">
-          <div class="stat-item">
-            <span class="stat-label">Pending:</span>
-            <span class="stat-value">{{ pendingOrders }}</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">Processing:</span>
-            <span class="stat-value">{{ processingOrders }}</span>
-          </div>
-        </div>
-      </div>
-      <div class="nav-card-arrow">
-        <i class="fas fa-chevron-right"></i>
-      </div>
-    </div>
-
-    <!-- Products Management Card -->
-    <div class="nav-card products-card" routerLink="/admin/products">
-      <div class="nav-card-icon">
-        <i class="fas fa-box-open"></i>
-      </div>
-      <div class="nav-card-content">
-        <h3>Products Management</h3>
-        <p>Add, edit, and manage your product inventory</p>
-        <div class="nav-card-stats">
-          <div class="stat-item">
-            <span class="stat-label">In Stock:</span>
-            <span class="stat-value">{{ inStockProducts }}</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">Low Stock:</span>
-            <span class="stat-value warning">{{ lowStockProducts }}</span>
-          </div>
-        </div>
-      </div>
-      <div class="nav-card-arrow">
-        <i class="fas fa-chevron-right"></i>
-      </div>
-    </div>
-
     <!-- Users Management Card -->
     <div class="nav-card users-card" routerLink="/admin/users">
       <div class="nav-card-icon">
-        <i class="fas fa-user-friends"></i>
+        <i class="bi bi-people"></i>
       </div>
       <div class="nav-card-content">
         <h3>Users Management</h3>
         <p>Manage users and assign roles (Admin, Seller, Customer)</p>
         <div class="nav-card-stats">
           <div class="stat-item">
-            <span class="stat-label">Sellers:</span>
-            <span class="stat-value">{{ totalSellers }}</span>
+            <span
+              class="stat-badge purple"
+              >{{ (dashboardStats()?.usersDistribution?.['Admin'] || 0) | number }}</span
+            >
+            <span class="stat-label">Admins</span>
           </div>
           <div class="stat-item">
-            <span class="stat-label">Customers:</span>
-            <span class="stat-value">{{ totalCustomers }}</span>
+            <span
+              class="stat-badge info"
+              >{{ (dashboardStats()?.usersDistribution?.['Seller'] || 0) | number }}</span
+            >
+            <span class="stat-label">Sellers</span>
+          </div>
+          <div class="stat-item">
+            <span
+              class="stat-badge success"
+              >{{ (dashboardStats()?.usersDistribution?.['Customer'] || 0) | number }}</span
+            >
+            <span class="stat-label">Customers</span>
           </div>
         </div>
       </div>
       <div class="nav-card-arrow">
-        <i class="fas fa-chevron-right"></i>
+        <i class="bi bi-arrow-right-circle"></i>
       </div>
     </div>
 
     <!-- Categories Management Card -->
     <div class="nav-card categories-card" routerLink="/admin/categories">
       <div class="nav-card-icon">
-        <i class="fas fa-tags"></i>
+        <i class="bi bi-grid-3x3-gap"></i>
       </div>
       <div class="nav-card-content">
         <h3>Categories Management</h3>
         <p>Organize products into categories for better navigation</p>
+      </div>
+      <div class="nav-card-arrow">
+        <i class="bi bi-arrow-right-circle"></i>
+      </div>
+    </div>
+
+    <!-- Brands Management Card -->
+    <div class="nav-card brands-card" routerLink="/admin/brands">
+      <div class="nav-card-icon">
+        <i class="bi bi-tags"></i>
+      </div>
+      <div class="nav-card-content">
+        <h3>Brands Management</h3>
+        <p>Manage product brands and partnerships</p>
+      </div>
+      <div class="nav-card-arrow">
+        <i class="bi bi-arrow-right-circle"></i>
+      </div>
+    </div>
+
+    <!-- Products Management Card -->
+    <div class="nav-card products-card" routerLink="/admin/products">
+      <div class="nav-card-icon">
+        <i class="bi bi-box-seam"></i>
+      </div>
+      <div class="nav-card-content">
+        <h3>Products Management</h3>
+        <p>Add, edit, and manage your product inventory</p>
         <div class="nav-card-stats">
           <div class="stat-item">
-            <span class="stat-label">Total:</span>
-            <span class="stat-value">{{ totalCategories }}</span>
+            <span
+              class="stat-badge success"
+              >{{ (dashboardStats()?.productsDistribution?.['inStock'] || 0) | number }}</span
+            >
+            <span class="stat-label">In Stock</span>
           </div>
           <div class="stat-item">
-            <span class="stat-label">Active:</span>
-            <span class="stat-value">{{ activeCategories }}</span>
+            <span
+              class="stat-badge warning"
+              >{{ (dashboardStats()?.productsDistribution?.['lowStock'] || 0) | number }}</span
+            >
+            <span class="stat-label">Low Stock</span>
+          </div>
+          <div class="stat-item">
+            <span
+              class="stat-badge danger"
+              >{{ (dashboardStats()?.productsDistribution?.['outOfStock'] || 0) | number }}</span
+            >
+            <span class="stat-label">Out of Stock</span>
           </div>
         </div>
       </div>
       <div class="nav-card-arrow">
-        <i class="fas fa-chevron-right"></i>
+        <i class="bi bi-arrow-right-circle"></i>
       </div>
     </div>
 
+    <!-- Orders Management Card -->
+    <div class="nav-card orders-card" routerLink="/admin/orders">
+      <div class="nav-card-icon">
+        <i class="bi bi-cart3"></i>
+      </div>
+      <div class="nav-card-content">
+        <h3>Orders Management</h3>
+        <p>View and manage customer orders, update order status</p>
+      </div>
+      <div class="nav-card-arrow">
+        <i class="bi bi-arrow-right-circle"></i>
+      </div>
+    </div>
   </div>
 
   <!-- Recent Activity Section -->
   <div class="section-header">
-    <h2><i class="fas fa-history me-2"></i>Recent Activity</h2>
+    <h2><i class="bi bi-clock-history me-2"></i>Recent Activity</h2>
     <p>Latest updates and changes in your store</p>
   </div>
 
   <div class="activity-grid">
-
     <!-- Recent Orders -->
     <div class="activity-card">
       <div class="activity-header">
-        <h3><i class="fas fa-shopping-bag me-2"></i>Recent Orders</h3>
-        <a routerLink="/admin/orders" class="view-all">View All</a>
+        <h3><i class="bi bi-bag me-2"></i>Recent Orders</h3>
+        <a routerLink="/admin/orders" class="view-all">
+          View All <i class="bi bi-arrow-right"></i>
+        </a>
       </div>
       <div class="activity-list">
-        @for (order of recentOrders; track order.id) {
-          <div class="activity-item">
-            <div class="activity-icon orders-icon">
-              <i class="fas fa-receipt"></i>
-            </div>
-            <div class="activity-info">
-              <p class="activity-title">Order {{ order.id }}</p>
-              <p class="activity-meta">{{ order.customerName }} • {{ order.total | currency }}</p>
-            </div>
-            <span class="activity-badge badge-{{ order.status }}">{{ order.status }}</span>
+        @for (order of dashboardStats()?.recentOrders; track order.id) {
+        <div class="activity-item" [routerLink]="['/admin/orders/edit', order.id]">
+          <div class="activity-avatar orders-avatar">
+            <i class="bi bi-receipt"></i>
           </div>
-        } @empty {
-          <p class="no-activity">No recent orders</p>
+          <div class="activity-info">
+            <p class="activity-title">Order #{{ order.id }}</p>
+            <p class="activity-meta">
+              <span class="customer-name">{{ order.userName }}</span>
+              <span class="separator">•</span>
+              <span class="payment-method">{{ order.paymentMethod | titlecase }}</span>
+              <span class="separator">•</span>
+              <span class="amount"
+                >{{ order.totalAmount | number }} <span class="currency-suffix">EGP</span></span
+              >
+            </p>
+          </div>
+          <div class="activity-right">
+            <span class="activity-badge" [class]="'badge-' + order.status.toLowerCase()">{{
+              order.status
+            }}</span>
+            <span class="activity-time">{{ getTimeAgo(order.created) }}</span>
+          </div>
+        </div>
         }
       </div>
     </div>
@@ -219,27 +514,35 @@
     <!-- Recent Users -->
     <div class="activity-card">
       <div class="activity-header">
-        <h3><i class="fas fa-user-plus me-2"></i>New Users</h3>
-        <a routerLink="/admin/users" class="view-all">View All</a>
+        <h3><i class="bi bi-person-plus me-2"></i>New Users</h3>
+        <a routerLink="/admin/users" class="view-all">
+          View All <i class="bi bi-arrow-right"></i>
+        </a>
       </div>
       <div class="activity-list">
-        @for (user of recentUsers; track user.id) {
-          <div class="activity-item">
-            <div class="activity-icon users-icon">
-              <i class="fas fa-user"></i>
-            </div>
-            <div class="activity-info">
-              <p class="activity-title">{{ user.name }}</p>
-              <p class="activity-meta">{{ user.email }}</p>
-            </div>
-            <span class="activity-badge badge-role-{{ user.role.toLowerCase() }}">{{ user.role }}</span>
+        @for (user of dashboardStats()?.recentUsers; track user.id) {
+        <div class="activity-item">
+          <div class="activity-avatar user-avatar">
+            @if (user.avatarUrl) {
+            <img [src]="backendUrl + user.avatarUrl" [alt]="user.fullName" />
+            } @else {
+            <span class="avatar-initials">{{ getInitials(user.fullName) }}</span>
+            }
           </div>
-        } @empty {
-          <p class="no-activity">No new users</p>
+          <div class="activity-info">
+            <p class="user-name">{{ user.fullName }}</p>
+            <p class="user-email">{{ user.email }}</p>
+          </div>
+          <div class="activity-right">
+            <span class="activity-badge" [class]="'badge-role-' + user.role.toLowerCase()">{{
+              user.role
+            }}</span>
+            <span class="activity-time">{{ getTimeAgo(user.created) }}</span>
+          </div>
+        </div>
         }
       </div>
     </div>
-
   </div>
-
+  }
 </div>

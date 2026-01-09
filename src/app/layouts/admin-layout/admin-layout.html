@@ -1,2 +1,140 @@
-<app-header></app-header>
-<router-outlet></router-outlet>
+<div class="admin-wrapper" [class.sidebar-collapsed]="sidebarCollapsed">
+  <!-- Sidebar Navigation -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-header">
+      <a routerLink="/admin/home" class="sidebar-logo">
+        <div class="logo-icon">
+          <i class="bi bi-grid-1x2-fill"></i>
+        </div>
+        <span class="logo-text">BlackBird</span>
+      </a>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a
+            routerLink="/admin/home"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="nav-link"
+          >
+            <i class="bi bi-house"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/users" routerLinkActive="active" class="nav-link">
+            <i class="bi bi-people"></i>
+            <span>Users</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/categories" routerLinkActive="active" class="nav-link">
+            <i class="bi bi-grid-3x3-gap"></i>
+            <span>Categories</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/brands" routerLinkActive="active" class="nav-link">
+            <i class="bi bi-tags"></i>
+            <span>Brands</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/products" routerLinkActive="active" class="nav-link">
+            <i class="bi bi-box-seam"></i>
+            <span>Products</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/orders" routerLinkActive="active" class="nav-link">
+            <i class="bi bi-bag"></i>
+            <span>Orders</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Collapse Toggle at bottom -->
+    <div class="sidebar-toggle-container">
+      <button class="sidebar-toggle-btn" (click)="toggleSidebarCollapse()" title="Toggle sidebar">
+        <i
+          class="bi"
+          [class.bi-chevron-left]="!sidebarCollapsed"
+          [class.bi-chevron-right]="sidebarCollapsed"
+        ></i>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="admin-main">
+    <!-- Top Bar -->
+    <header class="admin-topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu-btn d-xl-none" (click)="toggleMobileSidebar()">
+          <i class="bi bi-list"></i>
+        </button>
+      </div>
+
+      <div class="topbar-right">
+        <!-- User Dropdown -->
+        <div class="dropdown user-dropdown">
+          <button class="user-btn" data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="user-avatar">
+              @if (getAvatarUrl()) {
+              <img [src]="getAvatarUrl()" alt="Avatar" class="avatar-img" />
+              } @else {
+              <span>{{ getInitials() }}</span>
+              }
+            </div>
+            <div class="user-info">
+              <span class="user-name">{{ authService.user()?.fullName || 'Admin' }}</span>
+              <span class="user-role">Administrator</span>
+            </div>
+            <i class="bi bi-chevron-down"></i>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end">
+            <div class="dropdown-header">
+              <div class="dropdown-avatar">
+                @if (getAvatarUrl()) {
+                <img [src]="getAvatarUrl()" alt="Avatar" class="avatar-img" />
+                } @else {
+                <span>{{ getInitials() }}</span>
+                }
+              </div>
+              <div class="dropdown-user-info">
+                <h6>{{ authService.user()?.fullName || 'Admin User' }}</h6>
+                <p>{{ authService.user()?.email || 'admin@gebreel.com' }}</p>
+              </div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-body">
+              <a class="dropdown-item" routerLink="/account/settings">
+                <i class="bi bi-person-circle"></i>
+                <span>My Account</span>
+              </a>
+              <a class="dropdown-item" routerLink="/home">
+                <i class="bi bi-shop"></i>
+                <span>View Store</span>
+              </a>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-footer">
+              <button class="dropdown-logout-btn" (click)="logout()">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Sign Out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="admin-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

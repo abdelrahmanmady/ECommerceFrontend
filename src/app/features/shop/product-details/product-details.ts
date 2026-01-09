@@ -5,9 +5,15 @@ import { CommonModule } from '@angular/common';
 //Libraries
 import { ToastrService } from 'ngx-toastr';
 //Services
-import { AuthService, CartService, ProductService, ReviewService, WishlistService } from '../../../core/services';
+import {
+  AuthService,
+  CartService,
+  ProductService,
+  ReviewService,
+  WishlistService,
+} from '../../../core/services';
 //Models
-import { ApiError, ProductDetailsResponse } from '../../../core/models';
+import { ProductDetailsResponse, CareInstructionType } from '../../../core/models';
 import { ReviewProductSummaryDto } from '../../../core/models/review.model';
 
 @Component({
@@ -55,9 +61,7 @@ export class ProductDetails implements AfterViewInit {
   isShaking = signal(false);
 
   //Wishlist State
-  isWishlisted = computed(() =>
-    this.wishlistService.wishlistIds().includes(this.productId)
-  );
+  isWishlisted = computed(() => this.wishlistService.wishlistIds().includes(this.productId));
 
   //Helpful State
   helpfulClicked = signal<Set<number>>(new Set());
@@ -66,7 +70,7 @@ export class ProductDetails implements AfterViewInit {
   markHelpful(reviewId: number): void {
     if (this.helpfulClicked().has(reviewId) || this.processingHelpful().has(reviewId)) return;
 
-    this.processingHelpful.update(set => {
+    this.processingHelpful.update((set) => {
       const newSet = new Set(set);
       newSet.add(reviewId);
       return newSet;
@@ -74,20 +78,20 @@ export class ProductDetails implements AfterViewInit {
 
     this.reviewService.markReviewHelpful(reviewId).subscribe({
       next: () => {
-        this.processingHelpful.update(set => {
+        this.processingHelpful.update((set) => {
           const newSet = new Set(set);
           newSet.delete(reviewId);
           return newSet;
         });
 
-        this.helpfulClicked.update(set => {
+        this.helpfulClicked.update((set) => {
           const newSet = new Set(set);
           newSet.add(reviewId);
           return newSet;
         });
 
-        this.reviews.update(reviews =>
-          reviews.map(r => {
+        this.reviews.update((reviews) =>
+          reviews.map((r) => {
             if (r.id === reviewId) {
               return { ...r, helpfulCount: r.helpfulCount + 1 };
             }
@@ -96,14 +100,14 @@ export class ProductDetails implements AfterViewInit {
         );
       },
       error: (err) => {
-        this.processingHelpful.update(set => {
+        this.processingHelpful.update((set) => {
           const newSet = new Set(set);
           newSet.delete(reviewId);
           return newSet;
         });
 
         // Error handling delegated to global error interceptor to avoid double toasts
-      }
+      },
     });
   }
 
@@ -127,7 +131,7 @@ export class ProductDetails implements AfterViewInit {
       },
       error: () => {
         this.reviewsLoading.set(false);
-      }
+      },
     });
   }
 
@@ -145,7 +149,7 @@ export class ProductDetails implements AfterViewInit {
   hoverRating = signal(0);
 
   toggleReviewForm(): void {
-    this.showReviewForm.update(v => !v);
+    this.showReviewForm.update((v) => !v);
     if (!this.showReviewForm()) {
       this.resetReviewForm();
     }
@@ -170,13 +174,13 @@ export class ProductDetails implements AfterViewInit {
     this.submittingReview.set(true);
     const request = {
       rating: this.newReviewRating(),
-      comment: this.newReviewComment() || undefined
+      comment: this.newReviewComment() || undefined,
     };
 
     this.reviewService.addReview(this.productId, request).subscribe({
       next: (newReview) => {
         // Add to local reviews array (prepend so it shows at top)
-        this.reviews.update(reviews => [newReview, ...reviews]);
+        this.reviews.update((reviews) => [newReview, ...reviews]);
         // Reset form and hide it
         this.resetReviewForm();
         this.showReviewForm.set(false);
@@ -187,12 +191,15 @@ export class ProductDetails implements AfterViewInit {
       },
       error: () => {
         setTimeout(() => this.submittingReview.set(false), 400);
-      }
+      },
     });
   }
 
   //Care Instructions Mapping
-  private readonly careInstructionMap: Record<string, { icon: string; label: string }> = {
+  private readonly careInstructionMap: Record<
+    CareInstructionType,
+    { icon: string; label: string }
+  > = {
     machineWashCold: { icon: 'bi-water', label: 'Machine Wash Cold' },
     machineWashWarm: { icon: 'bi-thermometer-half', label: 'Machine Wash Warm' },
     handWash: { icon: 'bi-hand-index', label: 'Hand Wash Only' },
@@ -208,11 +215,11 @@ export class ProductDetails implements AfterViewInit {
     ironHigh: { icon: 'bi-thermometer-high', label: 'Iron High Heat' },
     doNotIron: { icon: 'bi-slash-circle', label: 'Do Not Iron' },
     dryCleanOnly: { icon: 'bi-building', label: 'Dry Clean Only' },
-    doNotDryClean: { icon: 'bi-x-square', label: 'Do Not Dry Clean' }
+    doNotDryClean: { icon: 'bi-x-square', label: 'Do Not Dry Clean' },
   };
 
-  getCareInfo(instruction: string): { icon: string; label: string } {
-    return this.careInstructionMap[instruction] || { icon: 'bi-question-circle', label: instruction };
+  getCareInfo(instruction: CareInstructionType): { icon: string; label: string } {
+    return this.careInstructionMap[instruction];
   }
 
   // Generates array of 5 star types: 'full', 'half', or 'empty'
@@ -248,7 +255,7 @@ export class ProductDetails implements AfterViewInit {
       this.quantity = this.maxStock > 0 ? 1 : 0;
 
       if (res.images && res.images.length > 0) {
-        const mainImg = res.images.find(img => img.isMain) || res.images[0];
+        const mainImg = res.images.find((img) => img.isMain) || res.images[0];
         this.mainImage.set(mainImg);
         this.activeImage.set(res.images.indexOf(mainImg));
       }
@@ -276,8 +283,7 @@ export class ProductDetails implements AfterViewInit {
   prevImage() {
     const product = this.productData();
     if (product && product.images) {
-      const index =
-        this.activeImage() > 0 ? this.activeImage() - 1 : product.images.length - 1;
+      const index = this.activeImage() > 0 ? this.activeImage() - 1 : product.images.length - 1;
       this.selectImage(index);
     }
   }
@@ -285,8 +291,7 @@ export class ProductDetails implements AfterViewInit {
   nextImage() {
     const product = this.productData();
     if (product && product.images) {
-      const index =
-        this.activeImage() < product.images.length - 1 ? this.activeImage() + 1 : 0;
+      const index = this.activeImage() < product.images.length - 1 ? this.activeImage() + 1 : 0;
       this.selectImage(index);
     }
   }
@@ -334,14 +339,14 @@ export class ProductDetails implements AfterViewInit {
     this.cartService.addToCart(product.id, this.quantity).subscribe({
       next: (response) => {
         // Check if product was actually added to cart
-        const addedItem = response.items.find(item => item.productId === product.id);
+        const addedItem = response.items.find((item) => item.productId === product.id);
         if (addedItem) {
           this.toastr.success('Product added to cart');
         }
       },
       error: (err) => {
         this.toastr.error(err.error);
-      }
+      },
     });
   }
 
@@ -360,7 +365,7 @@ export class ProductDetails implements AfterViewInit {
         },
         error: (err) => {
           this.toastr.error(err.error || 'Failed to remove from wishlist');
-        }
+        },
       });
       return;
     }
@@ -371,7 +376,7 @@ export class ProductDetails implements AfterViewInit {
       },
       error: (err) => {
         this.toastr.error(err.error || 'Failed to add to wishlist');
-      }
+      },
     });
   }
 }

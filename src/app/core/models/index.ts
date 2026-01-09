@@ -8,6 +8,4 @@ export * from './cart.model';
 export * from './address.model';
 export * from './order.model';
 export * from './checkout.model';
-
-
-
+export * from './dashboard.model';

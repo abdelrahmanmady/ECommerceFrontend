@@ -1,68 +1,113 @@
-<header id="header" class="header sticky-top">
-  <!-- Main Header -->
-  <div class="main-header bg-white">
-    <div class="container-fluid container-xl">
-      <div class="d-flex py-3 align-items-center justify-content-between">
+<header id="admin-header" class="admin-header sticky-top">
+  <!-- Unified Header -->
+  <div class="header-container">
+    <div class="header-content">
+      <!-- Center: Navigation (Now taking up left space too since logo is gone) -->
+      <nav class="header-nav">
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a
+              routerLink="/admin/home"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              class="nav-link"
+            >
+              <i class="bi bi-house"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a routerLink="/admin/orders" routerLinkActive="active" class="nav-link">
+              <i class="bi bi-bag"></i>
+              <span>Orders</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a routerLink="/admin/products" routerLinkActive="active" class="nav-link">
+              <i class="bi bi-box-seam"></i>
+              <span>Products</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a routerLink="/admin/categories" routerLinkActive="active" class="nav-link">
+              <i class="bi bi-tags"></i>
+              <span>Categories</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a routerLink="/admin/users" routerLinkActive="active" class="nav-link">
+              <i class="bi bi-people"></i>
+              <span>Users</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
 
-        <!-- Logo -->
-        <a routerLink="/admin/home" class="logo d-flex align-items-center text-dark">
-          <h1 class="sitename mb-0">Hello {{authService.user()?.fullName}}</h1>
+      <!-- Right: User Actions -->
+      <div class="header-right">
+        <!-- Back to Store -->
+        <a routerLink="/home" class="header-btn store-link" title="Go to Store">
+          <span>View Store</span>
+          <i class="bi bi-arrow-right-short"></i>
         </a>
 
-        <!-- Actions -->
-        <div class="header-actions d-flex align-items-center justify-content-end">
+        <div class="header-divider"></div>
 
-          <!-- Account if the admin will adjust his account -->
-          <div class="dropdown account-dropdown">
-            <button class="header-action-btn text-dark" data-bs-toggle="dropdown">
-              <i class="bi bi-person"></i>
-            </button>
-            <div class="dropdown-menu dropdown-menu-end">
-              <div class="dropdown-header">
-                <h6>Admin Account</h6>
-                <p class="mb-0">Manage your admin settings</p>
+        <!-- Notifications -->
+        <button class="header-icon-btn" title="Notifications">
+          <i class="bi bi-bell"></i>
+          <span class="notification-badge">3</span>
+        </button>
+
+        <!-- User Dropdown -->
+        <div class="dropdown user-dropdown">
+          <button class="user-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="user-avatar-small">
+              <span>{{ authService.user()?.fullName?.charAt(0) || 'A' }}</span>
+            </div>
+            <i class="bi bi-chevron-down toggle-arrow"></i>
+          </button>
+
+          <div class="dropdown-menu dropdown-menu-end">
+            <div class="dropdown-header">
+              <div class="dropdown-avatar">
+                <span>{{ authService.user()?.fullName?.charAt(0) || 'A' }}</span>
               </div>
-              <div class="dropdown-body">
-                <a class="dropdown-item d-flex align-items-center" routerLink="/admin/home">
-                  <i class="bi bi-speedometer2 me-2"></i>
-                  <span>Dashboard</span>
-                </a>
-                <a class="dropdown-item d-flex align-items-center" routerLink="/account">
-                  <i class="bi bi-person-circle me-2"></i>
-                  <span>My Profile</span>
-                </a>
-                <a class="dropdown-item d-flex align-items-center" routerLink="/account">
-                  <i class="bi bi-gear me-2"></i>
-                  <span>Settings</span>
-                </a>
-              </div>
-              <div class="dropdown-footer">
-                <button class="btn btn-danger w-100" (click)="logout()">Logout</button>
+              <div class="dropdown-user-info">
+                <h6>{{ authService.user()?.fullName || 'Admin User' }}</h6>
+                <p>{{ authService.user()?.email || 'admin@gebreel.com' }}</p>
               </div>
             </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-body">
+              <a class="dropdown-item" routerLink="/admin/home">
+                <i class="bi bi-speedometer2"></i>
+                <span>Dashboard</span>
+              </a>
+              <a class="dropdown-item" routerLink="/account/settings">
+                <i class="bi bi-person-circle"></i>
+                <span>My Profile</span>
+              </a>
+              <a class="dropdown-item" routerLink="/account/settings">
+                <i class="bi bi-gear"></i>
+                <span>Settings</span>
+              </a>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-footer">
+              <button class="logout-btn" (click)="logout()">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Sign Out</span>
+              </button>
+            </div>
           </div>
-
-          <!-- Mobile Navigation Toggle -->
-          <i class="mobile-nav-toggle d-xl-none bi bi-list me-0 text-dark"></i>
-
         </div>
+
+        <!-- Mobile Toggle -->
+        <button class="mobile-toggle d-xl-none">
+          <i class="bi bi-list"></i>
+        </button>
       </div>
     </div>
   </div>
-
-  <!-- Navigation -->
-  <div class="header-nav bg-dark border-top border-secondary">
-    <div class="container-fluid container-xl position-relative">
-      <nav id="navmenu" class="navmenu">
-        <ul class="flex-row justify-content-center">
-          <li><a routerLink="/admin/home" routerLinkActive="active">Home</a></li>
-          <li><a routerLink="/admin/users" routerLinkActive="active">Users</a></li>
-          <li><a routerLink="/admin/products" routerLinkActive="active">Products</a></li>
-          <li><a routerLink="/admin/categories" routerLinkActive="active">Categories</a></li>
-          <li><a routerLink="/admin/orders" routerLinkActive="active">Orders</a></li>
-        </ul>
-      </nav>
-    </div>
-  </div>
-
 </header>
