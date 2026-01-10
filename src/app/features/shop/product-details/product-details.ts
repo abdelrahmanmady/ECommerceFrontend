@@ -344,8 +344,8 @@ export class ProductDetails implements AfterViewInit {
           this.toastr.success('Product added to cart');
         }
       },
-      error: (err) => {
-        this.toastr.error(err.error);
+      error: () => {
+        // Error toast handled by global error interceptor
       },
     });
   }
@@ -363,8 +363,8 @@ export class ProductDetails implements AfterViewInit {
         next: () => {
           this.toastr.success('Removed from wishlist');
         },
-        error: (err) => {
-          this.toastr.error(err.error || 'Failed to remove from wishlist');
+        error: () => {
+          // Error toast handled by global error interceptor
         },
       });
       return;
@@ -374,8 +374,8 @@ export class ProductDetails implements AfterViewInit {
       next: () => {
         this.toastr.success('Added to wishlist');
       },
-      error: (err) => {
-        this.toastr.error(err.error || 'Failed to add to wishlist');
+      error: () => {
+        // Error toast handled by global error interceptor
       },
     });
   }
