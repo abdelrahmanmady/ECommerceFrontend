@@ -46,4 +46,12 @@ export class UserService {
       params: params as any,
     });
   }
+
+  deleteAdminUser(userId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/admin/${userId}`);
+  }
+
+  restoreAdminUser(userId: string): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/admin/${userId}/restore`, {});
+  }
 }
