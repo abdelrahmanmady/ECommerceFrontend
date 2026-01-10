@@ -1,5 +1,5 @@
 // Angular Imports
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, OnInit, AfterViewInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 // Libraries
@@ -7,6 +7,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { Subject, debounceTime, distinctUntilChanged, forkJoin, timer } from 'rxjs';
 // Services
 import { UserService } from '../../../core/services/user.service';
+import { AuthService } from '../../../core/services/auth.service';
 // Models
 import { AdminUserQueryParams, AdminUserSummaryDto } from '../../../core/models/user.model';
 // Environment
@@ -19,16 +20,16 @@ import { environment } from '../../../../environments/environment';
   templateUrl: './users.html',
   styleUrls: ['./users.css'],
 })
-export class UsersListComponent implements OnInit {
+export class UsersListComponent implements OnInit, AfterViewInit {
   // ==================== Injected Services ====================
   private userService = inject(UserService);
-  private cdr = inject(ChangeDetectorRef);
+  private authService = inject(AuthService);
 
   // ==================== State ====================
   // Data
-  users: AdminUserSummaryDto[] = [];
-  totalCount = 0;
-  isLoading = false;
+  users = signal<AdminUserSummaryDto[]>([]);
+  totalCount = signal(0);
+  isLoading = signal(false);
 
   // Filters
   selectedRole: 'all' | 'admin' | 'seller' | 'customer' | undefined = undefined;
@@ -50,6 +51,15 @@ export class UsersListComponent implements OnInit {
   private searchTerms = new Subject<string>();
   searchTerm = '';
 
+  // Confirmation Modal State
+  confirmModalTitle = signal('');
+  confirmModalMessage = signal('');
+  confirmModalIcon = signal('');
+  confirmModalButtonText = signal('');
+  confirmModalButtonClass = signal('');
+  private pendingAction: (() => void) | null = null;
+  private modalInstance: any = null;
+
   // ==================== Computed Properties ====================
   get hasActiveFilters(): boolean {
     return !!(this.selectedRole || this.selectedStatus || this.selectedSort || this.searchTerm);
@@ -59,6 +69,15 @@ export class UsersListComponent implements OnInit {
   ngOnInit(): void {
     this.setupSearchDebounce();
     this.loadUsers();
+  }
+
+  ngAfterViewInit(): void {
+    const confirmModal = document.getElementById('confirmModal');
+    if (confirmModal) {
+      confirmModal.addEventListener('hide.bs.modal', () => {
+        (document.activeElement as HTMLElement)?.blur();
+      });
+    }
   }
 
   private setupSearchDebounce(): void {
@@ -71,7 +90,7 @@ export class UsersListComponent implements OnInit {
 
   // ==================== Data Loading ====================
   loadUsers(scrollToTable = false): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     const params = this.buildQueryParams();
 
     forkJoin([
@@ -79,10 +98,9 @@ export class UsersListComponent implements OnInit {
       timer(300), // Minimum loading time for UX
     ]).subscribe({
       next: ([response]) => {
-        this.users = response.items;
-        this.totalCount = response.totalCount;
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this.users.set(response.items);
+        this.totalCount.set(response.totalCount);
+        this.isLoading.set(false);
 
         if (scrollToTable) {
           this.scrollToTableIfNeeded();
@@ -90,7 +108,7 @@ export class UsersListComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error fetching admin users:', error);
-        this.isLoading = false;
+        this.isLoading.set(false);
       },
     });
   }
@@ -154,7 +172,7 @@ export class UsersListComponent implements OnInit {
   }
 
   onSearch(term: string): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.searchTerms.next(term);
   }
 
@@ -175,16 +193,91 @@ export class UsersListComponent implements OnInit {
 
   // ==================== User Actions ====================
   deleteUser(userId: string): void {
-    if (confirm('Are you sure you want to delete this user?')) {
-      // TODO: Implement delete API call
-      console.log('Deleting user:', userId);
-    }
+    this.showConfirmModal({
+      title: 'Delete User',
+      message: 'Are you sure you want to delete this user? This action can be undone by restoring.',
+      icon: 'fas fa-trash text-danger',
+      buttonText: 'Delete',
+      buttonClass: 'btn-danger',
+      action: () => {
+        this.userService.deleteAdminUser(userId).subscribe({
+          next: () => {
+            if (this.selectedStatus === 'active') {
+              this.users.update((users) => users.filter((user) => user.id !== userId));
+              this.totalCount.update((count) => count - 1);
+            } else {
+              this.users.update((users) =>
+                users.map((user) => (user.id === userId ? { ...user, isDeleted: true } : user))
+              );
+            }
+          },
+          error: () => {
+            // Error toast handled by global error interceptor
+          },
+        });
+      },
+    });
   }
 
   restoreUser(userId: string): void {
-    if (confirm('Are you sure you want to restore this user?')) {
-      // TODO: Implement restore API call
-      console.log('Restoring user:', userId);
+    this.showConfirmModal({
+      title: 'Restore User',
+      message:
+        'Are you sure you want to restore this user? They will regain access to their account.',
+      icon: 'fas fa-trash-restore text-success',
+      buttonText: 'Restore',
+      buttonClass: 'btn-success',
+      action: () => {
+        this.userService.restoreAdminUser(userId).subscribe({
+          next: () => {
+            if (this.selectedStatus === 'deleted') {
+              this.users.update((users) => users.filter((user) => user.id !== userId));
+              this.totalCount.update((count) => count - 1);
+            } else {
+              this.users.update((users) =>
+                users.map((user) => (user.id === userId ? { ...user, isDeleted: false } : user))
+              );
+            }
+          },
+          error: () => {
+            // Error toast handled by global error interceptor
+          },
+        });
+      },
+    });
+  }
+
+  private showConfirmModal(config: {
+    title: string;
+    message: string;
+    icon: string;
+    buttonText: string;
+    buttonClass: string;
+    action: () => void;
+  }): void {
+    this.confirmModalTitle.set(config.title);
+    this.confirmModalMessage.set(config.message);
+    this.confirmModalIcon.set(config.icon);
+    this.confirmModalButtonText.set(config.buttonText);
+    this.confirmModalButtonClass.set(config.buttonClass);
+    this.pendingAction = config.action;
+
+    // Get modal element and show it
+    const modalElement = document.getElementById('confirmModal');
+    if (modalElement) {
+      const bootstrap = (window as any).bootstrap;
+      this.modalInstance = new bootstrap.Modal(modalElement);
+      this.modalInstance.show();
+    }
+  }
+
+  confirmAction(): void {
+    if (this.pendingAction) {
+      this.pendingAction();
+      this.pendingAction = null;
+    }
+    if (this.modalInstance) {
+      this.modalInstance.hide();
     }
   }
 
@@ -229,5 +322,9 @@ export class UsersListComponent implements OnInit {
       default:
         return 'role-customer';
     }
+  }
+
+  isCurrentUser(userId: string): boolean {
+    return this.authService.user()?.userId === userId;
   }
 }

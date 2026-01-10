@@ -200,7 +200,7 @@
   <!-- Users Table -->
   <div class="orders-table">
     <!-- Loading Overlay -->
-    @if (isLoading) {
+    @if (isLoading()) {
     <div class="loading-overlay">
       <div class="spinner-border text-secondary" role="status">
         <span class="visually-hidden">Loading...</span>
@@ -222,7 +222,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (user of users; track user.id) {
+          @for (user of users(); track user.id) {
           <tr [class.deleted-row]="user.isDeleted">
             <!-- Avatar -->
             <td class="ps-4">
@@ -303,6 +303,9 @@
 
             <!-- Actions -->
             <td>
+              @if (isCurrentUser(user.id)) {
+              <span class="current-user-badge"><span class="active-dot"></span>Logged In</span>
+              } @else {
               <button
                 class="action-btn btn-edit"
                 [routerLink]="'/admin/users/edit/' + user.id"
@@ -326,7 +329,7 @@
               >
                 <i class="fas fa-trash-restore"></i>
               </button>
-              }
+              } }
             </td>
           </tr>
           } @empty {
@@ -346,8 +349,8 @@
   <div class="d-flex justify-content-center mt-4">
     <!-- Hidden element to initialize pagination service -->
     <div style="display: none">
-      @for (user of users | paginate: { id: 'usersPagination', itemsPerPage: pageSize, currentPage:
-      pageIndex, totalItems: totalCount }; track user.id) {
+      @for (user of users() | paginate: { id: 'usersPagination', itemsPerPage: pageSize,
+      currentPage: pageIndex, totalItems: totalCount() }; track user.id) {
       <div></div>
       }
     </div>
@@ -379,5 +382,39 @@
         </ul>
       </nav>
     </pagination-template>
+  </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div
+  class="modal fade"
+  id="confirmModal"
+  tabindex="-1"
+  aria-labelledby="confirmModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title" id="confirmModalLabel">
+          <i [class]="confirmModalIcon()" class="me-2"></i>
+          {{ confirmModalTitle() }}
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-muted">
+        {{ confirmModalMessage() }}
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button
+          type="button"
+          [class]="'btn ' + confirmModalButtonClass()"
+          (click)="confirmAction()"
+        >
+          {{ confirmModalButtonText() }}
+        </button>
+      </div>
+    </div>
   </div>
 </div>

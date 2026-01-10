@@ -841,3 +841,108 @@ h6 {
 #usersTableAnchor {
   scroll-margin-top: 90px; /* Offset for fixed navbar */
 }
+
+/* Confirmation Modal Styles - Use ::ng-deep for proper encapsulation */
+::ng-deep #confirmModal .modal-dialog {
+  max-width: 400px;
+  margin: 1.75rem auto;
+}
+
+::ng-deep #confirmModal .modal-content {
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  padding: 0;
+  margin: 0;
+}
+
+::ng-deep #confirmModal .modal-header {
+  padding: 24px 24px 8px;
+  margin: 0;
+}
+
+::ng-deep #confirmModal .modal-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #2b2b2b;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+::ng-deep #confirmModal .modal-title i {
+  font-size: 20px;
+}
+
+::ng-deep #confirmModal .modal-body {
+  padding: 8px 24px 16px;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+::ng-deep #confirmModal .modal-footer {
+  padding: 16px 24px 24px;
+  gap: 12px;
+  margin: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+::ng-deep #confirmModal .modal-footer .btn {
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  margin: 0;
+}
+
+::ng-deep #confirmModal .modal-footer .btn-secondary {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  color: #6c757d;
+}
+
+::ng-deep #confirmModal .modal-footer .btn-secondary:hover {
+  background: #e9ecef;
+}
+
+::ng-deep .modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Current User Badge */
+.current-user-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #d1e7dd;
+  color: #0f5132;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.current-user-badge .active-dot {
+  width: 8px;
+  height: 8px;
+  background: #198754;
+  border-radius: 50%;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(0.85);
+  }
+}
