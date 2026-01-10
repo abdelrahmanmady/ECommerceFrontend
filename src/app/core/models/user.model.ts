@@ -39,3 +39,12 @@ export interface UpdatePasswordRequest {
   oldPassword: string;
   newPassword: string;
 }
+
+export interface AdminUserQueryParams {
+  role?: 'all' | 'admin' | 'seller' | 'customer';
+  status?: 'all' | 'active' | 'deleted';
+  search?: string;
+  sort?: 'createdAsc' | 'createdDesc' | 'updatedDesc' | 'ordersDesc' | 'nameAsc' | 'emailAsc';
+  pageIndex?: number;
+  pageSize?: number;
+}

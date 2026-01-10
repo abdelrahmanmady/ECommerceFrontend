@@ -1,51 +1,197 @@
 <!-- Users List View -->
 <div class="container py-4">
-
   <!-- Page Header -->
   <div class="page-header">
     <h1><i class="fas fa-users me-3"></i>Users Management</h1>
     <p>Manage users and assign roles</p>
   </div>
 
-  <!-- Filter Bar -->
+  <!-- Scroll Anchor -->
+  <div id="usersTableAnchor"></div>
+
+  <!-- Premium Filter Toolbar (Compact Split) -->
   <div class="filter-bar">
-    <div class="row align-items-between justify-content-between">
-      <div class="col-md-4 mb-3 mb-md-0">
-        <div class="search-box">
-          <input 
-            type="text" 
-            class="form-control" 
-            placeholder="Search by Name, Email, or Phone..." 
-            [(ngModel)]="searchTerm"
-            (input)="filterUsers()">
-          <i class="fas fa-search"></i>
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <!-- Search (Left) -->
+      <div class="search-pill" style="min-width: 400px">
+        <i class="fas fa-search"></i>
+        <input
+          type="text"
+          class="form-control-plaintext ps-1"
+          placeholder="Search users by name, email or phone number"
+          (input)="onSearch($any($event.target).value)"
+          [value]="searchTerm"
+        />
+      </div>
+
+      <!-- Filters (Right) -->
+      <div class="d-flex align-items-center gap-4">
+        <!-- Filter Group -->
+        <div class="d-flex gap-2">
+          <!-- Role Filter -->
+          <div class="dropdown custom-dropdown">
+            <button
+              class="filter-btn"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <i class="fas fa-user-tag"></i>
+              <span>{{
+                !selectedRole || selectedRole === 'all' ? 'All Roles' : (selectedRole | titlecase)
+              }}</span>
+              <i class="fas fa-chevron-down ms-1"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a
+                  class="dropdown-item"
+                  [class.active]="selectedRole === 'all' || !selectedRole"
+                  (click)="onRoleChange('all')"
+                  >All Roles</a
+                >
+              </li>
+              <li>
+                <a
+                  class="dropdown-item"
+                  [class.active]="selectedRole === 'admin'"
+                  (click)="onRoleChange('admin')"
+                  >Admin</a
+                >
+              </li>
+              <li>
+                <a
+                  class="dropdown-item"
+                  [class.active]="selectedRole === 'seller'"
+                  (click)="onRoleChange('seller')"
+                  >Seller</a
+                >
+              </li>
+              <li>
+                <a
+                  class="dropdown-item"
+                  [class.active]="selectedRole === 'customer'"
+                  (click)="onRoleChange('customer')"
+                  >Customer</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <!-- Status Filter -->
+          <div class="dropdown custom-dropdown">
+            <button
+              class="filter-btn"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <i class="fas fa-info-circle"></i>
+              <span>{{
+                !selectedStatus || selectedStatus === 'all'
+                  ? 'All Users'
+                  : (selectedStatus | titlecase)
+              }}</span>
+              <i class="fas fa-chevron-down ms-1"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a
+                  class="dropdown-item"
+                  [class.active]="selectedStatus === 'all' || !selectedStatus"
+                  (click)="onStatusChange('all')"
+                  >All Users</a
+                >
+              </li>
+              <li>
+                <a
+                  class="dropdown-item"
+                  [class.active]="selectedStatus === 'active'"
+                  (click)="onStatusChange('active')"
+                  >Active</a
+                >
+              </li>
+              <li>
+                <a
+                  class="dropdown-item"
+                  [class.active]="selectedStatus === 'deleted'"
+                  (click)="onStatusChange('deleted')"
+                  >Deleted</a
+                >
+              </li>
+            </ul>
+          </div>
         </div>
-      </div>
-      <div class="col-md-3 mb-3 mb-md-0">
-        <select 
-          class="form-select filter-select" 
-          [(ngModel)]="roleFilter"
-          (change)="filterUsers()">
-          <option value="">All Roles</option>
-          <option value="Admin">Admin</option>
-          <option value="Seller">Seller</option>
-          <option value="Customer">Customer</option>
-        </select>
-      </div>
-      <div class="col-md-2 mb-3 mb-md-0">
-        <select 
-          class="form-select filter-select" 
-          [(ngModel)]="sortBy"
-          (change)="sortUsers()">
-          <option value="newest">Newest First</option>
-          <option value="oldest">Oldest First</option>
-          <option value="name">Name (A-Z)</option>
-          <option value="email">Email (A-Z)</option>
-        </select>
-      </div>
-      <div class="col-md-2">
-        <button class="btn btn-submit w-100" (click)="filterUsers()">
-          <i class="fas fa-filter me-2"></i>Filter
+
+        <!-- Sort Dropdown -->
+        <div class="dropdown custom-dropdown border-start ps-4">
+          <button class="filter-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-sort-amount-down"></i>
+            <span>{{ getSortLabel() }}</span>
+            <i class="fas fa-chevron-down ms-1"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a
+                class="dropdown-item"
+                [class.active]="selectedSort === 'createdDesc' || !selectedSort"
+                (click)="onSortChange('createdDesc')"
+                >Newest</a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                [class.active]="selectedSort === 'createdAsc'"
+                (click)="onSortChange('createdAsc')"
+                >Oldest</a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                [class.active]="selectedSort === 'updatedDesc'"
+                (click)="onSortChange('updatedDesc')"
+                >Last Updated</a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                [class.active]="selectedSort === 'ordersDesc'"
+                (click)="onSortChange('ordersDesc')"
+                >Orders Placed</a
+              >
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <a
+                class="dropdown-item"
+                [class.active]="selectedSort === 'nameAsc'"
+                (click)="onSortChange('nameAsc')"
+                >Name (A-Z)</a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                [class.active]="selectedSort === 'emailAsc'"
+                (click)="onSortChange('emailAsc')"
+                >Email (A-Z)</a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <!-- Clear Filters -->
+        <button
+          class="btn-clear-filters"
+          [disabled]="!hasActiveFilters"
+          type="button"
+          (click)="clearFilters()"
+          title="Clear all filters"
+        >
+          <i class="fas fa-times"></i>
         </button>
       </div>
     </div>
@@ -53,86 +199,185 @@
 
   <!-- Users Table -->
   <div class="orders-table">
+    <!-- Loading Overlay -->
+    @if (isLoading) {
+    <div class="loading-overlay">
+      <div class="spinner-border text-secondary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+    }
+
     <div class="table-responsive">
       <table class="table">
         <thead>
           <tr>
-            <th>USER ID</th>
-            <th>NAME</th>
-            <th>EMAIL</th>
-            <th>PHONE</th>
-            <th>ROLE</th>
-            <th>PRODUCTS</th>
-            <th>JOINED</th>
+            <th class="ps-4" style="width: 80px">IMAGE</th>
+            <th class="text-start ps-3" style="width: 250px">USER</th>
+            <th style="width: 15%">PHONE</th>
+            <th style="width: 15%">ROLE</th>
+            <th style="width: 15%">ORDERS</th>
+            <th style="width: 15%">ACTIVITY</th>
             <th>ACTIONS</th>
           </tr>
         </thead>
         <tbody>
-          @for (user of filteredUsers; track user.id) {
-            <tr>
-              <td><strong>{{ user.id }}</strong></td>
-              <td>{{ user.name }}</td>
-              <td>{{ user.email }}</td>
-              <td>{{ user.phone || 'N/A' }}</td>
-              <td>
-                <span class="status-badge role-{{ user.role.name.toLowerCase() }}">
-                  {{ user.role.name }}
+          @for (user of users; track user.id) {
+          <tr [class.deleted-row]="user.isDeleted">
+            <!-- Avatar -->
+            <td class="ps-4">
+              @if (getAvatarUrl(user)) {
+              <img [src]="getAvatarUrl(user)" [alt]="user.fullName" class="user-avatar" />
+              } @else {
+              <div class="user-avatar avatar-initials">
+                {{ getInitials(user.fullName) }}
+              </div>
+              }
+            </td>
+
+            <!-- User Info -->
+            <td>
+              <span class="user-info-name">
+                {{ user.fullName }}
+                @if (user.isDeleted) {
+                <span class="deleted-badge">Deleted</span>
+                }
+              </span>
+              <span class="user-info-email">
+                {{ user.email }}
+                @if (user.emailConfirmed) {
+                <i class="fas fa-check-circle verified-badge" title="Email Verified"></i>
+                } @else {
+                <i
+                  class="fas fa-exclamation-circle unverified-badge"
+                  title="Email Not Verified"
+                ></i>
+                }
+              </span>
+            </td>
+
+            <!-- Phone -->
+            <td>
+              @if (user.phoneNumber) {
+              <span>
+                +{{ user.phoneNumber }}
+                @if (user.phoneNumberConfirmed) {
+                <i class="fas fa-check-circle verified-badge" title="Phone Verified"></i>
+                } @else {
+                <i
+                  class="fas fa-exclamation-circle unverified-badge"
+                  title="Phone Not Verified"
+                ></i>
+                }
+              </span>
+              } @else {
+              <span class="text-muted">-</span>
+              }
+            </td>
+
+            <!-- Role -->
+            <td>
+              <span class="status-badge" [ngClass]="getRoleBadgeClass(user.role)">
+                {{ user.role }}
+              </span>
+            </td>
+
+            <!-- Orders -->
+            <td>{{ user.ordersCount }} Order(s)</td>
+
+            <!-- Activity -->
+            <td>
+              <div class="d-flex flex-column">
+                <span class="fw-medium">{{ user.created | date : 'mediumDate' }}</span>
+                @if (user.updated) {
+                <span class="text-muted" style="font-size: 11px; white-space: nowrap">
+                  <i class="fas fa-clock me-1"></i>Updated: {{ user.updated | date : 'shortDate' }}
                 </span>
-              </td>
-              <td>{{ user.products.length }} item(s)</td>
-              <td>{{ user.createdAt | date: 'MMM d, y' }}</td>
-              <td>
-                <button 
-                  class="action-btn btn-edit" 
-                  [routerLink]="['/admin/users/edit', user.id]"
-                  title="Edit User">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button 
-                  class="action-btn btn-delete" 
-                  (click)="deleteUser(user.id)"
-                  title="Delete User"
-                  [disabled]="user.role.name === 'Admin'">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </td>
-            </tr>
+                } @else {
+                <span class="text-muted" style="font-size: 11px; opacity: 0.5">
+                  <i class="fas fa-clock me-1"></i>Joined
+                </span>
+                }
+              </div>
+            </td>
+
+            <!-- Actions -->
+            <td>
+              <button
+                class="action-btn btn-edit"
+                [routerLink]="'/admin/users/edit/' + user.id"
+                title="Edit User"
+              >
+                <i class="fas fa-edit"></i>
+              </button>
+              @if (!user.isDeleted) {
+              <button
+                class="action-btn btn-delete"
+                (click)="deleteUser(user.id)"
+                title="Delete User"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+              } @else {
+              <button
+                class="action-btn btn-restore"
+                (click)="restoreUser(user.id)"
+                title="Restore User"
+              >
+                <i class="fas fa-trash-restore"></i>
+              </button>
+              }
+            </td>
+          </tr>
           } @empty {
-            <tr>
-              <td colspan="8" class="text-center py-5">
-                <i class="fas fa-user-slash fa-3x mb-3 text-muted"></i>
-                <p class="text-muted">No users found</p>
-              </td>
-            </tr>
+          <tr>
+            <td colspan="7" class="text-center py-5">
+              <i class="fas fa-users" style="font-size: 3rem; color: #ccc"></i>
+              <p class="mt-3 text-muted">No users found.</p>
+            </td>
+          </tr>
           }
         </tbody>
       </table>
     </div>
+  </div>
 
-    <!-- Pagination -->
-    <div class="pagination-wrapper">
+  <!-- Pagination -->
+  <div class="d-flex justify-content-center mt-4">
+    <!-- Hidden element to initialize pagination service -->
+    <div style="display: none">
+      @for (user of users | paginate: { id: 'usersPagination', itemsPerPage: pageSize, currentPage:
+      pageIndex, totalItems: totalCount }; track user.id) {
+      <div></div>
+      }
+    </div>
+
+    <pagination-template
+      #p="paginationApi"
+      [id]="'usersPagination'"
+      (pageChange)="onPageChange($event)"
+    >
       <nav>
         <ul class="pagination">
-          <li class="page-item" [class.disabled]="currentPage === 1">
-            <a class="page-link" (click)="changePage(currentPage - 1)">
+          <li class="page-item" [class.disabled]="p.isFirstPage()">
+            <a class="page-link" (click)="p.previous()" style="cursor: pointer">
               <i class="fas fa-chevron-left"></i>
             </a>
           </li>
-          @for (page of pages; track page) {
-            <li 
-              class="page-item" 
-              [class.active]="page === currentPage">
-              <a class="page-link" (click)="changePage(page)">{{ page }}</a>
-            </li>
+          @for (page of p.pages; track page.value) {
+          <li class="page-item" [class.active]="p.getCurrent() === page.value">
+            <a class="page-link" (click)="p.setCurrent(page.value)" style="cursor: pointer">
+              {{ page.label }}
+            </a>
+          </li>
           }
-          <li class="page-item" [class.disabled]="currentPage === totalPages">
-            <a class="page-link" (click)="changePage(currentPage + 1)">
+          <li class="page-item" [class.disabled]="p.isLastPage()">
+            <a class="page-link" (click)="p.next()" style="cursor: pointer">
               <i class="fas fa-chevron-right"></i>
             </a>
           </li>
         </ul>
       </nav>
-    </div>
+    </pagination-template>
   </div>
-
 </div>

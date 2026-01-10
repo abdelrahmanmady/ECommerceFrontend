@@ -1,3 +1,21 @@
+export type CareInstructionType =
+  | 'machineWashCold'
+  | 'machineWashWarm'
+  | 'handWash'
+  | 'doNotWash'
+  | 'doNotBleach'
+  | 'bleachAny'
+  | 'tumbleDryLow'
+  | 'tumbleDryHigh'
+  | 'doNotTumbleDry'
+  | 'dryFlat'
+  | 'ironLow'
+  | 'ironMedium'
+  | 'ironHigh'
+  | 'doNotIron'
+  | 'dryCleanOnly'
+  | 'doNotDryClean';
+
 export interface AdminProductSummaryDto {
   id: number;
   thumbnailUrl: string;
@@ -55,24 +73,6 @@ export interface ProductSummaryDto {
   categoryBreadcrumbLinks: BreadcrumbLink[];
 }
 
-export type CareInstructionType =
-  | 'machineWashCold'
-  | 'machineWashWarm'
-  | 'handWash'
-  | 'doNotWash'
-  | 'doNotBleach'
-  | 'bleachAny'
-  | 'tumbleDryLow'
-  | 'tumbleDryHigh'
-  | 'doNotTumbleDry'
-  | 'dryFlat'
-  | 'ironLow'
-  | 'ironMedium'
-  | 'ironHigh'
-  | 'doNotIron'
-  | 'dryCleanOnly'
-  | 'doNotDryClean';
-
 export interface ProductDetailsResponse {
   id: number;
   images: ProductImageDto[];
@@ -126,7 +126,3 @@ export interface ProductQueryParams {
   pageIndex?: number;
   pageSize?: number;
 }
-
-export type Product = AdminProductSummaryDto;
-
-export type ProductDetails = ProductDetailsResponse;

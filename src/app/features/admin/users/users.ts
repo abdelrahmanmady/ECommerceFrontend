@@ -1,356 +1,233 @@
-import { Component, OnInit } from '@angular/core';
+// Angular Imports
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-
-// DTOs and Models matching your User entity
-interface Role {
-  id: string;
-  name: string;
-}
-
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  stock: number;
-  imageUrl: string;
-}
-
-interface Address {
-  id: string;
-  street: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
-}
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  roleId: string;
-  role: Role;
-  products: Product[];
-  orders: any[];
-  addresses: Address[];
-  createdAt: Date;
-  updatedAt: Date;
-}
+// Libraries
+import { NgxPaginationModule } from 'ngx-pagination';
+import { Subject, debounceTime, distinctUntilChanged, forkJoin, timer } from 'rxjs';
+// Services
+import { UserService } from '../../../core/services/user.service';
+// Models
+import { AdminUserQueryParams, AdminUserSummaryDto } from '../../../core/models/user.model';
+// Environment
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-users-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, RouterModule, NgxPaginationModule],
   templateUrl: './users.html',
-  styleUrls: ['./users.css']
+  styleUrls: ['./users.css'],
 })
 export class UsersListComponent implements OnInit {
-  // Mock Data - Users
-  users: User[] = [
-    {
-      id: "USR-2024-001",
-      name: "John Admin",
-      email: "admin@ecommerce.com",
-      phone: "+1-555-0101",
-      roleId: "ROLE-001",
-      role: { id: "ROLE-001", name: "Admin" },
-      products: [],
-      orders: [],
-      addresses: [
-        {
-          id: "ADDR-001",
-          street: "123 Admin Street",
-          city: "New York",
-          state: "NY",
-          zipCode: "10001",
-          country: "USA"
-        }
-      ],
-      createdAt: new Date("2024-01-15T10:00:00"),
-      updatedAt: new Date("2024-12-01T10:00:00")
-    },
-    {
-      id: "USR-2024-002",
-      name: "Sarah Seller",
-      email: "sarah.seller@example.com",
-      phone: "+1-555-0102",
-      roleId: "ROLE-002",
-      role: { id: "ROLE-002", name: "Seller" },
-      products: [
-        {
-          id: "PROD-001",
-          name: "Wireless Headphones",
-          price: 299.99,
-          stock: 50,
-          imageUrl: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200"
-        },
-        {
-          id: "PROD-002",
-          name: "Smart Watch",
-          price: 399.99,
-          stock: 30,
-          imageUrl: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200"
-        }
-      ],
-      orders: [],
-      addresses: [
-        {
-          id: "ADDR-002",
-          street: "456 Seller Ave",
-          city: "Los Angeles",
-          state: "CA",
-          zipCode: "90001",
-          country: "USA"
-        }
-      ],
-      createdAt: new Date("2024-02-20T14:30:00"),
-      updatedAt: new Date("2024-12-03T16:20:00")
-    },
-    {
-      id: "USR-2024-003",
-      name: "Mike Johnson",
-      email: "mike.johnson@example.com",
-      phone: "+1-555-0103",
-      roleId: "ROLE-003",
-      role: { id: "ROLE-003", name: "Customer" },
-      products: [],
-      orders: [
-        { id: "ORD-001", total: 299.99 },
-        { id: "ORD-002", total: 149.99 }
-      ],
-      addresses: [
-        {
-          id: "ADDR-003",
-          street: "789 Customer Blvd",
-          city: "Chicago",
-          state: "IL",
-          zipCode: "60601",
-          country: "USA"
-        }
-      ],
-      createdAt: new Date("2024-03-10T09:15:00"),
-      updatedAt: new Date("2024-11-28T11:45:00")
-    },
-    {
-      id: "USR-2024-004",
-      name: "Emily Merchant",
-      email: "emily.merchant@example.com",
-      phone: "+1-555-0104",
-      roleId: "ROLE-002",
-      role: { id: "ROLE-002", name: "Seller" },
-      products: [
-        {
-          id: "PROD-003",
-          name: "Leather Wallet",
-          price: 79.99,
-          stock: 100,
-          imageUrl: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=200"
-        },
-        {
-          id: "PROD-004",
-          name: "Designer Handbag",
-          price: 189.50,
-          stock: 25,
-          imageUrl: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=200"
-        },
-        {
-          id: "PROD-005",
-          name: "Running Shoes",
-          price: 129.99,
-          stock: 75,
-          imageUrl: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200"
-        }
-      ],
-      orders: [],
-      addresses: [
-        {
-          id: "ADDR-004",
-          street: "321 Merchant Lane",
-          city: "Houston",
-          state: "TX",
-          zipCode: "77001",
-          country: "USA"
-        }
-      ],
-      createdAt: new Date("2024-04-05T13:20:00"),
-      updatedAt: new Date("2024-12-05T14:10:00")
-    },
-    {
-      id: "USR-2024-005",
-      name: "David Brown",
-      email: "david.brown@example.com",
-      phone: "+1-555-0105",
-      roleId: "ROLE-003",
-      role: { id: "ROLE-003", name: "Customer" },
-      products: [],
-      orders: [
-        { id: "ORD-003", total: 89.99 }
-      ],
-      addresses: [
-        {
-          id: "ADDR-005",
-          street: "555 Buyer Road",
-          city: "Phoenix",
-          state: "AZ",
-          zipCode: "85001",
-          country: "USA"
-        },
-        {
-          id: "ADDR-006",
-          street: "999 Second Home St",
-          city: "Phoenix",
-          state: "AZ",
-          zipCode: "85002",
-          country: "USA"
-        }
-      ],
-      createdAt: new Date("2024-05-15T16:40:00"),
-      updatedAt: new Date("2024-11-30T10:00:00")
-    },
-    {
-      id: "USR-2024-006",
-      name: "Lisa Anderson",
-      email: "lisa.anderson@example.com",
-      phone: "+1-555-0106",
-      roleId: "ROLE-003",
-      role: { id: "ROLE-003", name: "Customer" },
-      products: [],
-      orders: [
-        { id: "ORD-004", total: 549.99 },
-        { id: "ORD-005", total: 129.99 },
-        { id: "ORD-006", total: 199.99 }
-      ],
-      addresses: [
-        {
-          id: "ADDR-007",
-          street: "777 Shopping Plaza",
-          city: "Seattle",
-          state: "WA",
-          zipCode: "98101",
-          country: "USA"
-        }
-      ],
-      createdAt: new Date("2024-06-22T11:30:00"),
-      updatedAt: new Date("2024-12-04T09:25:00")
-    }
-  ];
+  // ==================== Injected Services ====================
+  private userService = inject(UserService);
+  private cdr = inject(ChangeDetectorRef);
 
-  filteredUsers: User[] = [];
+  // ==================== State ====================
+  // Data
+  users: AdminUserSummaryDto[] = [];
+  totalCount = 0;
+  isLoading = false;
 
-  // Filter properties
-  searchTerm: string = '';
-  roleFilter: string = '';
-  sortBy: string = 'newest';
+  // Filters
+  selectedRole: 'all' | 'admin' | 'seller' | 'customer' | undefined = undefined;
+  selectedStatus: 'all' | 'active' | 'deleted' | undefined = undefined;
+  selectedSort:
+    | 'createdAsc'
+    | 'createdDesc'
+    | 'updatedDesc'
+    | 'ordersDesc'
+    | 'nameAsc'
+    | 'emailAsc'
+    | undefined = undefined;
 
   // Pagination
-  currentPage: number = 1;
-  itemsPerPage: number = 10;
-  totalPages: number = 1;
-  pages: number[] = [];
+  pageIndex = 1;
+  pageSize = 10;
 
+  // Search
+  private searchTerms = new Subject<string>();
+  searchTerm = '';
+
+  // ==================== Computed Properties ====================
+  get hasActiveFilters(): boolean {
+    return !!(this.selectedRole || this.selectedStatus || this.selectedSort || this.searchTerm);
+  }
+
+  // ==================== Lifecycle ====================
   ngOnInit(): void {
-    this.filteredUsers = [...this.users];
-    this.calculatePagination();
+    this.setupSearchDebounce();
+    this.loadUsers();
   }
 
-  /**
-   * Filter users based on search term and role
-   */
-  filterUsers(): void {
-    let filtered = [...this.users];
-
-    // Apply search filter
-    if (this.searchTerm.trim()) {
-      const search = this.searchTerm.toLowerCase();
-      filtered = filtered.filter(user =>
-        user.name.toLowerCase().includes(search) ||
-        user.email.toLowerCase().includes(search) ||
-        user.phone?.toLowerCase().includes(search) ||
-        user.id.toLowerCase().includes(search)
-      );
-    }
-
-    // Apply role filter
-    if (this.roleFilter) {
-      filtered = filtered.filter(user => user.role.name === this.roleFilter);
-    }
-
-    this.filteredUsers = filtered;
-    this.sortUsers();
-    this.calculatePagination();
+  private setupSearchDebounce(): void {
+    this.searchTerms.pipe(debounceTime(500), distinctUntilChanged()).subscribe((term) => {
+      this.searchTerm = term;
+      this.pageIndex = 1;
+      this.loadUsers();
+    });
   }
 
-  /**
-   * Sort users based on selected criteria
-   */
-  sortUsers(): void {
-    switch (this.sortBy) {
-      case 'newest':
-        this.filteredUsers.sort((a, b) => 
-          b.createdAt.getTime() - a.createdAt.getTime()
-        );
-        break;
-      case 'oldest':
-        this.filteredUsers.sort((a, b) => 
-          a.createdAt.getTime() - b.createdAt.getTime()
-        );
-        break;
-      case 'name':
-        this.filteredUsers.sort((a, b) => 
-          a.name.localeCompare(b.name)
-        );
-        break;
-      case 'email':
-        this.filteredUsers.sort((a, b) => 
-          a.email.localeCompare(b.email)
-        );
-        break;
-    }
+  // ==================== Data Loading ====================
+  loadUsers(scrollToTable = false): void {
+    this.isLoading = true;
+    const params = this.buildQueryParams();
+
+    forkJoin([
+      this.userService.getAdminUsers(params),
+      timer(300), // Minimum loading time for UX
+    ]).subscribe({
+      next: ([response]) => {
+        this.users = response.items;
+        this.totalCount = response.totalCount;
+        this.isLoading = false;
+        this.cdr.detectChanges();
+
+        if (scrollToTable) {
+          this.scrollToTableIfNeeded();
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching admin users:', error);
+        this.isLoading = false;
+      },
+    });
   }
 
-  /**
-   * Delete user with confirmation
-   */
-  deleteUser(userId: string): void {
-    const user = this.users.find(u => u.id === userId);
+  private buildQueryParams(): AdminUserQueryParams {
+    const params: AdminUserQueryParams = {};
 
-    if (user?.role.name === 'Admin') {
-      alert('Cannot delete admin users!');
-      return;
+    if (this.pageIndex > 1) {
+      params.pageIndex = this.pageIndex;
+    }
+    if (this.selectedRole && this.selectedRole !== 'all') {
+      params.role = this.selectedRole;
+    }
+    if (this.selectedStatus && this.selectedStatus !== 'all') {
+      params.status = this.selectedStatus;
+    }
+    if (this.selectedSort) {
+      params.sort = this.selectedSort;
+    }
+    if (this.searchTerm) {
+      params.search = this.searchTerm;
     }
 
-    if (confirm(`Are you sure you want to delete user ${user?.name}?`)) {
-      const index = this.users.findIndex(u => u.id === userId);
-      if (index > -1) {
-        this.users.splice(index, 1);
-        this.filterUsers();
-        alert('User deleted successfully!');
+    return params;
+  }
+
+  private scrollToTableIfNeeded(): void {
+    setTimeout(() => {
+      const anchor = document.getElementById('usersTableAnchor');
+      if (anchor) {
+        const rect = anchor.getBoundingClientRect();
+        if (rect.top < 0) {
+          anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       }
+    }, 50);
+  }
+
+  // ==================== Filter Handlers ====================
+  onRoleChange(role: 'all' | 'admin' | 'seller' | 'customer'): void {
+    if (this.selectedRole === role) return;
+    this.selectedRole = role === 'all' ? 'all' : role;
+    this.pageIndex = 1;
+    this.loadUsers();
+  }
+
+  onStatusChange(status: 'all' | 'active' | 'deleted'): void {
+    if (this.selectedStatus === status) return;
+    this.selectedStatus = status === 'all' ? 'all' : status;
+    this.pageIndex = 1;
+    this.loadUsers();
+  }
+
+  onSortChange(
+    sort: 'createdAsc' | 'createdDesc' | 'updatedDesc' | 'ordersDesc' | 'nameAsc' | 'emailAsc'
+  ): void {
+    if (this.selectedSort === sort) return;
+    this.selectedSort = sort;
+    this.pageIndex = 1;
+    this.loadUsers();
+  }
+
+  onSearch(term: string): void {
+    this.isLoading = true;
+    this.searchTerms.next(term);
+  }
+
+  clearFilters(): void {
+    this.selectedRole = undefined;
+    this.selectedStatus = undefined;
+    this.selectedSort = undefined;
+    this.searchTerm = '';
+    this.pageIndex = 1;
+    this.loadUsers();
+  }
+
+  // ==================== Pagination ====================
+  onPageChange(page: number): void {
+    this.pageIndex = page;
+    this.loadUsers(true);
+  }
+
+  // ==================== User Actions ====================
+  deleteUser(userId: string): void {
+    if (confirm('Are you sure you want to delete this user?')) {
+      // TODO: Implement delete API call
+      console.log('Deleting user:', userId);
     }
   }
 
-  /**
-   * Calculate pagination
-   */
-  calculatePagination(): void {
-    this.totalPages = Math.ceil(this.filteredUsers.length / this.itemsPerPage);
-    this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
-
-    if (this.currentPage > this.totalPages) {
-      this.currentPage = 1;
+  restoreUser(userId: string): void {
+    if (confirm('Are you sure you want to restore this user?')) {
+      // TODO: Implement restore API call
+      console.log('Restoring user:', userId);
     }
   }
 
-  /**
-   * Change page
-   */
-  changePage(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+  // ==================== Template Helpers ====================
+  getSortLabel(): string {
+    switch (this.selectedSort) {
+      case 'createdDesc':
+        return 'Newest';
+      case 'createdAsc':
+        return 'Oldest';
+      case 'updatedDesc':
+        return 'Last Updated';
+      case 'ordersDesc':
+        return 'Orders Placed';
+      case 'nameAsc':
+        return 'Name (A-Z)';
+      case 'emailAsc':
+        return 'Email (A-Z)';
+      default:
+        return 'Newest';
+    }
+  }
+
+  getAvatarUrl(user: AdminUserSummaryDto): string | null {
+    return user.avatarUrl ? environment.url + user.avatarUrl : null;
+  }
+
+  getInitials(name: string): string {
+    if (!name) return '';
+    const parts = name.split(' ');
+    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+
+  getRoleBadgeClass(role: string): string {
+    switch (role?.toLowerCase()) {
+      case 'admin':
+        return 'role-admin';
+      case 'seller':
+        return 'role-seller';
+      case 'customer':
+      default:
+        return 'role-customer';
     }
   }
 }
