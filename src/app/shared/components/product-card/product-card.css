@@ -1,5 +1,6 @@
 .product-card.list {
   display: flex;
+  flex-direction: row;
   align-items: stretch;
   gap: 20px;
   height: 300px !important;
