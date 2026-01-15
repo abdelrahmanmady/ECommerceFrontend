@@ -1,8 +1,8 @@
 //Angular Imports
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { NgClass } from '@angular/common';
-import { FormsModule } from '@angular/forms'
-import { Router, RouterLink } from "@angular/router";
+import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 //Libraries
 import { ToastrService } from 'ngx-toastr';
 //Services
@@ -35,7 +35,7 @@ export class Login {
     private readonly authService: AuthService,
     private readonly cartService: CartService,
     private readonly wishlistService: WishlistService
-  ) { }
+  ) {}
 
   togglePassword(): void {
     this.showPassword = !this.showPassword;
@@ -77,21 +77,26 @@ export class Login {
 
     if (hasError) return;
 
-    this.authService.login({ identifier: this.identifier, password: this.password, rememberMe: this.rememberMe }).subscribe({
-      next: (res) => {
-        this.authService.setAuthState(res);
-        this.cartService.getUserCart().subscribe();
-        this.wishlistService.getWishlistIds().subscribe();
-        this.toastr.success('Login successful!');
-        const isAdminOrSeller = res.roles.includes(RoleType.Admin) || res.roles.includes(RoleType.Seller);
-        this.router.navigate([isAdminOrSeller ? '/admin' : '/home']);
-      },
-      error: (err) => {
-        const errorDetail = err.error?.detail || 'An error occurred. Please try again.';
-        this.hasApiError = true;
-        this.errors.password = errorDetail;
-        this.cdr.detectChanges();
-      }
-    });
+    this.authService
+      .login({ identifier: this.identifier, password: this.password, rememberMe: this.rememberMe })
+      .subscribe({
+        next: (res) => {
+          this.authService.setAuthState(res);
+          this.cartService.getUserCart().subscribe();
+          this.wishlistService.getWishlistIds().subscribe();
+          this.toastr.success('Login successful!');
+          const isAdminOrSeller =
+            res.roles.includes(RoleType.SuperAdmin) ||
+            res.roles.includes(RoleType.Admin) ||
+            res.roles.includes(RoleType.Seller);
+          this.router.navigate([isAdminOrSeller ? '/admin' : '/home']);
+        },
+        error: (err) => {
+          const errorDetail = err.error?.detail || 'An error occurred. Please try again.';
+          this.hasApiError = true;
+          this.errors.password = errorDetail;
+          this.cdr.detectChanges();
+        },
+      });
   }
 }

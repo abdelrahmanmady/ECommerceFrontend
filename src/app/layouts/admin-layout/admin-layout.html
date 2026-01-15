@@ -91,7 +91,7 @@
             </div>
             <div class="user-info">
               <span class="user-name">{{ authService.user()?.fullName || 'Admin' }}</span>
-              <span class="user-role">Administrator</span>
+              <span class="user-role">{{ getUserRoleLabel() }}</span>
             </div>
             <i class="bi bi-chevron-down"></i>
           </button>

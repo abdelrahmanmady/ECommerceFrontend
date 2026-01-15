@@ -1,3 +1,7 @@
+import { AddressSummaryDto } from './address.model';
+import { AdminOrderSummaryDto } from './order.model';
+import { LoginSessionDto } from './refresh-token.model';
+
 export interface AdminUserSummaryDto {
   id: string;
   avatarUrl?: string;
@@ -11,6 +15,28 @@ export interface AdminUserSummaryDto {
   created: string;
   updated?: string;
   isDeleted: boolean;
+}
+
+export interface AdminUserDetailsResponse {
+  avatarUrl?: string;
+  fullName: string;
+  userName: string;
+  email: string;
+  emailConfirmed: boolean;
+  phoneNumber?: string;
+  phoneNumberConfirmed?: boolean;
+  id: string;
+  role: string;
+  accountStatus: 'Active' | 'Locked' | 'Deleted';
+  created: string;
+  updated?: string;
+  addressesCount: number;
+  reviewsCount: number;
+  ordersCount: number;
+  totalSpent: number;
+  loginSessions: LoginSessionDto[];
+  savedAddresses: AddressSummaryDto[];
+  recentOrders: AdminOrderSummaryDto[];
 }
 
 export interface UserDetailsResponse {
@@ -41,7 +67,7 @@ export interface UpdatePasswordRequest {
 }
 
 export interface AdminUserQueryParams {
-  role?: 'all' | 'admin' | 'seller' | 'customer';
+  role?: 'all' | 'superadmin' | 'admin' | 'seller' | 'customer';
   status?: 'all' | 'active' | 'deleted';
   search?: string;
   sort?: 'createdAsc' | 'createdDesc' | 'updatedDesc' | 'ordersDesc' | 'nameAsc' | 'emailAsc';

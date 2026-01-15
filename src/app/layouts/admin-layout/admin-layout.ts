@@ -3,6 +3,7 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../core/services';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../environments/environment';
+import { RoleType } from '../../core/types/role.type';
 
 @Component({
   selector: 'app-admin-layout',
@@ -44,5 +45,17 @@ export class AdminLayout {
 
   logout(): void {
     this.authService.logout();
+  }
+
+  getUserRoleLabel(): string {
+    const roles = this.authService.user()?.roles || [];
+    if (roles.includes(RoleType.SuperAdmin)) {
+      return 'Super Administrator';
+    } else if (roles.includes(RoleType.Admin)) {
+      return 'Administrator';
+    } else if (roles.includes(RoleType.Seller)) {
+      return 'Seller';
+    }
+    return 'User';
   }
 }

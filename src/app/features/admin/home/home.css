@@ -818,6 +818,10 @@
   color: #721c24;
 }
 
+.badge-role-superadmin {
+  background: linear-gradient(135deg, #ffd700, #ff8c00);
+  color: #1a1a1a;
+}
 .badge-role-admin {
   background: #e2d9f3;
   color: #5a32a3;

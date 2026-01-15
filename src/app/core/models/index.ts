@@ -9,3 +9,4 @@ export * from './address.model';
 export * from './order.model';
 export * from './checkout.model';
 export * from './dashboard.model';
+export * from './refresh-token.model';

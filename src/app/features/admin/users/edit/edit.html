@@ -1,0 +1,437 @@
+<!-- Edit User View - Full-Width Single Column Layout -->
+<div class="container py-4">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="d-flex justify-content-between align-items-center flex-wrap">
+      <div>
+        <h1><i class="fas fa-user-edit me-3"></i>Edit User</h1>
+        <p>Update user information and assign roles</p>
+      </div>
+      <button class="action-btn btn-cancel-outline" routerLink="/admin/users">
+        <i class="fas fa-arrow-left"></i>
+        <span>Back to Users</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 1. User Profile Header (Full Width) -->
+  @if (user()) {
+  <div class="details-card user-profile-header">
+    <div class="profile-header-content">
+      <div class="profile-avatar-section">
+        @if (getAvatarUrl()) {
+        <img [src]="getAvatarUrl()" [alt]="user()!.fullName" class="profile-avatar" />
+        } @else {
+        <div class="profile-avatar avatar-initials">
+          {{ getInitials() }}
+        </div>
+        }
+      </div>
+      <div class="profile-info-section">
+        <h2 class="profile-name">{{ user()!.fullName }}</h2>
+        <p class="profile-username">&#64;{{ user()!.userName }}</p>
+        <div class="profile-badges">
+          <span class="role-badge" [ngClass]="getRoleBadgeClass()">{{ user()!.role }}</span>
+          <span class="status-badge-compact" [ngClass]="getStatusBadgeClass()">
+            <i class="fas me-1" [ngClass]="getStatusIcon()"></i>{{ user()!.accountStatus }}
+          </span>
+        </div>
+      </div>
+      <div class="profile-actions">
+        <!-- Delete button shown for Active/Locked users -->
+        @if (user()!.accountStatus !== 'Deleted') {
+        <button
+          type="button"
+          class="action-btn btn-delete"
+          title="Delete Account"
+          (click)="deleteUser()"
+        >
+          <i class="fas fa-trash"></i>
+          <span>Delete</span>
+        </button>
+        } @else {
+        <!-- Restore button shown for deleted users -->
+        <button
+          type="button"
+          class="action-btn btn-restore"
+          title="Restore Account"
+          (click)="restoreUser()"
+        >
+          <i class="fas fa-undo"></i>
+          <span>Restore</span>
+        </button>
+        }
+        <!-- Unlock button shown only for locked accounts -->
+        <button
+          type="button"
+          class="action-btn btn-unlock"
+          title="Instant Unlock"
+          [disabled]="user()!.accountStatus !== 'Locked'"
+          (click)="unlockUser()"
+        >
+          <i class="fas fa-unlock"></i>
+          <span>Unlock</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  }
+
+  <!-- 2. User Metrics (Horizontal Stats Row) - Only for Customers -->
+  @if (user() && user()!.role.toLowerCase() === 'customer') {
+  <div class="user-metrics-row">
+    <div class="metric-card">
+      <div class="metric-icon addresses">
+        <i class="fas fa-map-marker-alt"></i>
+      </div>
+      <div class="metric-content">
+        <span class="metric-value">{{ user()!.addressesCount }}</span>
+        <span class="metric-label">Addresses</span>
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-icon reviews">
+        <i class="fas fa-star"></i>
+      </div>
+      <div class="metric-content">
+        <span class="metric-value">{{ user()!.reviewsCount }}</span>
+        <span class="metric-label">Reviews</span>
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-icon orders">
+        <i class="fas fa-shopping-bag"></i>
+      </div>
+      <div class="metric-content">
+        <span class="metric-value">{{ user()!.ordersCount }}</span>
+        <span class="metric-label">Orders</span>
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-icon spent">
+        <i class="fas fa-coins"></i>
+      </div>
+      <div class="metric-content">
+        <span class="metric-value"
+          >{{ user()!.totalSpent | number : '1.0-0' }}
+          <span class="currency-suffix">EGP</span></span
+        >
+        <span class="metric-label">Total Spent</span>
+      </div>
+    </div>
+  </div>
+  }
+
+  <!-- 3. User Info + Account Info (Side by Side) -->
+  @if (user()) {
+  <div class="info-cards-row">
+    <!-- User Information -->
+    <div class="details-card">
+      <h3><i class="fas fa-user me-2"></i>User Information</h3>
+
+      <div class="detail-row">
+        <span class="detail-label">User ID:</span>
+        <span class="detail-value">{{ user()!.id }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">Full Name:</span>
+        <span class="detail-value">{{ user()!.fullName }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">Username:</span>
+        <span class="detail-value">{{ user()!.userName }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">Email:</span>
+        <span class="detail-value">
+          {{ user()!.email }}
+          @if (user()!.emailConfirmed) {
+          <i class="fas fa-check-circle verified-badge" title="Email Verified"></i>
+          } @else {
+          <i class="fas fa-exclamation-circle unverified-badge" title="Email Not Verified"></i>
+          }
+        </span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">Phone:</span>
+        <span class="detail-value">
+          @if (user()!.phoneNumber) { +{{ user()!.phoneNumber }}
+          @if (user()!.phoneNumberConfirmed) {
+          <i class="fas fa-check-circle verified-badge" title="Phone Verified"></i>
+          } @else {
+          <i class="fas fa-exclamation-circle unverified-badge" title="Phone Not Verified"></i>
+          } } @else {
+          <span class="text-muted">No phone number added</span>
+          }
+        </span>
+      </div>
+    </div>
+
+    <!-- Account Information -->
+    <div class="details-card">
+      <h3><i class="fas fa-shield-alt me-2"></i>Account Information</h3>
+
+      <div class="detail-row">
+        <span class="detail-label">Created At:</span>
+        <span class="detail-value">{{ user()!.created | date : 'MMM d, yyyy, h:mm a' }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">Last Updated:</span>
+        <span class="detail-value">
+          @if (user()!.updated) {
+          {{ user()!.updated | date : 'MMM d, yyyy, h:mm a' }}
+          } @else {
+          <span class="text-muted">Never updated</span>
+          }
+        </span>
+      </div>
+    </div>
+  </div>
+  }
+
+  <!-- 4. Saved Addresses (Full Width Grid) - Only for Customers -->
+  @if (user() && user()!.role.toLowerCase() === 'customer') {
+  <div class="details-card">
+    <h3><i class="fas fa-map-marked-alt me-2"></i>Saved Addresses</h3>
+
+    <div class="row g-3 addresses-grid">
+      @for (address of getSortedAddresses(); track address.id) {
+      <div class="col-md-4 mb-3">
+        <div class="address-card" [class.default]="address.isDefault">
+          <div class="address-header">
+            <span class="address-label">{{ address.label || 'Address' }}</span>
+            @if (address.isDefault) {
+            <span class="default-badge">Default</span>
+            }
+          </div>
+          <div class="address-body">
+            <p>{{ address.street }}, {{ address.building }}</p>
+            <p>{{ address.district }}</p>
+            <p>{{ address.city }}, {{ address.governorate }}</p>
+            <p>{{ address.country }}</p>
+            <p class="address-name"><i class="fas fa-user me-2"></i>{{ address.fullName }}</p>
+            <p class="address-phone">
+              <i class="fas fa-phone me-2"></i>+{{ address.mobileNumber }}
+            </p>
+          </div>
+        </div>
+      </div>
+      } @empty {
+      <div class="col-12">
+        <p class="text-muted text-center py-4">
+          <i class="fas fa-map-marker-alt me-2"></i>No saved addresses
+        </p>
+      </div>
+      }
+    </div>
+  </div>
+  }
+
+  <!-- 5. Recent Orders (Full Width Table) - Only for Customers -->
+  @if (user() && user()!.role.toLowerCase() === 'customer') {
+  <div class="details-card">
+    <div class="section-header-with-action">
+      <h3><i class="fas fa-shopping-cart me-2"></i>Recent Orders</h3>
+      <a class="btn-see-all" routerLink="/admin/orders">
+        View All Orders <i class="fas fa-arrow-right ms-1"></i>
+      </a>
+    </div>
+
+    <div class="orders-table">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Placed</th>
+            <th>Status</th>
+            <th>Payment</th>
+            <th>Total</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of user()!.recentOrders; track order.id) {
+          <tr>
+            <td>
+              <strong>#{{ order.id }}</strong>
+            </td>
+            <td>{{ getTimeAgo(order.created) }}</td>
+            <td>
+              <span class="order-status-badge" [ngClass]="getOrderStatusBadgeClass(order.status)">
+                {{ order.status | titlecase }}
+              </span>
+            </td>
+            <td>{{ getPaymentMethodLabel(order.paymentMethod) }}</td>
+            <td>
+              <strong
+                >{{ order.totalAmount | number : '1.2-2' }}
+                <span class="currency-suffix">EGP</span></strong
+              >
+            </td>
+            <td>
+              <button class="action-btn btn-edit" [routerLink]="'/admin/orders/edit/' + order.id">
+                <i class="fas fa-eye"></i>
+              </button>
+            </td>
+          </tr>
+          } @empty {
+          <tr>
+            <td colspan="6" class="text-center py-4">
+              <p class="text-muted text-center py-4">
+                <i class="fas fa-cart-shopping me-2"></i>No orders yet
+              </p>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+  }
+
+  <!-- 6. Login Sessions + Update Role Form (Side by Side) -->
+  @if (user()) {
+  <div class="bottom-cards-row">
+    <!-- Login Sessions -->
+    <div class="details-card">
+      <h3><i class="fas fa-key me-2"></i>Login Sessions</h3>
+
+      <div class="sessions-list">
+        @for (session of user()!.loginSessions; track session.id) {
+        <div class="session-item" [class.active]="session.isActive">
+          <div class="session-icon">
+            <i class="fas" [ngClass]="getDeviceIcon(session.userAgent)"></i>
+          </div>
+          <div class="session-info">
+            <span class="session-device">{{ getDeviceInfo(session.userAgent) }}</span>
+            <span class="session-meta"
+              >{{ session.ipAddress || 'Unknown IP' }} •
+              {{ formatSessionDate(session.created) }}</span
+            >
+          </div>
+          <span class="session-status" [ngClass]="session.isActive ? 'active' : 'inactive'">
+            <i class="fas fa-circle"></i> {{ session.isActive ? 'Active' : 'Inactive' }}
+          </span>
+        </div>
+        } @empty {
+        <p class="text-muted text-center py-4">
+          <i class="fas fa-key me-2"></i>No login sessions found
+        </p>
+        }
+      </div>
+    </div>
+
+    <!-- Update User Role Form -->
+    <div class="details-card">
+      <h3><i class="fas fa-user-cog me-2"></i>Update User Role</h3>
+
+      <form>
+        <!-- Role Selection -->
+        <div class="form-group">
+          <label class="form-label"> <i class="fas fa-user-tag me-1"></i>Select Role </label>
+          <div class="role-selector">
+            <label class="role-option">
+              <input
+                type="radio"
+                name="userRole"
+                value="admin"
+                [checked]="selectedRole() === 'admin'"
+                [disabled]="user()?.accountStatus === 'Deleted'"
+                (change)="selectedRole.set('admin')"
+              />
+              <div class="role-option-content">
+                <span class="role-option-icon admin">
+                  <i class="fas fa-crown"></i>
+                </span>
+                <div class="role-option-text">
+                  <span class="role-option-name">Admin</span>
+                  <span class="role-option-desc">Full access</span>
+                </div>
+                <span class="role-option-check">
+                  <i class="fas fa-check"></i>
+                </span>
+              </div>
+            </label>
+            <label class="role-option">
+              <input
+                type="radio"
+                name="userRole"
+                value="seller"
+                [checked]="selectedRole() === 'seller'"
+                [disabled]="user()?.accountStatus === 'Deleted'"
+                (change)="selectedRole.set('seller')"
+              />
+              <div class="role-option-content">
+                <span class="role-option-icon seller">
+                  <i class="fas fa-store"></i>
+                </span>
+                <div class="role-option-text">
+                  <span class="role-option-name">Seller</span>
+                  <span class="role-option-desc">Manage products</span>
+                </div>
+                <span class="role-option-check">
+                  <i class="fas fa-check"></i>
+                </span>
+              </div>
+            </label>
+            <label class="role-option">
+              <input
+                type="radio"
+                name="userRole"
+                value="customer"
+                [checked]="selectedRole() === 'customer'"
+                [disabled]="user()?.accountStatus === 'Deleted'"
+                (change)="selectedRole.set('customer')"
+              />
+              <div class="role-option-content">
+                <span class="role-option-icon customer">
+                  <i class="fas fa-user"></i>
+                </span>
+                <div class="role-option-text">
+                  <span class="role-option-name">Customer</span>
+                  <span class="role-option-desc">Browse &amp; buy</span>
+                </div>
+                <span class="role-option-check">
+                  <i class="fas fa-check"></i>
+                </span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="form-group btn-group-inline">
+          <button
+            type="button"
+            class="action-btn btn-save"
+            [disabled]="
+              user()?.accountStatus === 'Deleted' || selectedRole() === user()?.role?.toLowerCase()
+            "
+            (click)="updateRole()"
+          >
+            <i class="fas fa-save"></i>
+            <span>Update Role</span>
+          </button>
+          <button
+            type="button"
+            class="action-btn btn-cancel-outline"
+            [disabled]="user()?.accountStatus === 'Deleted'"
+            (click)="resetRole()"
+          >
+            <i class="fas fa-times"></i>
+            <span>Cancel</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  }
+</div>

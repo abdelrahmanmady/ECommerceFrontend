@@ -6,19 +6,21 @@ import { RouterModule } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { Subject, debounceTime, distinctUntilChanged, forkJoin, timer } from 'rxjs';
 // Services
-import { UserService } from '../../../core/services/user.service';
-import { AuthService } from '../../../core/services/auth.service';
+import { UserService } from '../../../../core/services/user.service';
+import { AuthService } from '../../../../core/services/auth.service';
 // Models
-import { AdminUserQueryParams, AdminUserSummaryDto } from '../../../core/models/user.model';
+import { AdminUserQueryParams, AdminUserSummaryDto } from '../../../../core/models/user.model';
 // Environment
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../../../environments/environment';
+// Types
+import { RoleType } from '../../../../core/types/role.type';
 
 @Component({
   selector: 'app-users-list',
   standalone: true,
   imports: [CommonModule, RouterModule, NgxPaginationModule],
-  templateUrl: './users.html',
-  styleUrls: ['./users.css'],
+  templateUrl: './list.html',
+  styleUrls: ['../style.css'],
 })
 export class UsersListComponent implements OnInit, AfterViewInit {
   // ==================== Injected Services ====================
@@ -32,7 +34,7 @@ export class UsersListComponent implements OnInit, AfterViewInit {
   isLoading = signal(false);
 
   // Filters
-  selectedRole: 'all' | 'admin' | 'seller' | 'customer' | undefined = undefined;
+  selectedRole: 'all' | 'superadmin' | 'admin' | 'seller' | 'customer' | undefined = undefined;
   selectedStatus: 'all' | 'active' | 'deleted' | undefined = undefined;
   selectedSort:
     | 'createdAsc'
@@ -148,7 +150,7 @@ export class UsersListComponent implements OnInit, AfterViewInit {
   }
 
   // ==================== Filter Handlers ====================
-  onRoleChange(role: 'all' | 'admin' | 'seller' | 'customer'): void {
+  onRoleChange(role: 'all' | 'superadmin' | 'admin' | 'seller' | 'customer'): void {
     if (this.selectedRole === role) return;
     this.selectedRole = role === 'all' ? 'all' : role;
     this.pageIndex = 1;
@@ -301,6 +303,21 @@ export class UsersListComponent implements OnInit, AfterViewInit {
     }
   }
 
+  getRoleLabel(): string {
+    switch (this.selectedRole) {
+      case 'superadmin':
+        return 'Super Admin';
+      case 'admin':
+        return 'Admin';
+      case 'seller':
+        return 'Seller';
+      case 'customer':
+        return 'Customer';
+      default:
+        return 'All Roles';
+    }
+  }
+
   getAvatarUrl(user: AdminUserSummaryDto): string | null {
     return user.avatarUrl ? environment.url + user.avatarUrl : null;
   }
@@ -314,17 +331,41 @@ export class UsersListComponent implements OnInit, AfterViewInit {
 
   getRoleBadgeClass(role: string): string {
     switch (role?.toLowerCase()) {
+      case 'superadmin':
+        return 'badge-role-superadmin';
       case 'admin':
-        return 'role-admin';
+        return 'badge-role-admin';
       case 'seller':
-        return 'role-seller';
+        return 'badge-role-seller';
       case 'customer':
       default:
-        return 'role-customer';
+        return 'badge-role-customer';
     }
   }
 
   isCurrentUser(userId: string): boolean {
     return this.authService.user()?.userId === userId;
+  }
+
+  /**
+   * Check if the current user can perform actions on a target user.
+   * SuperAdmin can act on anyone.
+   * Admin can only act on Sellers and Customers.
+   */
+  canPerformActionOn(targetUserRole: string): boolean {
+    const currentUserRoles = this.authService.user()?.roles || [];
+
+    // SuperAdmin can perform actions on anyone
+    if (currentUserRoles.includes(RoleType.SuperAdmin)) {
+      return true;
+    }
+
+    // Admin can only perform actions on Sellers and Customers
+    if (currentUserRoles.includes(RoleType.Admin)) {
+      const lowerRole = targetUserRole?.toLowerCase();
+      return lowerRole === 'seller' || lowerRole === 'customer';
+    }
+
+    return false;
   }
 }

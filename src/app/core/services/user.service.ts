@@ -9,6 +9,7 @@ import {
   UpdatePasswordRequest,
   AdminUserQueryParams,
   AdminUserSummaryDto,
+  AdminUserDetailsResponse,
 } from '../models/user.model';
 import { AuthResponse } from '../models';
 
@@ -19,6 +20,7 @@ export class UserService {
   private http = inject(HttpClient);
   private readonly baseUrl = `${environment.url}/api/Users`;
 
+  // ==================== User Profile ====================
   getUserDetails(): Observable<UserDetailsResponse> {
     return this.http.get<UserDetailsResponse>(this.baseUrl);
   }
@@ -41,10 +43,19 @@ export class UserService {
     return this.http.delete<void>(`${this.baseUrl}/image`);
   }
 
+  // ==================== Admin User Management ====================
   getAdminUsers(params: AdminUserQueryParams): Observable<PagedResponse<AdminUserSummaryDto>> {
     return this.http.get<PagedResponse<AdminUserSummaryDto>>(`${this.baseUrl}/admin`, {
       params: params as any,
     });
+  }
+
+  getAdminUserDetails(userId: string): Observable<AdminUserDetailsResponse> {
+    return this.http.get<AdminUserDetailsResponse>(`${this.baseUrl}/admin/${userId}`);
+  }
+
+  updateAdminUserRole(userId: string, role: string): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/admin/${userId}`, { role });
   }
 
   deleteAdminUser(userId: string): Observable<void> {
@@ -53,5 +64,9 @@ export class UserService {
 
   restoreAdminUser(userId: string): Observable<void> {
     return this.http.put<void>(`${this.baseUrl}/admin/${userId}/restore`, {});
+  }
+
+  unlockAdminUser(userId: string): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/admin/${userId}/unlock`, {});
   }
 }

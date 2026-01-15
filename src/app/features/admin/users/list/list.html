@@ -37,9 +37,7 @@
               aria-expanded="false"
             >
               <i class="fas fa-user-tag"></i>
-              <span>{{
-                !selectedRole || selectedRole === 'all' ? 'All Roles' : (selectedRole | titlecase)
-              }}</span>
+              <span>{{ getRoleLabel() }}</span>
               <i class="fas fa-chevron-down ms-1"></i>
             </button>
             <ul class="dropdown-menu">
@@ -49,6 +47,14 @@
                   [class.active]="selectedRole === 'all' || !selectedRole"
                   (click)="onRoleChange('all')"
                   >All Roles</a
+                >
+              </li>
+              <li>
+                <a
+                  class="dropdown-item"
+                  [class.active]="selectedRole === 'superadmin'"
+                  (click)="onRoleChange('superadmin')"
+                  >Super Admin</a
                 >
               </li>
               <li>
@@ -277,13 +283,18 @@
 
             <!-- Role -->
             <td>
-              <span class="status-badge" [ngClass]="getRoleBadgeClass(user.role)">
+              <span class="role-badge" [ngClass]="getRoleBadgeClass(user.role)">
                 {{ user.role }}
               </span>
             </td>
 
             <!-- Orders -->
-            <td>{{ user.ordersCount }} Order(s)</td>
+            <td>
+              @if (user.role.toLowerCase() === 'customer') {
+              {{ user.ordersCount }} Order(s) } @else {
+              <span class="text-muted">-</span>
+              }
+            </td>
 
             <!-- Activity -->
             <td>
@@ -309,23 +320,29 @@
               <button
                 class="action-btn btn-edit"
                 [routerLink]="'/admin/users/edit/' + user.id"
-                title="Edit User"
+                [class.disabled]="!canPerformActionOn(user.role)"
+                [attr.disabled]="!canPerformActionOn(user.role) ? true : null"
+                title="{{ canPerformActionOn(user.role) ? 'Edit User' : 'No permission' }}"
               >
                 <i class="fas fa-edit"></i>
               </button>
               @if (!user.isDeleted) {
               <button
                 class="action-btn btn-delete"
-                (click)="deleteUser(user.id)"
-                title="Delete User"
+                (click)="canPerformActionOn(user.role) && deleteUser(user.id)"
+                [class.disabled]="!canPerformActionOn(user.role)"
+                [disabled]="!canPerformActionOn(user.role)"
+                title="{{ canPerformActionOn(user.role) ? 'Delete User' : 'No permission' }}"
               >
                 <i class="fas fa-trash"></i>
               </button>
               } @else {
               <button
                 class="action-btn btn-restore"
-                (click)="restoreUser(user.id)"
-                title="Restore User"
+                (click)="canPerformActionOn(user.role) && restoreUser(user.id)"
+                [class.disabled]="!canPerformActionOn(user.role)"
+                [disabled]="!canPerformActionOn(user.role)"
+                title="{{ canPerformActionOn(user.role) ? 'Restore User' : 'No permission' }}"
               >
                 <i class="fas fa-trash-restore"></i>
               </button>

@@ -3,7 +3,6 @@
   <div class="main-header">
     <div class="container-fluid container-xl">
       <div class="d-flex py-3 align-items-center justify-content-between">
-
         <!-- Logo -->
         <a routerLink="/home" class="logo d-flex align-items-center">
           <!-- Uncomment the line below if you also wish to use an image logo -->
@@ -14,7 +13,7 @@
         <!-- Search -->
         <form class="search-form desktop-search-form">
           <div class="input-group">
-            <input type="text" class="form-control" placeholder="Search for products">
+            <input type="text" class="form-control" placeholder="Search for products" />
             <button class="btn" type="submit">
               <i class="bi bi-search"></i>
             </button>
@@ -23,20 +22,22 @@
 
         <!-- Actions -->
         <div class="header-actions d-flex align-items-center justify-content-end">
-
           <!-- Mobile Search Toggle -->
-          <button class="header-action-btn mobile-search-toggle d-xl-none" type="button" data-bs-toggle="collapse"
-            data-bs-target="#mobileSearch" aria-expanded="false" aria-controls="mobileSearch">
+          <button
+            class="header-action-btn mobile-search-toggle d-xl-none"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#mobileSearch"
+            aria-expanded="false"
+            aria-controls="mobileSearch"
+          >
             <i class="bi bi-search"></i>
           </button>
 
           <!-- Account -->
           <div class="dropdown account-dropdown">
-            @if(authService.user() != null){
-            Welcome {{ authService.user()?.fullName }}
-            }@else{
-            Welcome
-            }
+            @if(authService.user() != null){ Welcome {{ authService.user()?.fullName }}
+            }@else{ Welcome }
             <button class="header-action-btn" data-bs-toggle="dropdown">
               <i class="bi bi-person"></i>
             </button>
@@ -65,10 +66,10 @@
                 <a routerLink="/login" class="btn btn-primary w-100 mb-2">Sign In</a>
                 <a routerLink="/register" class="btn btn-outline-primary w-100">Register</a>
               </div>
-              }
-              @if(authService.user()){
+              } @if(authService.user()){
               <div class="dropdown-footer">
-                @if(authService.user()!.roles.includes(RoleType.Admin) ||
+                @if(authService.user()!.roles.includes(RoleType.SuperAdmin) ||
+                authService.user()!.roles.includes(RoleType.Admin) ||
                 authService.user()!.roles.includes(RoleType.Seller)){
                 <a routerLink="/admin" class="btn btn-primary w-100 mb-2">My Dashboard</a>
                 }
@@ -89,12 +90,11 @@
           <!-- Cart -->
           <a routerLink="/cart" class="header-action-btn">
             <i class="bi bi-cart3"></i>
-            <span class="badge">{{cartService.getCartCount()}}</span>
+            <span class="badge">{{ cartService.getCartCount() }}</span>
           </a>
 
           <!-- Mobile Navigation Toggle -->
           <i class="mobile-nav-toggle d-xl-none bi bi-list me-0"></i>
-
         </div>
       </div>
     </div>
@@ -105,12 +105,10 @@
     <div class="container-fluid container-xl position-relative">
       <nav id="navmenu" class="navmenu">
         <ul class="flex-row justify-content-center">
-
           <li><a routerLink="/home" routerLinkActive="active">Home</a></li>
           <li><a routerLink="/products" routerLinkActive="active">Products</a></li>
           <li><a routerLink="/about" routerLinkActive="active">About</a></li>
           <li><a routerLink="/contact-us" routerLinkActive="active">Contact</a></li>
-
         </ul>
       </nav>
     </div>
@@ -121,7 +119,7 @@
     <div class="container">
       <form class="search-form">
         <div class="input-group">
-          <input type="text" class="form-control" placeholder="Search for products">
+          <input type="text" class="form-control" placeholder="Search for products" />
           <button class="btn" type="submit">
             <i class="bi bi-search"></i>
           </button>
@@ -129,5 +127,4 @@
       </form>
     </div>
   </div>
-
 </header>

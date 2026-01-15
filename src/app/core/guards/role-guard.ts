@@ -30,7 +30,11 @@ export const roleGuard: CanActivateFn = (route) => {
   }
 
   toastr.error('You are not authorized to access this page');
-  if (user.roles.includes(RoleType.Admin) || user.roles.includes(RoleType.Seller)) {
+  if (
+    user.roles.includes(RoleType.SuperAdmin) ||
+    user.roles.includes(RoleType.Admin) ||
+    user.roles.includes(RoleType.Seller)
+  ) {
     return router.createUrlTree(['/admin']);
   }
   return router.createUrlTree(['/']);

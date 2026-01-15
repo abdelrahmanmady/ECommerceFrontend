@@ -136,7 +136,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     canActivate: [authGuard, roleGuard],
-    data: { roles: [RoleType.Admin, RoleType.Seller] },
+    data: { roles: [RoleType.SuperAdmin, RoleType.Admin, RoleType.Seller] },
     loadComponent: () => import('./layouts/admin-layout/admin-layout').then((m) => m.AdminLayout),
     children: [
       {
@@ -188,16 +188,16 @@ export const routes: Routes = [
       {
         path: 'users',
         loadComponent: () =>
-          import('./features/admin/users/users').then((m) => m.UsersListComponent),
+          import('./features/admin/users/list/list').then((m) => m.UsersListComponent),
         canActivate: [authGuard, roleGuard],
-        data: { roles: [RoleType.Admin] },
+        data: { roles: [RoleType.SuperAdmin, RoleType.Admin] },
       },
       {
         path: 'users/edit/:id',
         loadComponent: () =>
-          import('./features/admin/users/user-edit/user-edit').then((m) => m.UserEditComponent),
+          import('./features/admin/users/edit/edit').then((m) => m.UserEditComponent),
         canActivate: [authGuard, roleGuard],
-        data: { roles: [RoleType.Admin] },
+        data: { roles: [RoleType.SuperAdmin, RoleType.Admin] },
       },
       {
         path: 'home',
