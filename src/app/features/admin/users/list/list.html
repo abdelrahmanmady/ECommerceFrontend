@@ -20,7 +20,7 @@
           class="form-control-plaintext ps-1"
           placeholder="Search users by name, email or phone number"
           (input)="onSearch($any($event.target).value)"
-          [value]="searchTerm"
+          [value]="searchTerm()"
         />
       </div>
 
@@ -44,7 +44,7 @@
               <li>
                 <a
                   class="dropdown-item"
-                  [class.active]="selectedRole === 'all' || !selectedRole"
+                  [class.active]="selectedRole() === 'all'"
                   (click)="onRoleChange('all')"
                   >All Roles</a
                 >
@@ -52,7 +52,7 @@
               <li>
                 <a
                   class="dropdown-item"
-                  [class.active]="selectedRole === 'superadmin'"
+                  [class.active]="selectedRole() === 'superadmin'"
                   (click)="onRoleChange('superadmin')"
                   >Super Admin</a
                 >
@@ -60,7 +60,7 @@
               <li>
                 <a
                   class="dropdown-item"
-                  [class.active]="selectedRole === 'admin'"
+                  [class.active]="selectedRole() === 'admin'"
                   (click)="onRoleChange('admin')"
                   >Admin</a
                 >
@@ -68,7 +68,7 @@
               <li>
                 <a
                   class="dropdown-item"
-                  [class.active]="selectedRole === 'seller'"
+                  [class.active]="selectedRole() === 'seller'"
                   (click)="onRoleChange('seller')"
                   >Seller</a
                 >
@@ -76,7 +76,7 @@
               <li>
                 <a
                   class="dropdown-item"
-                  [class.active]="selectedRole === 'customer'"
+                  [class.active]="selectedRole() === 'customer'"
                   (click)="onRoleChange('customer')"
                   >Customer</a
                 >
@@ -94,9 +94,7 @@
             >
               <i class="fas fa-info-circle"></i>
               <span>{{
-                !selectedStatus || selectedStatus === 'all'
-                  ? 'All Users'
-                  : (selectedStatus | titlecase)
+                selectedStatus() === 'all' ? 'All Users' : (selectedStatus() | titlecase)
               }}</span>
               <i class="fas fa-chevron-down ms-1"></i>
             </button>
@@ -104,7 +102,7 @@
               <li>
                 <a
                   class="dropdown-item"
-                  [class.active]="selectedStatus === 'all' || !selectedStatus"
+                  [class.active]="selectedStatus() === 'all'"
                   (click)="onStatusChange('all')"
                   >All Users</a
                 >
@@ -112,7 +110,7 @@
               <li>
                 <a
                   class="dropdown-item"
-                  [class.active]="selectedStatus === 'active'"
+                  [class.active]="selectedStatus() === 'active'"
                   (click)="onStatusChange('active')"
                   >Active</a
                 >
@@ -120,7 +118,7 @@
               <li>
                 <a
                   class="dropdown-item"
-                  [class.active]="selectedStatus === 'deleted'"
+                  [class.active]="selectedStatus() === 'deleted'"
                   (click)="onStatusChange('deleted')"
                   >Deleted</a
                 >
@@ -140,7 +138,7 @@
             <li>
               <a
                 class="dropdown-item"
-                [class.active]="selectedSort === 'createdDesc' || !selectedSort"
+                [class.active]="selectedSort() === 'createdDesc'"
                 (click)="onSortChange('createdDesc')"
                 >Newest</a
               >
@@ -148,7 +146,7 @@
             <li>
               <a
                 class="dropdown-item"
-                [class.active]="selectedSort === 'createdAsc'"
+                [class.active]="selectedSort() === 'createdAsc'"
                 (click)="onSortChange('createdAsc')"
                 >Oldest</a
               >
@@ -156,7 +154,7 @@
             <li>
               <a
                 class="dropdown-item"
-                [class.active]="selectedSort === 'updatedDesc'"
+                [class.active]="selectedSort() === 'updatedDesc'"
                 (click)="onSortChange('updatedDesc')"
                 >Last Updated</a
               >
@@ -164,7 +162,7 @@
             <li>
               <a
                 class="dropdown-item"
-                [class.active]="selectedSort === 'ordersDesc'"
+                [class.active]="selectedSort() === 'ordersDesc'"
                 (click)="onSortChange('ordersDesc')"
                 >Orders Placed</a
               >
@@ -173,7 +171,7 @@
             <li>
               <a
                 class="dropdown-item"
-                [class.active]="selectedSort === 'nameAsc'"
+                [class.active]="selectedSort() === 'nameAsc'"
                 (click)="onSortChange('nameAsc')"
                 >Name (A-Z)</a
               >
@@ -181,7 +179,7 @@
             <li>
               <a
                 class="dropdown-item"
-                [class.active]="selectedSort === 'emailAsc'"
+                [class.active]="selectedSort() === 'emailAsc'"
                 (click)="onSortChange('emailAsc')"
                 >Email (A-Z)</a
               >
@@ -192,7 +190,7 @@
         <!-- Clear Filters -->
         <button
           class="btn-clear-filters"
-          [disabled]="!hasActiveFilters"
+          [disabled]="!hasActiveFilters()"
           type="button"
           (click)="clearFilters()"
           title="Clear all filters"

@@ -5,11 +5,27 @@
     </a>
     <div class="product-overlay">
       <div class="product-actions">
-        <button type="button" class="action-btn" [class.wishlisted]="isWishlisted()" data-bs-toggle="tooltip"
-          [title]="isWishlisted() ? 'Remove from Wishlist' : 'Add to Wishlist'" (click)="toggleWishlist()">
-          <i class="bi" [class.bi-heart]="!isWishlisted()" [class.bi-heart-fill]="isWishlisted()"></i>
+        <button
+          type="button"
+          class="action-btn"
+          [class.wishlisted]="isWishlisted()"
+          data-bs-toggle="tooltip"
+          [title]="isWishlisted() ? 'Remove from Wishlist' : 'Add to Wishlist'"
+          (click)="toggleWishlist()"
+        >
+          <i
+            class="bi"
+            [class.bi-heart]="!isWishlisted()"
+            [class.bi-heart-fill]="isWishlisted()"
+          ></i>
         </button>
-        <button type="button" class="action-btn" data-bs-toggle="tooltip" title="Add to Cart" (click)="addToCart()">
+        <button
+          type="button"
+          class="action-btn"
+          data-bs-toggle="tooltip"
+          title="Add to Cart"
+          (click)="addToCart()"
+        >
           <i class="bi bi-cart-plus"></i>
         </button>
       </div>
@@ -17,9 +33,16 @@
   </div>
   <div class="product-details" [ngClass]="viewType()">
     <div class="product-category" [ngClass]="viewType()">
-      @for(link of productData().categoryBreadcrumbLinks; track $index; let last = $last){
-      <a [routerLink]="['/products']" [queryParams]="{ categoryId: link.id }" class="category-link">{{ link.name }}</a>
-      @if(!last){ <span class="breadcrumb-separator"> \ </span> }
+      @for (link of productData().categoryBreadcrumbLinks; track $index; let last = $last) {
+        <a
+          [routerLink]="['/products']"
+          [queryParams]="{ categoryId: link.id }"
+          class="category-link"
+          >{{ link.name }}</a
+        >
+        @if (!last) {
+          <span class="breadcrumb-separator">›</span>
+        }
       }
     </div>
     <h4 class="product-title" [ngClass]="viewType()">
@@ -28,30 +51,42 @@
     <div class="product-footer">
       <div class="product-rating">
         <div class="stars">
-          @for(star of getStarsArray(productData().averageRating); track $index) {
-          <i class="bi" [class.bi-star-fill]="star === 'full'" [class.bi-star-half]="star === 'half'"
-            [class.bi-star]="star === 'empty'"></i>
+          @for (star of getStarsArray(productData().averageRating); track $index) {
+            <i
+              class="bi"
+              [class.bi-star-fill]="star === 'full'"
+              [class.bi-star-half]="star === 'half'"
+              [class.bi-star]="star === 'empty'"
+            ></i>
           }
         </div>
-        <span class="review-count">({{productData().reviewsCount}})</span>
+        <span class="review-count">({{ productData().reviewsCount }})</span>
       </div>
       <div class="product-meta">
         <div class="product-price" [ngClass]="viewType()">
-          {{productData().price | number : '1.2-2'}}<span class="currency-suffix">EGP</span>
+          {{ productData().price | number: '1.2-2' }}<span class="currency-suffix">EGP</span>
         </div>
       </div>
     </div>
-    @if(viewType() === 'list'){
-    <div class="list-actions">
-      <button type="button" class="list-action-btn wishlist-btn" [class.wishlisted]="isWishlisted()"
-        (click)="toggleWishlist()">
-        <i class="bi" [class.bi-heart]="!isWishlisted()" [class.bi-heart-fill]="isWishlisted()"></i>
-        {{ isWishlisted() ? 'In Wishlist' : 'Add to Wishlist' }}
-      </button>
-      <button type="button" class="list-action-btn cart-btn" (click)="addToCart()">
-        <i class="bi bi-cart-plus"></i> Add to Cart
-      </button>
-    </div>
+    @if (viewType() === 'list') {
+      <div class="list-actions">
+        <button
+          type="button"
+          class="list-action-btn wishlist-btn"
+          [class.wishlisted]="isWishlisted()"
+          (click)="toggleWishlist()"
+        >
+          <i
+            class="bi"
+            [class.bi-heart]="!isWishlisted()"
+            [class.bi-heart-fill]="isWishlisted()"
+          ></i>
+          {{ isWishlisted() ? 'In Wishlist' : 'Add to Wishlist' }}
+        </button>
+        <button type="button" class="list-action-btn cart-btn" (click)="addToCart()">
+          <i class="bi bi-cart-plus"></i> Add to Cart
+        </button>
+      </div>
     }
   </div>
 </div>

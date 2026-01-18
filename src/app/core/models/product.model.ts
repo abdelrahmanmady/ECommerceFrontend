@@ -20,12 +20,10 @@ export interface AdminProductSummaryDto {
   id: number;
   thumbnailUrl: string;
   name: string;
-  description?: string;
   categoryName: string;
   brandName: string;
   price: number;
-  inStock: boolean;
-  isFeatured: boolean;
+  stockQuantity: number;
   created: string;
   updated: string;
 }

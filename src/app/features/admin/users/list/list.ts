@@ -1,5 +1,5 @@
 // Angular Imports
-import { Component, inject, OnInit, AfterViewInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, AfterViewInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 // Libraries
@@ -34,16 +34,11 @@ export class UsersListComponent implements OnInit, AfterViewInit {
   isLoading = signal(false);
 
   // Filters
-  selectedRole: 'all' | 'superadmin' | 'admin' | 'seller' | 'customer' | undefined = undefined;
-  selectedStatus: 'all' | 'active' | 'deleted' | undefined = undefined;
-  selectedSort:
-    | 'createdAsc'
-    | 'createdDesc'
-    | 'updatedDesc'
-    | 'ordersDesc'
-    | 'nameAsc'
-    | 'emailAsc'
-    | undefined = undefined;
+  selectedRole = signal<'all' | 'superadmin' | 'admin' | 'seller' | 'customer'>('all');
+  selectedStatus = signal<'all' | 'active' | 'deleted'>('all');
+  selectedSort = signal<
+    'createdAsc' | 'createdDesc' | 'updatedDesc' | 'ordersDesc' | 'nameAsc' | 'emailAsc' | undefined
+  >(undefined);
 
   // Pagination
   pageIndex = 1;
@@ -51,7 +46,7 @@ export class UsersListComponent implements OnInit, AfterViewInit {
 
   // Search
   private searchTerms = new Subject<string>();
-  searchTerm = '';
+  searchTerm = signal('');
 
   // Confirmation Modal State
   confirmModalTitle = signal('');
@@ -63,9 +58,14 @@ export class UsersListComponent implements OnInit, AfterViewInit {
   private modalInstance: any = null;
 
   // ==================== Computed Properties ====================
-  get hasActiveFilters(): boolean {
-    return !!(this.selectedRole || this.selectedStatus || this.selectedSort || this.searchTerm);
-  }
+  hasActiveFilters = computed(() => {
+    return (
+      this.selectedRole() !== 'all' ||
+      this.selectedStatus() !== 'all' ||
+      !!this.selectedSort() ||
+      !!this.searchTerm()
+    );
+  });
 
   // ==================== Lifecycle ====================
   ngOnInit(): void {
@@ -84,7 +84,7 @@ export class UsersListComponent implements OnInit, AfterViewInit {
 
   private setupSearchDebounce(): void {
     this.searchTerms.pipe(debounceTime(500), distinctUntilChanged()).subscribe((term) => {
-      this.searchTerm = term;
+      this.searchTerm.set(term);
       this.pageIndex = 1;
       this.loadUsers();
     });
@@ -121,17 +121,17 @@ export class UsersListComponent implements OnInit, AfterViewInit {
     if (this.pageIndex > 1) {
       params.pageIndex = this.pageIndex;
     }
-    if (this.selectedRole && this.selectedRole !== 'all') {
-      params.role = this.selectedRole;
+    if (this.selectedRole() !== 'all') {
+      params.role = this.selectedRole() as 'superadmin' | 'admin' | 'seller' | 'customer';
     }
-    if (this.selectedStatus && this.selectedStatus !== 'all') {
-      params.status = this.selectedStatus;
+    if (this.selectedStatus() !== 'all') {
+      params.status = this.selectedStatus() as 'active' | 'deleted';
     }
-    if (this.selectedSort) {
-      params.sort = this.selectedSort;
+    if (this.selectedSort()) {
+      params.sort = this.selectedSort();
     }
-    if (this.searchTerm) {
-      params.search = this.searchTerm;
+    if (this.searchTerm()) {
+      params.search = this.searchTerm();
     }
 
     return params;
@@ -151,15 +151,15 @@ export class UsersListComponent implements OnInit, AfterViewInit {
 
   // ==================== Filter Handlers ====================
   onRoleChange(role: 'all' | 'superadmin' | 'admin' | 'seller' | 'customer'): void {
-    if (this.selectedRole === role) return;
-    this.selectedRole = role === 'all' ? 'all' : role;
+    if (this.selectedRole() === role) return;
+    this.selectedRole.set(role);
     this.pageIndex = 1;
     this.loadUsers();
   }
 
   onStatusChange(status: 'all' | 'active' | 'deleted'): void {
-    if (this.selectedStatus === status) return;
-    this.selectedStatus = status === 'all' ? 'all' : status;
+    if (this.selectedStatus() === status) return;
+    this.selectedStatus.set(status);
     this.pageIndex = 1;
     this.loadUsers();
   }
@@ -167,8 +167,8 @@ export class UsersListComponent implements OnInit, AfterViewInit {
   onSortChange(
     sort: 'createdAsc' | 'createdDesc' | 'updatedDesc' | 'ordersDesc' | 'nameAsc' | 'emailAsc'
   ): void {
-    if (this.selectedSort === sort) return;
-    this.selectedSort = sort;
+    if (this.selectedSort() === sort) return;
+    this.selectedSort.set(sort);
     this.pageIndex = 1;
     this.loadUsers();
   }
@@ -179,10 +179,10 @@ export class UsersListComponent implements OnInit, AfterViewInit {
   }
 
   clearFilters(): void {
-    this.selectedRole = undefined;
-    this.selectedStatus = undefined;
-    this.selectedSort = undefined;
-    this.searchTerm = '';
+    this.selectedRole.set('all');
+    this.selectedStatus.set('all');
+    this.selectedSort.set(undefined);
+    this.searchTerm.set('');
     this.pageIndex = 1;
     this.loadUsers();
   }
@@ -204,7 +204,7 @@ export class UsersListComponent implements OnInit, AfterViewInit {
       action: () => {
         this.userService.deleteAdminUser(userId).subscribe({
           next: () => {
-            if (this.selectedStatus === 'active') {
+            if (this.selectedStatus() === 'active') {
               this.users.update((users) => users.filter((user) => user.id !== userId));
               this.totalCount.update((count) => count - 1);
             } else {
@@ -232,7 +232,7 @@ export class UsersListComponent implements OnInit, AfterViewInit {
       action: () => {
         this.userService.restoreAdminUser(userId).subscribe({
           next: () => {
-            if (this.selectedStatus === 'deleted') {
+            if (this.selectedStatus() === 'deleted') {
               this.users.update((users) => users.filter((user) => user.id !== userId));
               this.totalCount.update((count) => count - 1);
             } else {
@@ -285,7 +285,7 @@ export class UsersListComponent implements OnInit, AfterViewInit {
 
   // ==================== Template Helpers ====================
   getSortLabel(): string {
-    switch (this.selectedSort) {
+    switch (this.selectedSort()) {
       case 'createdDesc':
         return 'Newest';
       case 'createdAsc':
@@ -299,12 +299,12 @@ export class UsersListComponent implements OnInit, AfterViewInit {
       case 'emailAsc':
         return 'Email (A-Z)';
       default:
-        return 'Newest';
+        return 'Sort By';
     }
   }
 
   getRoleLabel(): string {
-    switch (this.selectedRole) {
+    switch (this.selectedRole()) {
       case 'superadmin':
         return 'Super Admin';
       case 'admin':

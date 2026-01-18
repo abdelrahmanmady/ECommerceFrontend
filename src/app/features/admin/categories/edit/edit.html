@@ -1,158 +1,497 @@
-<div class="admin-container">
+<div class="container py-4">
   <!-- Page Header -->
   <div class="page-header">
-    <div class="header-top">
-      <a routerLink="/admin/categories" class="back-link">
-        <i class="fas fa-arrow-left"></i>
-        <span>Back to Categories</span>
-      </a>
-    </div>
-    <div class="header-title-row">
-      <div>
-        <h1 class="page-title">Edit Category</h1>
-        <p class="page-subtitle">Update category information and hierarchy</p>
+    <div class="header-content">
+      <div class="header-left">
+        <!-- Breadcrumbs -->
+        <nav class="breadcrumbs">
+          <a routerLink="/admin/categories" class="breadcrumb-link">Root</a>
+          <i class="fas fa-chevron-right breadcrumb-separator"></i>
+          <span class="breadcrumb-current">Electronics</span>
+        </nav>
+        <!-- Title with Badges -->
+        <div class="title-row">
+          <h1>Electronics</h1>
+          <span class="id-badge">#1</span>
+          <span class="type-badge" [ngClass]="isNodeCategory ? 'badge-node' : 'badge-leaf'">
+            <i class="fas" [ngClass]="isNodeCategory ? 'fa-sitemap' : 'fa-tag'"></i>
+            {{ isNodeCategory ? 'Node' : 'Leaf' }}
+          </span>
+        </div>
       </div>
-      <div class="product-id-badge">
-        <span>Category ID: #{{ categoryId() }}</span>
+      <div class="header-actions">
+        <button class="action-btn btn-back" routerLink="/admin/categories">
+          <i class="fas fa-arrow-left"></i>
+          <span>Back to Categories</span>
+        </button>
+        <button class="action-btn btn-edit-category" (click)="toggleCategoryType()">
+          <i class="fas fa-edit"></i>
+          <span>Edit Category</span>
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Form Container -->
-  <div class="form-container">
-    <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
-      
-      <!-- Basic Information Section -->
-      <div class="form-section">
-        <div class="section-header">
-          <i class="fas fa-info-circle"></i>
-          <h3>Category Information</h3>
-        </div>
+  <!-- Section A: General Information + Metadata Row -->
+  <div class="info-cards-row">
+    <!-- General Information -->
+    <div class="details-card">
+      <h3><i class="fas fa-info-circle me-2"></i>General Information</h3>
 
-        <div class="form-row">
-          <div class="form-group full-width">
-            <label for="name">Category Name <span class="required">*</span></label>
-            <input 
-              type="text" 
-              id="name"
-              formControlName="name"
-              class="form-control" 
-              placeholder="Enter category name">
-            <div class="help-text">
-              <i class="fas fa-info-circle"></i>
-              Maximum 200 characters
-            </div>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group full-width">
-            <label for="description">Description</label>
-            <textarea 
-              id="description"
-              formControlName="description"
-              (input)="onDescriptionChange($event)"
-              class="form-control" 
-              rows="4" 
-              placeholder="Enter category description (optional)"></textarea>
-            <div class="char-count">
-              {{ descriptionLength() }} / 1000 characters
-            </div>
-          </div>
-        </div>
+      <div class="detail-row">
+        <span class="detail-label">Description</span>
+        <span class="detail-value description-text">
+          All electronic devices and gadgets including computers, smartphones, tablets, gaming
+          consoles, and accessories for modern digital lifestyle.
+        </span>
       </div>
 
-      <!-- Hierarchy Section -->
-      <div class="form-section">
-        <div class="section-header">
-          <i class="fas fa-sitemap"></i>
-          <h3>Category Hierarchy</h3>
-        </div>
-
-        <div class="form-row flex-wrap">
-          <div class="col-lg-3 col-sm-12">
-            <div class="form-group full-width">
-              <label for="parentCategoryId">Parent Category</label>
-              <select 
-                id="parentCategoryId"
-                formControlName="parentCategoryId"
-                class="form-control">
-                <option value="">None (Root Category)</option>
-                @for (parent of parentCategories(); track parent.id) {
-                  <option [value]="parent.id">{{ parent.name }}</option>
-                }
-              </select>
-              <div class="help-text">
-                <i class="fas fa-info-circle"></i>
-                Select a parent category to create a subcategory
-              </div>
-            </div>
-          </div>
-
-          <!-- Subcategories Info -->
-          <div class="subcategories-info col-lg-5 col-sm-12">
-            <div class="info-header">
-              <i class="fas fa-layer-group"></i>
-              <h4>Subcategories ({{ subcategoryCount() }})</h4>
-            </div>
-            <div class="subcategory-list">
-              @for (sub of currentCategory().subcategories; track sub.name) {
-                <div class="subcategory-item">
-                  <i class="fas {{ sub.icon }}"></i>
-                  <span>{{ sub.name }}</span>
-                </div>
-              }
-            </div>
-            <div class="info-note">
-              <i class="fas fa-exclamation-triangle"></i>
-              <span>Note: Moving this category will also move all its subcategories</span>
-            </div>
-          </div>
-
-          <!-- Category Preview -->
-          <div class="category-preview col-lg-3 col-sm-12">
-            <div class="preview-header">
-              <i class="fas fa-eye"></i>
-              <h4>Category Preview</h4>
-            </div>
-            <div class="preview-content">
-              <div class="preview-item">
-                <i class="fas fa-layer-group"></i>
-                <div class="preview-details">
-                  <span class="preview-label">Category Path:</span>
-                  <span class="preview-value">{{ categoryPath() }}</span>
-                </div>
-              </div>
-              <div class="preview-item">
-                <i class="fas fa-calendar-alt"></i>
-                <div class="preview-details">
-                  <span class="preview-label">Created:</span>
-                  <span class="preview-value">{{ currentCategory().createdDate }}</span>
-                </div>
-              </div>
-              <div class="preview-item">
-                <i class="fas fa-clock"></i>
-                <div class="preview-details">
-                  <span class="preview-label">Last Updated:</span>
-                  <span class="preview-value">{{ currentCategory().updatedDate }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="detail-row">
+        <span class="detail-label">Parent Category</span>
+        <span class="detail-value">
+          <span class="root-indicator">Root Category</span>
+        </span>
       </div>
-      
-      <!-- Form Actions -->
-      <div class="form-actions">
-        <button type="button" (click)="onCancel()" class="btn btn-secondary">
-          <i class="fas fa-times"></i>
-          Cancel
-        </button>
-        <button type="submit" class="btn btn-primary" [disabled]="!categoryForm.valid">
-          <i class="fas fa-save"></i>
-          Update Category
+    </div>
+
+    <!-- Metadata & History -->
+    <div class="details-card">
+      <h3><i class="fas fa-clock me-2"></i>Metadata & History</h3>
+
+      <div class="detail-row">
+        <span class="detail-label">Created</span>
+        <span class="detail-value">Jan 10, 2024, 9:30 AM</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">Last Updated</span>
+        <span class="detail-value">Nov 28, 2024, 2:45 PM</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section B: Dynamic Content -->
+  @if (isNodeCategory) {
+    <!-- NODE VIEW: Sub-Categories -->
+    <div class="details-card">
+      <div class="section-header-with-action">
+        <h3><i class="fas fa-layer-group me-2"></i>Sub-Categories (5)</h3>
+        <button class="action-btn btn-add" routerLink="/admin/categories/add">
+          <i class="fas fa-plus"></i>
+          <span>Add Sub-Category</span>
         </button>
       </div>
-    </form>
+
+      <div class="subcategories-list">
+        <!-- Subcategory 1 -->
+        <a routerLink="/admin/categories/edit/2" class="subcategory-item">
+          <div class="subcategory-info">
+            <span class="subcategory-name">Smartphones</span>
+            <span class="subcategory-meta">
+              <span class="type-badge-sm badge-leaf">Leaf</span>
+              <span class="product-count">89 products</span>
+              <span class="created-date">Jan 15, 2024</span>
+            </span>
+          </div>
+          <i class="fas fa-chevron-right subcategory-arrow"></i>
+        </a>
+        <!-- Subcategory 2 -->
+        <a routerLink="/admin/categories/edit/3" class="subcategory-item">
+          <div class="subcategory-info">
+            <span class="subcategory-name">Computers</span>
+            <span class="subcategory-meta">
+              <span class="type-badge-sm badge-node">Node</span>
+              <span class="product-count">4 Subcategories</span>
+              <span class="created-date">Jan 15, 2024</span>
+            </span>
+          </div>
+          <i class="fas fa-chevron-right subcategory-arrow"></i>
+        </a>
+        <!-- Subcategory 3 -->
+        <a routerLink="/admin/categories/edit/4" class="subcategory-item">
+          <div class="subcategory-info">
+            <span class="subcategory-name">Gaming</span>
+            <span class="subcategory-meta">
+              <span class="type-badge-sm badge-node">Node</span>
+              <span class="product-count">3 Subcategories</span>
+              <span class="created-date">Jan 20, 2024</span>
+            </span>
+          </div>
+          <i class="fas fa-chevron-right subcategory-arrow"></i>
+        </a>
+        <!-- Subcategory 4 -->
+        <a routerLink="/admin/categories/edit/5" class="subcategory-item">
+          <div class="subcategory-info">
+            <span class="subcategory-name">Audio</span>
+            <span class="subcategory-meta">
+              <span class="type-badge-sm badge-leaf">Leaf</span>
+              <span class="product-count">45 products</span>
+              <span class="created-date">Feb 1, 2024</span>
+            </span>
+          </div>
+          <i class="fas fa-chevron-right subcategory-arrow"></i>
+        </a>
+        <!-- Subcategory 5 -->
+        <a routerLink="/admin/categories/edit/6" class="subcategory-item">
+          <div class="subcategory-info">
+            <span class="subcategory-name">Accessories</span>
+            <span class="subcategory-meta">
+              <span class="type-badge-sm badge-leaf">Leaf</span>
+              <span class="product-count">112 products</span>
+              <span class="created-date">Feb 10, 2024</span>
+            </span>
+          </div>
+          <i class="fas fa-chevron-right subcategory-arrow"></i>
+        </a>
+      </div>
+    </div>
+  } @else {
+    <!-- LEAF VIEW: Products in this Category -->
+    <div class="details-card">
+      <div class="section-header-with-action">
+        <h3><i class="fas fa-box me-2"></i>Products in this Category (89)</h3>
+        <a class="btn-see-all" routerLink="/admin/products">
+          View All Products <i class="fas fa-arrow-right ms-1"></i>
+        </a>
+      </div>
+
+      <!-- Recent Products Table -->
+      <h4 class="subsection-title">Recent Products</h4>
+      <div class="orders-table">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Brand</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Created</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="name-cell">
+                <a routerLink="/admin/products/edit/101" class="product-link">iPhone 15 Pro Max</a>
+              </td>
+              <td><span class="brand-name">Apple</span></td>
+              <td><strong>52,999</strong> <span class="currency-suffix">EGP</span></td>
+              <td><span class="stock-badge in-stock">25 units</span></td>
+              <td><span class="text-muted">Nov 25, 2024</span></td>
+              <td>
+                <a class="action-btn btn-edit" routerLink="/admin/products/edit/101">
+                  <i class="fas fa-eye"></i>
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td class="name-cell">
+                <a routerLink="/admin/products/edit/102" class="product-link"
+                  >Samsung Galaxy S24 Ultra</a
+                >
+              </td>
+              <td><span class="brand-name">Samsung</span></td>
+              <td><strong>48,999</strong> <span class="currency-suffix">EGP</span></td>
+              <td><span class="stock-badge in-stock">18 units</span></td>
+              <td><span class="text-muted">Nov 20, 2024</span></td>
+              <td>
+                <a class="action-btn btn-edit" routerLink="/admin/products/edit/102">
+                  <i class="fas fa-eye"></i>
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td class="name-cell">
+                <a routerLink="/admin/products/edit/103" class="product-link">Google Pixel 8 Pro</a>
+              </td>
+              <td><span class="brand-name">Google</span></td>
+              <td><strong>39,999</strong> <span class="currency-suffix">EGP</span></td>
+              <td><span class="stock-badge in-stock">12 units</span></td>
+              <td><span class="text-muted">Nov 18, 2024</span></td>
+              <td>
+                <a class="action-btn btn-edit" routerLink="/admin/products/edit/103">
+                  <i class="fas fa-eye"></i>
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td class="name-cell">
+                <a routerLink="/admin/products/edit/104" class="product-link">OnePlus 12</a>
+              </td>
+              <td><span class="brand-name">OnePlus</span></td>
+              <td><strong>32,999</strong> <span class="currency-suffix">EGP</span></td>
+              <td><span class="stock-badge in-stock">30 units</span></td>
+              <td><span class="text-muted">Nov 15, 2024</span></td>
+              <td>
+                <a class="action-btn btn-edit" routerLink="/admin/products/edit/104">
+                  <i class="fas fa-eye"></i>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+  <!-- Section D: Danger Zone -->
+  <div class="details-card danger-zone">
+    <h3><i class="fas fa-exclamation-triangle me-2"></i>Danger Zone</h3>
+
+    <div class="danger-actions">
+      <div class="danger-action-item">
+        <div class="danger-action-info">
+          <h4>Delete Category</h4>
+          <p>Permanently remove this category. This action cannot be undone.</p>
+          <span class="danger-warning">
+            <i class="fas fa-info-circle"></i>
+            Category must be empty (0 products, 0 subcategories) to delete.
+          </span>
+        </div>
+        <button class="action-btn btn-delete" disabled>
+          <i class="fas fa-trash"></i>
+          <span>Delete</span>
+        </button>
+      </div>
+
+      <div class="danger-action-item">
+        <div class="danger-action-info">
+          <h4>Move Category</h4>
+          <p>Change the parent category to reorganize the hierarchy.</p>
+        </div>
+        <button class="action-btn btn-move" (click)="openMoveModal()">
+          <i class="fas fa-arrows-alt"></i>
+          <span>Move</span>
+        </button>
+      </div>
+    </div>
   </div>
 </div>
+
+<!-- Move Category Modal -->
+@if (showMoveModal) {
+  <div class="modal-overlay" (click)="closeMoveModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2><i class="fas fa-arrows-alt me-2"></i>Move Category</h2>
+        <button class="modal-close" (click)="closeMoveModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Current Location -->
+        <div class="current-location">
+          <span class="location-label">Currently in:</span>
+          <span class="location-path"> <i class="fas fa-sitemap me-2"></i>Root </span>
+        </div>
+
+        <!-- New Parent Selector - Custom Tree Dropdown -->
+        <div class="form-group">
+          <!-- Dropdown Trigger -->
+          <div class="tree-select" (click)="toggleDropdown()">
+            <div class="tree-select-value">
+              <i
+                class="fas fa-folder me-2"
+                [style.display]="selectedParentId ? 'inline' : 'none'"
+              ></i>
+              <span>{{
+                selectedParentId ? selectedParentName : 'Choose a parent category...'
+              }}</span>
+            </div>
+            <i class="fas fa-chevron-down tree-select-arrow" [class.rotated]="isDropdownOpen"></i>
+          </div>
+
+          <!-- Dropdown Panel -->
+          @if (isDropdownOpen) {
+            <div class="tree-select-panel">
+              <div class="tree-select-panel-inner">
+                <!-- Root Option -->
+                <div
+                  class="tree-node root-node"
+                  [class.selected]="selectedParentId === 'root'"
+                  (click)="selectParent('root', 'Root')"
+                >
+                  <i class="fas fa-home tree-node-icon"></i>
+                  <span class="tree-node-name">Root</span>
+                  @if (selectedParentId === 'root') {
+                    <i class="fas fa-check tree-node-check"></i>
+                  }
+                </div>
+
+                <!-- Electronics (Current - Disabled) -->
+                <div class="tree-node disabled">
+                  <span class="tree-node-name">Electronics</span>
+                  <span class="tree-node-badge badge-current">Current</span>
+                </div>
+
+                <!-- Electronics Children -->
+                <div
+                  class="tree-node child"
+                  [class.selected]="selectedParentId === '2'"
+                  (click)="selectParent('2', 'Electronics › Smartphones')"
+                >
+                  <span class="tree-indent"></span>
+                  <span class="tree-node-name">Smartphones</span>
+                  @if (selectedParentId === '2') {
+                    <i class="fas fa-check tree-node-check"></i>
+                  }
+                </div>
+
+                <div
+                  class="tree-node child"
+                  [class.selected]="selectedParentId === '3'"
+                  (click)="selectParent('3', 'Electronics › Computers')"
+                >
+                  <span class="tree-indent"></span>
+                  <span class="tree-node-name">Computers</span>
+                  @if (selectedParentId === '3') {
+                    <i class="fas fa-check tree-node-check"></i>
+                  }
+                </div>
+
+                <div
+                  class="tree-node child"
+                  [class.selected]="selectedParentId === '4'"
+                  (click)="selectParent('4', 'Electronics › Gaming')"
+                >
+                  <span class="tree-indent"></span>
+                  <span class="tree-node-name">Gaming</span>
+                  @if (selectedParentId === '4') {
+                    <i class="fas fa-check tree-node-check"></i>
+                  }
+                </div>
+
+                <div
+                  class="tree-node child"
+                  [class.selected]="selectedParentId === '5'"
+                  (click)="selectParent('5', 'Electronics › Audio')"
+                >
+                  <span class="tree-indent"></span>
+                  <span class="tree-node-name">Audio</span>
+                  @if (selectedParentId === '5') {
+                    <i class="fas fa-check tree-node-check"></i>
+                  }
+                </div>
+
+                <div
+                  class="tree-node child"
+                  [class.selected]="selectedParentId === '6'"
+                  (click)="selectParent('6', 'Electronics › Accessories')"
+                >
+                  <span class="tree-indent"></span>
+                  <span class="tree-node-name">Accessories</span>
+                  @if (selectedParentId === '6') {
+                    <i class="fas fa-check tree-node-check"></i>
+                  }
+                </div>
+
+                <!-- Fashion Category -->
+                <div
+                  class="tree-node"
+                  [class.selected]="selectedParentId === '10'"
+                  (click)="selectParent('10', 'Fashion')"
+                >
+                  <span class="tree-node-name">Fashion</span>
+                  @if (selectedParentId === '10') {
+                    <i class="fas fa-check tree-node-check"></i>
+                  }
+                </div>
+
+                <!-- Fashion Children -->
+                <div
+                  class="tree-node child"
+                  [class.selected]="selectedParentId === '11'"
+                  (click)="selectParent('11', 'Fashion › Mens Clothing')"
+                >
+                  <span class="tree-indent"></span>
+                  <span class="tree-node-name">Men's Clothing</span>
+                  @if (selectedParentId === '11') {
+                    <i class="fas fa-check tree-node-check"></i>
+                  }
+                </div>
+
+                <div
+                  class="tree-node child"
+                  [class.selected]="selectedParentId === '12'"
+                  (click)="selectParent('12', 'Fashion › Womens Clothing')"
+                >
+                  <span class="tree-indent"></span>
+                  <span class="tree-node-name">Women's Clothing</span>
+                  @if (selectedParentId === '12') {
+                    <i class="fas fa-check tree-node-check"></i>
+                  }
+                </div>
+
+                <div
+                  class="tree-node child"
+                  [class.selected]="selectedParentId === '13'"
+                  (click)="selectParent('13', 'Fashion › Footwear')"
+                >
+                  <span class="tree-indent"></span>
+                  <span class="tree-node-name">Footwear</span>
+                  @if (selectedParentId === '13') {
+                    <i class="fas fa-check tree-node-check"></i>
+                  }
+                </div>
+
+                <!-- Home & Garden -->
+                <div
+                  class="tree-node"
+                  [class.selected]="selectedParentId === '20'"
+                  (click)="selectParent('20', 'Home & Garden')"
+                >
+                  <span class="tree-node-name">Home & Garden</span>
+                  @if (selectedParentId === '20') {
+                    <i class="fas fa-check tree-node-check"></i>
+                  }
+                </div>
+
+                <!-- Sports & Outdoors -->
+                <div
+                  class="tree-node"
+                  [class.selected]="selectedParentId === '30'"
+                  (click)="selectParent('30', 'Sports & Outdoors')"
+                >
+                  <span class="tree-node-name">Sports & Outdoors</span>
+                  @if (selectedParentId === '30') {
+                    <i class="fas fa-check tree-node-check"></i>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+
+          <span class="form-hint">
+            <i class="fas fa-info-circle me-1"></i>
+            Select a new parent location. Disabled items cannot be selected.
+          </span>
+        </div>
+
+        <!-- Preview -->
+        @if (selectedParentId) {
+          <div class="move-preview">
+            <span class="preview-label">New path will be:</span>
+            <span class="preview-path">
+              <i class="fas fa-folder me-1"></i>{{ getSelectedParentName() }} › Electronics
+            </span>
+          </div>
+        } @else {
+          <div class="move-preview inactive">
+            <span class="preview-label">
+              <i class="fas fa-info-circle me-1"></i>Select a parent category to see the new path
+            </span>
+          </div>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <button class="action-btn btn-cancel" (click)="closeMoveModal()">Cancel</button>
+        <button class="action-btn btn-confirm-move" [disabled]="!selectedParentId">
+          <i class="fas fa-check me-1"></i>
+          Move Category
+        </button>
+      </div>
+    </div>
+  </div>
+}

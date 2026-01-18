@@ -1,91 +1,238 @@
-<div class="admin-container">
-  <!-- Header Section -->
-  <div class="admin-header">
-    <div class="header-content">
-      <div class="header-left">
-        <h1 class="page-title">Category Management</h1>
-        <p class="page-subtitle">Organize and manage your product categories</p>
-      </div>
-      <div class="header-right">
-        <a routerLink="/admin/categories/add" class="btn btn-primary">
-          <i class="fas fa-plus-circle"></i>
-          <span>Add New Category</span>
-        </a>
-      </div>
-    </div>
+<!-- Categories List View -->
+<div class="container py-4">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1><i class="fas fa-layer-group me-3"></i>Categories Management</h1>
+    <p>Organize and manage your product categories</p>
   </div>
 
-  <!-- Search Section -->
-  <div class="controls-section">
-    <div class="search-bar">
-      <i class="fas fa-search search-icon"></i>
-      <input 
-        type="text" 
-        placeholder="Search by category name or description..."
-        class="search-input"
-        (input)="onSearch($event)">
-    </div>
-    <div class="filter-actions">
-      <span class="product-count">
-        <i class="fas fa-layer-group"></i>
-        {{ categoryCount() }} Categories
-      </span>
+  <!-- Scroll Anchor -->
+  <div id="categoriesTableAnchor"></div>
+
+  <!-- Filter Toolbar -->
+  <div class="filter-bar">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <!-- Search (Left) -->
+      <div class="search-pill" style="min-width: 400px">
+        <i class="fas fa-search"></i>
+        <input
+          type="text"
+          class="form-control-plaintext ps-1"
+          placeholder="Search by name, description, or hierarchy path..."
+          (input)="onSearch($any($event.target).value)"
+          [value]="searchTerm()"
+        />
+      </div>
+
+      <!-- Right Side Actions -->
+      <div class="d-flex align-items-center gap-4">
+        <!-- Type Filter Dropdown -->
+        <div class="dropdown custom-dropdown">
+          <button class="filter-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-sitemap"></i>
+            <span>{{ getTypeLabel() }}</span>
+            <i class="fas fa-chevron-down ms-1"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li>
+              <a
+                class="dropdown-item"
+                [class.active]="selectedType() === 'all'"
+                (click)="onTypeChange('all')"
+                >All Types</a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                [class.active]="selectedType() === 'node'"
+                (click)="onTypeChange('node')"
+                >Node</a
+              >
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                [class.active]="selectedType() === 'leaf'"
+                (click)="onTypeChange('leaf')"
+                >Leaf</a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <!-- Clear Filters -->
+        <button
+          class="btn-clear-filters"
+          [disabled]="!hasActiveFilters()"
+          type="button"
+          (click)="clearFilters()"
+          title="Clear all filters"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+
+        <!-- Separator + Add Button + Count -->
+        <div class="d-flex align-items-center gap-3 border-start ps-4">
+          <!-- Add Category Button -->
+          <a routerLink="/admin/categories/add" class="btn btn-add-new">
+            <i class="fas fa-plus-circle"></i>
+            <span>Add Category</span>
+          </a>
+
+          <!-- Category Count -->
+          <span class="text-muted fw-medium">
+            <i class="fas fa-layer-group me-2"></i>{{ globalTotalCount() }} Categor{{
+              globalTotalCount() !== 1 ? 'ies' : 'y'
+            }}
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- Categories Table -->
-  <div class="table-container">
-    <table class="products-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Category Name</th>
-          <th>Description</th>
-          <th>Parent Category</th>
-          <th>Created Date</th>
-          <th>Updated Date</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (category of filteredCategories(); track category.id) {
-          <tr class="table-row">
-            <td>
-              <span class="product-id">#{{ category.id }}</span>
-            </td>
-            <td>
-              <div class="category-name-cell">
-                <i class="fas {{ category.icon }} category-icon"></i>
-                <h5>{{ category.name }}</h5>
-              </div>
-            </td>
-            <td>
-              <p class="category-description">{{ category.description }}</p>
-            </td>
-            <td>
-              <span [class]="category.parentCategory ? 'parent-badge' : 'parent-badge none'">
-                {{ category.parentCategory || 'Root Category' }}
-              </span>
-            </td>
-            <td>
-              <span class="date-text">{{ category.createdDate }}</span>
-            </td>
-            <td>
-              <span class="date-text">{{ category.updatedDate }}</span>
-            </td>
-            <td>
-              <div class="action-buttons">
-                <a [routerLink]="['/admin/categories/edit', category.id]" class="btn-icon btn-edit" title="Edit Category">
+  <div class="orders-table">
+    <!-- Loading Overlay -->
+    @if (isLoading()) {
+      <div class="loading-overlay">
+        <div class="spinner-border text-secondary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    }
+
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="ps-4" style="width: 100px">CATEGORY ID</th>
+            <th style="width: 160px">NAME</th>
+            <th style="width: 200px">DESCRIPTION</th>
+            <th style="width: 200px">HIERARCHY</th>
+            <th style="width: 80px">TYPE</th>
+            <th style="width: 120px">CHILDREN</th>
+            <th style="width: 110px">CREATED</th>
+            <th style="width: 100px">ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (category of categories(); track category.id) {
+            <tr>
+              <td class="ps-4">
+                <span class="fw-medium text-muted">#{{ category.id }}</span>
+              </td>
+              <td>
+                <span class="category-name">{{ category.name }}</span>
+              </td>
+              <td>
+                @if (category.description) {
+                  <span class="category-description">{{ category.description }}</span>
+                } @else {
+                  <span class="no-description">No description</span>
+                }
+              </td>
+              <td>
+                <span class="hierarchy-path" title="{{ category.hierarchyPath }}">
+                  <i class="fas fa-sitemap me-2 opacity-50"></i>{{ category.hierarchyPath }}
+                </span>
+              </td>
+              <td>
+                @if (category.isLeaf) {
+                  <span class="type-badge leaf">Leaf</span>
+                } @else {
+                  <span class="type-badge node">Node</span>
+                }
+              </td>
+              <td>
+                @if (category.isLeaf) {
+                  <span class="children-count"
+                    >{{ category.childrenCount }} Product{{
+                      category.childrenCount !== 1 ? 's' : ''
+                    }}</span
+                  >
+                } @else {
+                  <span class="children-count"
+                    >{{ category.childrenCount }} Subcategor{{
+                      category.childrenCount !== 1 ? 'ies' : 'y'
+                    }}</span
+                  >
+                }
+              </td>
+              <td>
+                <span class="text-muted">{{ category.created | date: 'MMM dd, yyyy' }}</span>
+              </td>
+              <td>
+                <a
+                  class="action-btn btn-edit"
+                  [routerLink]="['/admin/categories/edit', category.id]"
+                  title="Edit"
+                >
                   <i class="fas fa-edit"></i>
                 </a>
-                <button (click)="deleteCategory(category.id)" class="btn-icon btn-delete" title="Delete Category">
-                  <i class="fas fa-trash-alt"></i>
+                <button class="action-btn btn-delete" title="Delete">
+                  <i class="fas fa-trash"></i>
                 </button>
-              </div>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="8" class="text-center py-5">
+                <i class="fas fa-layer-group" style="font-size: 3rem; color: #ccc"></i>
+                <p class="mt-3 text-muted">No categories found.</p>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="d-flex justify-content-center mt-4">
+    <!-- Hidden element to initialize pagination service -->
+    <div style="display: none">
+      @for (
+        category of categories()
+          | paginate
+            : {
+                id: 'categoriesPagination',
+                itemsPerPage: pageSize,
+                currentPage: pageIndex,
+                totalItems: totalCount(),
+              };
+        track category.id
+      ) {
+        <div></div>
+      }
+    </div>
+
+    <pagination-template
+      #p="paginationApi"
+      [id]="'categoriesPagination'"
+      (pageChange)="onPageChange($event)"
+    >
+      <nav>
+        <ul class="pagination">
+          <li class="page-item" [class.disabled]="p.isFirstPage()">
+            <a class="page-link" (click)="p.previous()" style="cursor: pointer">
+              <i class="fas fa-chevron-left"></i>
+            </a>
+          </li>
+          @for (page of p.pages; track page.value) {
+            <li class="page-item" [class.active]="p.getCurrent() === page.value">
+              <a class="page-link" (click)="p.setCurrent(page.value)" style="cursor: pointer">
+                {{ page.label }}
+              </a>
+            </li>
+          }
+          <li class="page-item" [class.disabled]="p.isLastPage()">
+            <a class="page-link" (click)="p.next()" style="cursor: pointer">
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </pagination-template>
   </div>
 </div>
