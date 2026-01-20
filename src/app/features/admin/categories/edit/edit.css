@@ -105,6 +105,12 @@
   border-radius: 6px;
 }
 
+.breadcrumb-root {
+  color: rgba(255, 255, 255, 0.7);
+  padding: 4px 8px;
+  font-size: 14px;
+}
+
 /* Title Row */
 .title-row {
   display: flex;
@@ -287,6 +293,11 @@
   color: #6c757d;
 }
 
+.no-data {
+  color: #adb5bd;
+  font-style: italic;
+}
+
 /* ============================================
    SECTION HEADER WITH ACTION
 ============================================ */
@@ -423,7 +434,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.product-count {
+.children-count {
   color: #6c757d;
   font-size: 13px;
 }
@@ -618,6 +629,11 @@
 .stock-badge.low-stock {
   background: #fff3cd;
   color: #856404;
+}
+
+.stock-badge.out-of-stock {
+  background: #f8d7da;
+  color: #721c24;
 }
 
 /* Currency Suffix */
@@ -831,11 +847,9 @@
 @keyframes subtle-fade {
   from {
     opacity: 0;
-    transform: translateY(10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
@@ -1201,6 +1215,16 @@
   transform: rotate(180deg);
 }
 
+/* Dropdown Backdrop */
+.dropdown-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99;
+}
+
 /* Dropdown Panel */
 .tree-select-panel {
   position: absolute;
@@ -1275,6 +1299,10 @@
 
 .tree-node.root-node:hover {
   background: linear-gradient(135deg, #e8ecf0 0%, #dce0e4 100%);
+}
+
+.tree-node.root-node.disabled:hover {
+  background: linear-gradient(135deg, #f0f4f8 0%, #e8ecf0 100%);
 }
 
 .tree-node.root-node .tree-node-icon {
@@ -1356,6 +1384,11 @@
 .tree-node-badge.badge-current {
   background: #fff3cd;
   color: #856404;
+}
+
+.tree-node-badge.badge-current-parent {
+  background: #d1ecf1;
+  color: #0c5460;
 }
 
 /* Tree Node Check Mark */
