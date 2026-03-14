@@ -1,117 +1,177 @@
-<div class="admin-container">
-  <!-- Page Header -->
+<div class="container py-4 add-category-page" [class.dropdown-open]="isDropdownOpen()">
   <div class="page-header">
-    <div class="header-top">
-      <a routerLink="/admin/categories" class="back-link">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <div>
+        <h1><i class="fas fa-folder-plus me-3"></i>Add Category</h1>
+        <p>Create a new category to organize your catalog hierarchy.</p>
+      </div>
+      <a routerLink="/admin/categories" class="action-btn btn-cancel-outline">
         <i class="fas fa-arrow-left"></i>
         <span>Back to Categories</span>
       </a>
     </div>
-    <h1 class="page-title">Add New Category</h1>
-    <p class="page-subtitle">Create a new category to organize your products</p>
   </div>
 
-  <!-- Form Container -->
-  <div class="form-container">
-    <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
-      
-      <!-- Basic Information Section -->
-      <div class="form-section">
-        <div class="section-header">
-          <i class="fas fa-info-circle"></i>
-          <h3>Category Information</h3>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group full-width">
-            <label for="name">Category Name <span class="required">*</span></label>
-            <input 
-              type="text" 
-              id="name"
-              formControlName="name"
-              class="form-control" 
-              placeholder="Enter category name (e.g., Electronics, Fashion)">
-            <div class="help-text">
+  <div class="add-category-grid">
+    <div class="add-category-main">
+      <div class="details-card category-details-card">
+        <h3><i class="fas fa-layer-group me-2"></i>Category Details</h3>
+        <form class="add-category-form">
+          <div class="form-group">
+            <label class="form-label" for="categoryName">
+              Category Name <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="categoryName"
+              class="form-control"
+              placeholder="Enter category name"
+            />
+            <span class="form-hint">
               <i class="fas fa-info-circle"></i>
-              Maximum 200 characters
-            </div>
+              Max 200 characters.
+            </span>
           </div>
-        </div>
 
-        <div class="form-row">
-          <div class="form-group full-width">
-            <label for="description">Description</label>
-            <textarea 
-              id="description"
-              formControlName="description"
-              (input)="onDescriptionChange($event)"
-              class="form-control" 
-              rows="4" 
-              placeholder="Enter category description (optional)"></textarea>
-            <div class="char-count">
-              {{ descriptionLength() }} / 1000 characters
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Hierarchy Section -->
-      <div class="form-section">
-        <div class="section-header">
-          <i class="fas fa-sitemap"></i>
-          <h3>Category Hierarchy</h3>
-        </div>
-
-        <div class="form-row flex-wrap">
-          <div class="col-lg-4 col-sm-12">
-            <div class="form-group full-width">
-              <label for="parentCategoryId">Parent Category</label>
-              <select 
-                id="parentCategoryId"
-                formControlName="parentCategoryId"
-                class="form-control">
-                <option value="">None (Root Category)</option>
-                @for (parent of parentCategories(); track parent.id) {
-                  <option [value]="parent.id">{{ parent.name }}</option>
-                }
-              </select>
-              <div class="help-text">
-                <i class="fas fa-info-circle"></i>
-                Select a parent category to create a subcategory, or leave as "None" for a root category
-              </div>
+          <div class="form-group">
+            <label class="form-label" for="categoryDescription">Description</label>
+            <textarea
+              id="categoryDescription"
+              class="form-control"
+              rows="4"
+              placeholder="Enter category description (optional)"
+            ></textarea>
+            <div class="form-footer">
+              <span class="form-hint">
+                <i class="fas fa-lightbulb"></i>
+                Highlight the primary use case.
+              </span>
+              <span class="char-count">120 / 1000</span>
             </div>
           </div>
 
-          <!-- Category Preview -->
-          <div class="category-preview col-lg-7 col-sm-12">
-            <div class="preview-header">
-              <i class="fas fa-eye"></i>
-              <h4>Category Preview</h4>
-            </div>
-            <div class="preview-content">
-              <div class="preview-item">
-                <i class="fas fa-layer-group"></i>
-                <div class="preview-details">
-                  <span class="preview-label">Category Path:</span>
-                  <span class="preview-value">{{ categoryPath() }}</span>
+          <div class="form-group">
+            <label class="form-label" for="parentCategory">Parent Category</label>
+            <div class="tree-select-wrapper" id="parentCategory">
+              <div class="tree-select" (click)="toggleDropdown()">
+                <div class="tree-select-value">
+                  <i class="fas fa-folder"></i>
+                  <span class="selected-text">
+                    {{ selectedParentPath() || 'Select a parent category...' }}
+                  </span>
                 </div>
+                <i
+                  class="fas fa-chevron-down tree-select-arrow"
+                  [class.rotated]="isDropdownOpen()"
+                ></i>
               </div>
+              @if (isDropdownOpen()) {
+                <div class="dropdown-backdrop" (click)="closeDropdown()"></div>
+                <div class="tree-select-panel" (click)="$event.stopPropagation()">
+                  <div class="tree-select-panel-inner">
+                    <div
+                      class="tree-node root-node"
+                      [class.selected]="selectedParentId() === 0"
+                      (click)="selectParent(0, 'Root', 'Root')"
+                    >
+                      <i class="fas fa-home tree-node-icon"></i>
+                      <span class="tree-node-name">Root</span>
+                      @if (selectedParentId() === 0) {
+                        <i class="fas fa-check tree-node-check"></i>
+                      }
+                    </div>
+                    @for (category of dropdownCategories(); track category.id) {
+                      <div
+                        class="tree-node"
+                        [class.child]="category.depth > 0"
+                        [class.selected]="selectedParentId() === category.id"
+                        (click)="selectParent(category.id, category.name, category.fullPath)"
+                      >
+                        @if (category.depth > 0) {
+                          <span
+                            class="tree-indent"
+                            [style.margin-left.px]="(category.depth - 1) * 20"
+                          ></span>
+                        }
+                        <span class="tree-node-name">{{ category.name }}</span>
+                        @if (selectedParentId() === category.id) {
+                          <i class="fas fa-check tree-node-check"></i>
+                        }
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
             </div>
+            <span class="form-hint">
+              <i class="fas fa-sitemap"></i>
+              Choose a parent to create a subcategory.
+            </span>
+          </div>
+
+          <div class="form-actions">
+            <a routerLink="/admin/categories" class="action-btn btn-cancel-outline">
+              <i class="fas fa-times"></i>
+              <span>Cancel</span>
+            </a>
+            <button type="button" class="action-btn btn-save">
+              <i class="fas fa-check"></i>
+              <span>Create Category</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="add-category-side">
+      <div class="details-card preview-card">
+        <h3><i class="fas fa-sitemap me-2"></i>Hierarchy Preview</h3>
+        <div class="preview-meta">
+          <div class="preview-row">
+            <span class="preview-label">Path</span>
+            <span class="preview-value path-badge">
+              <i class="fas fa-sitemap"></i>
+              {{ selectedParentPath() || 'Root' }} › New Category
+            </span>
+          </div>
+          <div class="preview-row">
+            <span class="preview-label">Parent</span>
+            <span class="preview-value">{{ selectedParentLabel() || 'Root' }}</span>
           </div>
         </div>
       </div>
 
-      <!-- Form Actions -->
-      <div class="form-actions">
-        <button type="button" (click)="onCancel()" class="btn btn-secondary">
-          <i class="fas fa-times"></i>
-          Cancel
-        </button>
-        <button type="submit" class="btn btn-primary" [disabled]="!categoryForm.valid">
-          <i class="fas fa-check"></i>
-          Add Category
-        </button>
+      <div class="details-card tips-card">
+        <h3><i class="fas fa-clipboard-check me-2"></i>Quick Guidelines</h3>
+        <p class="tips-intro">Keep categories consistent with the store navigation.</p>
+        <ul class="tips-list">
+          <li>
+            <span class="tip-icon"><i class="fas fa-pen"></i></span>
+            <div>
+              <strong>Clear naming</strong>
+              <span>Use shopper-friendly category names.</span>
+            </div>
+          </li>
+          <li>
+            <span class="tip-icon"><i class="fas fa-align-left"></i></span>
+            <div>
+              <strong>Concise descriptions</strong>
+              <span>Summarize what belongs in this category.</span>
+            </div>
+          </li>
+          <li>
+            <span class="tip-icon"><i class="fas fa-sitemap"></i></span>
+            <div>
+              <strong>Logical hierarchy</strong>
+              <span>Match the parent to navigation depth.</span>
+            </div>
+          </li>
+        </ul>
+        <div class="tips-footer">
+          <i class="fas fa-info-circle"></i>
+          Add subcategories when the catalog grows.
+        </div>
       </div>
-    </form>
+    </div>
   </div>
 </div>

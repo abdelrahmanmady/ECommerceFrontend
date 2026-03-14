@@ -1,81 +1,88 @@
-import { Component, signal, computed, effect } from '@angular/core';
+//Angular Imports
 import { CommonModule } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+//Services
+import { CategoryService } from '../../../../core/services/category.service';
+//Models
+import { CategorySummaryDto } from '../../../../core/models';
 
-interface ParentCategory {
+interface DropdownCategory {
   id: number;
   name: string;
+  depth: number;
+  fullPath: string;
 }
 
 @Component({
   selector: 'app-add',
   standalone: true,
-  imports: [CommonModule, RouterLink, ReactiveFormsModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './add.html',
-  styleUrls: ['../style.css']
+  styleUrls: ['../../users/style.css', './add.css'],
 })
-export class Add {
-  categoryForm: FormGroup;
-  
-  // Mock parent categories using signal
-  parentCategories = signal<ParentCategory[]>([
-    { id: 1, name: 'Electronics' },
-    { id: 3, name: 'Fashion' },
-    { id: 6, name: 'Home & Kitchen' },
-    { id: 7, name: 'Sports & Fitness' },
-    { id: 8, name: 'Books & Media' },
-    { id: 10, name: 'Beauty & Personal Care' }
-  ]);
+export class Add implements OnInit {
+  // Services
+  private readonly categoryService = inject(CategoryService);
 
-  descriptionLength = signal(0);
-  
-  // Computed signal for category path preview
-  categoryPath = computed(() => {
-    const parentId = this.categoryForm?.get('parentCategoryId')?.value;
-    const categoryName = this.categoryForm?.get('name')?.value || 'Your New Category';
-    
-    if (parentId) {
-      const parent = this.parentCategories().find(p => p.id === +parentId);
-      return parent ? `Root → ${parent.name} → ${categoryName}` : `Root → ${categoryName}`;
-    }
-    return `Root → ${categoryName}`;
-  });
+  // State
+  isDropdownOpen = signal(false);
+  dropdownCategories = signal<DropdownCategory[]>([]);
+  selectedParentId = signal<number | null>(null);
+  selectedParentLabel = signal<string | null>(null);
+  selectedParentPath = signal<string | null>(null);
 
-  constructor(
-    private fb: FormBuilder,
-    private router: Router
-  ) {
-    this.categoryForm = this.fb.group({
-      name: ['', [Validators.required, Validators.maxLength(200)]],
-      description: ['', Validators.maxLength(1000)],
-      parentCategoryId: ['']
-    });
+  ngOnInit(): void {
+    this.loadParentCategories();
+  }
 
-    // Track description length using effect
-    effect(() => {
-      const desc = this.categoryForm.get('description')?.value || '';
-      this.descriptionLength.set(desc.length);
+  toggleDropdown(): void {
+    this.isDropdownOpen.update((isOpen) => !isOpen);
+  }
+
+  closeDropdown(): void {
+    this.isDropdownOpen.set(false);
+  }
+
+  selectParent(id: number, label: string, fullPath: string): void {
+    this.selectedParentId.set(id);
+    this.selectedParentLabel.set(label);
+    this.selectedParentPath.set(fullPath);
+    this.isDropdownOpen.set(false);
+  }
+
+  private loadParentCategories(): void {
+    this.categoryService.getAllStoreCategories().subscribe({
+      next: (categories) => {
+        this.dropdownCategories.set(this.flattenCategories(categories, 0, 'Root'));
+      },
+      error: (error) => {
+        console.error('Error loading categories for dropdown:', error);
+      },
     });
   }
 
-  onDescriptionChange(event: Event): void {
-    const textarea = event.target as HTMLTextAreaElement;
-    this.descriptionLength.set(textarea.value.length);
-  }
+  private flattenCategories(
+    categories: CategorySummaryDto[],
+    depth: number,
+    parentPath: string,
+  ): DropdownCategory[] {
+    const result: DropdownCategory[] = [];
 
-  onSubmit(): void {
-    if (this.categoryForm.valid) {
-      console.log('Category Data:', this.categoryForm.value);
-      // Here you would call your API service
-      alert('Category added successfully!');
-      this.router.navigate(['/admin/categories']);
-    } else {
-      alert('Please fill in all required fields');
+    for (const category of categories) {
+      const fullPath = `${parentPath} › ${category.name}`;
+      result.push({
+        id: category.id,
+        name: category.name,
+        depth,
+        fullPath,
+      });
+
+      if (category.subcategories?.length) {
+        result.push(...this.flattenCategories(category.subcategories, depth + 1, fullPath));
+      }
     }
-  }
 
-  onCancel(): void {
-    this.router.navigate(['/admin/categories']);
+    return result;
   }
 }
